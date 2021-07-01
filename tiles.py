@@ -3,7 +3,7 @@ Tiles
 History
 
  - v1 - Initial version-controlled code for tile generation and management. 
- Note: walls no changes to access with opposite truth values.
+ Note: walls now changes to access with opposite truth values.
 """
 import os
 import sys
@@ -147,7 +147,7 @@ class TileSet:
             tile_counts : dict
                 Dictionary with then number of each tile in set.
         """
-        self.number = name
+        self.name = name
         self.tile_counts = tile_counts
         self.tiles = {}
         for tile_number, doors in doors_for_tiles.items():
