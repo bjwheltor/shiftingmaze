@@ -16,12 +16,11 @@ from position import *
 
 
 class Plot:
-    def __init__(self, x_tiles, y_tiles, tile_size, player_size):
+    def __init__(self, x_tiles, y_tiles, tile_size):
         """ """
         self.x_tiles = x_tiles
         self.y_tiles = y_tiles
         self.tile_size = tile_size
-        self.player_size = player_size
 
         self.board_width = self.x_tiles * self.tile_size
         self.board_height = self.y_tiles * self.tile_size
@@ -280,6 +279,58 @@ class Plot:
                 self.board.blit(extended_column, (x, y))
                 pygame.display.flip()
 
+    def show_player(self, player, player_offset=None, position_shift=None):
+        """
+        Plot player in position
+
+        Parameters:
+            player: Player
+                player instance
+
+        Keywords:
+            player_offset : Position
+                x,y coordinates of player offset from top left of tile in plot space. Default: Position(20,20)
+            position_shift : int
+                x-y movement vector for viewing area relative to whole board (in 'tile space'). Default: no shift
+        """
+        position_placed = self.position_placed(player.position, position_shift)
+
+        if not player_offset:
+            player_offset = Position(
+                int((self.tile_size - player.rect.width) / 2),
+                int((self.tile_size - player.rect.height) / 2),
+            )
+
+        self.board.blit(
+            player.image,
+            (position_placed.x + player_offset.x, position_placed.y + player_offset.y),
+        )
+        pygame.display.flip()
+
+    def move_player(self, player, direction, player_offset=None, position_shift=None):
+        """
+        Move player in direction specified
+
+        Parameters:
+            player: Player
+                player instance
+        direction : int
+            Direction in which presence of door to be checked.
+            0 = up, 1 = left, 2 = down, 3 = right
+
+        Keywords:
+            player_offset : Position
+                x,y coordinates of player offset from top left of tile in plot space. Default: Position(20,20)
+            position_shift : int
+                x-y movement vector for viewing area relative to whole board (in 'tile space'). Default: no shift
+        """
+        if not player_offset:
+            player_offset = Position(
+                int((self.tile_size - player.rect.width) / 2),
+                int((self.tile_size - player.rect.height) / 2),
+            )
+        # rest of code to be added
+
 
 if __name__ == "__main__":
     # Create a tileset
@@ -308,8 +359,7 @@ if __name__ == "__main__":
     rotation_range = list(range(-1, 2, 2))
 
     tile_size = tile_set.tiles[0].size
-    player_size = 40
-    plot = Plot(x_tiles, y_tiles, tile_size, player_size)
+    plot = Plot(x_tiles, y_tiles, tile_size)
 
     # plot tiles
     position_shift = Position(4, 2)

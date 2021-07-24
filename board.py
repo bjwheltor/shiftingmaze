@@ -14,6 +14,7 @@ import numpy as np
 from tiles import *
 from position import *
 
+
 class Board:
     """
     Represents the state of the board for Shifting Maze game.
