@@ -208,6 +208,20 @@ class TileBag:
             tile_list.append(self.draw_tile())
         return tile_list
 
+    def __repr__(self):
+        """Display tile bag"""
+        tile_list = ""
+        for tile_number in self.tile_numbers:
+            tile_list += str(tile_number) + " "
+        return tile_list
+
+    def __str__(self):
+        """Print tile bag"""
+        tile_list = ""
+        for tile_number in self.tile_numbers:
+            tile_list += str(tile_number) + " "
+        return tile_list
+
 
 if __name__ == "__main__":
     # screen set-up to test
