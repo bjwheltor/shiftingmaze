@@ -1,8 +1,9 @@
 """
 Board
-History
 
- - v1 - Initial version
+History
+17-Jul-2021 - Initial version
+24-Jul-2021 - Position class moved into a separate file
 """
 import os
 import sys
@@ -11,95 +12,7 @@ import pygame
 import numpy as np
 
 from tiles import *
-
-
-class Position:
-    """
-    Represents a position as a set of coordinates
-
-    Attributes
-        x : int
-            x-coordinate
-        y : int
-            y-coordinate
-    """
-
-    def __init__(self, x, y):
-        """
-        Parameters
-            x : int
-                x-coordinate
-            y : int
-                y-coordinate
-        """
-        self.x = x
-        self.y = y
-
-    def coords(self):
-        """
-        Return position as a tuple
-
-        Parameters
-            none
-
-        Returns
-            coords : tuple
-                position as a tuple
-        """
-        return (self.x, self.y)
-
-    def get_next(self, direction):
-        """
-        Get the position of the next point in a particular direction
-
-        Parameters
-            direction : int
-                Direction in which presence of door to be checked.
-                0 = up, 1 = left, 2 = down, 3 = right
-
-        Returns
-            next_position : Position
-                position of next point as a set of coordinates
-        """
-        x = self.x
-        y = self.y
-        if direction == 0:
-            y -= 1
-        elif direction == 1:
-            x -= 1
-        elif direction == 2:
-            y += 1
-        elif direction == 3:
-            x += 1
-        return Position(x, y)
-
-    def move(self, direction):
-        """
-        Updates the position to the next point in a particular direction
-
-        Parameters
-            direction : int
-                Direction in which presence of door to be checked.
-                0 = up, 1 = left, 2 = down, 3 = right
-
-        """
-        if direction == 0:
-            self.y -= 1
-        elif direction == 1:
-            self.x -= 1
-        elif direction == 2:
-            self.y += 1
-        elif direction == 3:
-            self.x += 1
-
-    def __repr__(self):
-        """Display position"""
-        return f"Position( x = {self.x}, y = {self.y} )"
-
-    def __str__(self):
-        """Print coordinates"""
-        return f"x = {self.x}, y = {self.y}"
-
+from position import *
 
 class Board:
     """
@@ -285,12 +198,12 @@ if __name__ == "__main__":
     print(tile_bag.tile_numbers)
     print()
 
-    # Fill board with tiles
+    # Create board and fill with tiles from tile bag
     board = Board(width=10, height=10, tile_bag=tile_bag)
 
     print(tile_bag.tile_numbers)
 
-    # display boar
+    # display board
     for x in range(board.width):
         for y in range(board.height):
             tile_number = board.tile_placements[x, y]

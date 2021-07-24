@@ -2,14 +2,13 @@
 Tiles
 History
 
- - v1 - Initial version-controlled code for tile generation and management. 
+17-Jul-2021 - Initial version-controlled code for tile generation and management. 
  Note: walls now changes to access with opposite truth values.
 """
 import os
 import sys
 import random
 import pygame
-
 
 class Tile:
     """

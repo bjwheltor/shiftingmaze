@@ -1,7 +1,8 @@
 """
 Plot
+
 History
- - v1 - Initial version
+17-Jul-2021 - Initial version
 """
 import os
 import sys
@@ -11,6 +12,7 @@ import numpy as np
 
 from tiles import *
 from board import *
+from position import *
 
 
 class Plot:
