@@ -107,13 +107,15 @@ class Board:
                 True if door is present, False if not
         """
         if next:
-            direction = (direction + 2) % 4
-            tile_number = self.tile_placements[position.next().coords()]
+            check_position = position.get_next(direction)
+            check_direction = (direction + 2) % 4
         else:
-            tile_number = self.tile_placements[position.coords()]
+            check_position = position
+            check_direction = direction
+        tile_number = self.tile_placements[check_position.coords()]
+        tile_orientation = self.tile_orientations[check_position.coords()]
         doors = tiles[tile_number].doors
-        tile_orientation = self.tile_orientations[position.coords()]
-        door_index = (direction - tile_orientation) % 4
+        door_index = (check_direction - tile_orientation) % 4
         return doors[door_index]
 
     def slide_row(self, row_y, slide=1):
