@@ -301,10 +301,13 @@ class Plot:
                 int((self.tile_size - player.rect.height) / 2),
             )
 
-        self.board.blit(
-            player.image,
-            (position_placed.x + player_offset.x, position_placed.y + player_offset.y),
-        )
+        x = position_placed.x + player_offset.x
+        y = position_placed.y + player_offset.y
+
+        background_rect = pygame.Rect(x, y, player.size, player.size)
+        player.background.blit(self.board, (0, 0), background_rect)
+
+        self.board.blit(player.image, (x, y))
         pygame.display.flip()
 
     def move_player(self, player, direction, player_offset=None, position_shift=None):
@@ -329,7 +332,108 @@ class Plot:
                 int((self.tile_size - player.rect.width) / 2),
                 int((self.tile_size - player.rect.height) / 2),
             )
-        # rest of code to be added
+
+        position_placed = self.position_placed(player.position, position_shift)
+
+        if direction == Position.DOWN:
+            background_tiles = pygame.Surface(
+                (self.tile_size, self.tile_size * 2), pygame.SRCALPHA
+            )
+            background_rect = pygame.Rect(
+                position_placed.x, position_placed.y, self.tile_size, self.tile_size * 2
+            )
+            background_tiles.blit(self.board, (0, 0), background_rect)
+            background_tiles.blit(player.background, (player_offset.x, player_offset.y))
+            for y in range(0, self.tile_size + 1):
+                self.board.blit(
+                    background_tiles, (position_placed.x, position_placed.y)
+                )
+                self.board.blit(
+                    player.image,
+                    (
+                        position_placed.x + player_offset.x,
+                        position_placed.y + player_offset.y + y,
+                    ),
+                )
+                pygame.display.flip()
+
+        elif direction == Position.UP:
+            background_tiles = pygame.Surface(
+                (self.tile_size, self.tile_size * 2), pygame.SRCALPHA
+            )
+            background_rect = pygame.Rect(
+                position_placed.x,
+                position_placed.y - self.tile_size,
+                self.tile_size,
+                self.tile_size * 2,
+            )
+            background_tiles.blit(self.board, (0, 0), background_rect)
+            background_tiles.blit(
+                player.background, (player_offset.x, self.tile_size + player_offset.y)
+            )
+            for y in range(0, self.tile_size + 1):
+                self.board.blit(
+                    background_tiles,
+                    (position_placed.x, position_placed.y - self.tile_size),
+                )
+                self.board.blit(
+                    player.image,
+                    (
+                        position_placed.x + player_offset.x,
+                        position_placed.y + player_offset.y - y,
+                    ),
+                )
+                pygame.display.flip()
+
+        elif direction == Position.RIGHT:
+            background_tiles = pygame.Surface(
+                (self.tile_size * 2, self.tile_size), pygame.SRCALPHA
+            )
+            background_rect = pygame.Rect(
+                position_placed.x, position_placed.y, self.tile_size * 2, self.tile_size
+            )
+            background_tiles.blit(self.board, (0, 0), background_rect)
+            background_tiles.blit(player.background, (player_offset.x, player_offset.y))
+            for x in range(0, self.tile_size + 1):
+                self.board.blit(
+                    background_tiles, (position_placed.x, position_placed.y)
+                )
+                self.board.blit(
+                    player.image,
+                    (
+                        position_placed.x + player_offset.x + x,
+                        position_placed.y + player_offset.y,
+                    ),
+                )
+                pygame.display.flip()
+
+        elif direction == Position.LEFT:
+            background_tiles = pygame.Surface(
+                (self.tile_size * 2, self.tile_size), pygame.SRCALPHA
+            )
+            background_rect = pygame.Rect(
+                position_placed.x - self.tile_size,
+                position_placed.y,
+                self.tile_size * 2,
+                self.tile_size,
+            )
+            background_tiles.blit(self.board, (0, 0), background_rect)
+            background_tiles.blit(
+                player.background, (self.tile_size + player_offset.x, player_offset.y)
+            )
+            for x in range(0, self.tile_size + 1):
+                self.board.blit(
+                    background_tiles,
+                    (position_placed.x - self.tile_size, position_placed.y),
+                )
+                self.board.blit(
+                    player.image,
+                    (
+                        position_placed.x + player_offset.x - x,
+                        position_placed.y + player_offset.y,
+                    ),
+                )
+                pygame.display.flip()
 
 
 if __name__ == "__main__":

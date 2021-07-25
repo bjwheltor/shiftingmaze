@@ -16,6 +16,8 @@ from player import *
 from board import *
 from plot import *
 
+pygame.init()
+
 # Define colours
 WHITE = (255, 255, 255)
 GREY = (128, 128, 128)
@@ -79,6 +81,7 @@ plot.show_all_tiles(
 
 # draw player
 plot.show_player(player, position_shift=position_shift)
+print(f"Player postion: {player.position}")
 
 # gaming loop
 while True:
@@ -102,47 +105,6 @@ while True:
                     direction = Position.DOWN
                 elif event.key == pygame.K_RIGHT:
                     direction = Position.RIGHT
+                plot.move_player(player, direction, position_shift=position_shift)
                 player.position.move(direction)
-
-                new_x, new_y = new_xy_from_direction(player.x, player.y, direction)
-                current_clear, new_clear = board.access_in_direction(
-                    player.x, player.y, direction
-                )
-                plot.move_player(
-                    player.image,
-                    player.x,
-                    player.y,
-                    new_x,
-                    new_y,
-                    current_clear,
-                    new_clear,
-                )
-                if new_clear:
-                    player.move(new_x, new_y)
-            elif event.key in ROTATE_KEYS:
-                if event.key == pygame.K_z:
-                    rotation = 1
-                elif event.key == pygame.K_x:
-                    rotation = -1
-                tile_x = player.x
-                tile_y = player.y
-                tile_number = board.tile_placements[tile_x, tile_y]
-                tile_image = tiles[tile_number].image
-                plot.rotate_tile(tile_image, player.image, tile_x, tile_y, rotation)
-                board.rotate_tile(tile_x, tile_y, rotation)
-            elif event.key in SLIDE_ROW_KEYS:
-                if event.key == pygame.K_q:
-                    slide = 1
-                elif event.key == pygame.K_w:
-                    slide = -1
-                row_y = 5
-                plot.slide_row(row_y, slide)
-                board.slide_row(row_y, slide)
-            elif event.key in SLIDE_COLUMN_KEYS:
-                if event.key == pygame.K_p:
-                    slide = 1
-                elif event.key == pygame.K_l:
-                    slide = -1
-                column_x = 5
-                plot.slide_column(column_x, slide)
-                board.slide_column(column_x, slide)
+                print(f"Player postion: {player.position}")

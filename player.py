@@ -48,6 +48,8 @@ class Player:
         self.image = pygame.Surface((self.size, self.size), pygame.SRCALPHA)
         self.rect = self.image.get_rect()
         pygame.draw.ellipse(self.image, self.colour, self.rect)
+        self.background = pygame.Surface((self.size, self.size), pygame.SRCALPHA)
+        pygame.draw.ellipse(self.background, self.colour, self.rect)
 
 
 if __name__ == "__main__":
