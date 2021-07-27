@@ -110,8 +110,14 @@ while True:
                 ) and board.check_for_door(
                     player.position, direction, tile_set.tiles, next=True
                 ):
-                    plot.move_player(player, direction, position_shift=position_shift)
+                    plot.move_player_centred(
+                        player, direction, position_shift=position_shift
+                    )
+                    # plot.move_player(
+                    #    player, direction, position_shift=position_shift
+                    # )
                     player.position.move(direction)
+                    position_shift.move(direction)
                 print(f"Player postion: {player.position}")
             elif event.key in ROTATE_KEYS:
                 if event.key == pygame.K_z:

@@ -376,6 +376,71 @@ class Plot:
                 self.board.blit(player.image, (player_x - move, player_y))
             pygame.display.flip()
 
+    def move_player_centred(
+        self, player, direction, player_offset=None, position_shift=None
+    ):
+        """
+        Move player in direction specified, but maintain in centre of board.
+        i.e. the board appears to move rather than then player.
+
+        Parameters:
+            player: Player
+                player instance
+        direction : int
+            Direction in which presence of door to be checked.
+            0 = up, 1 = left, 2 = down, 3 = right
+
+        Keywords:
+            player_offset : Position
+                x,y coordinates of player offset from top left of tile in plot space. Default: Position(20,20)
+            position_shift : int
+                x-y movement vector for viewing area relative to whole board (in 'tile space'). Default: no shift
+        """
+        position_placed = self.position_placed(player.position, position_shift)
+        if not player_offset:
+            player_offset = Position(
+                int((self.tile_size - player.rect.width) / 2),
+                int((self.tile_size - player.rect.height) / 2),
+            )
+        player_x = position_placed.x + player_offset.x
+        player_y = position_placed.y + player_offset.y
+
+        background_width = self.board_width
+        background_height = self.board_height
+        board_offset_x = 0
+        board_offset_y = 0
+
+        if direction == Position.DOWN or direction == Position.UP:
+            background_height += self.tile_size
+        elif direction == Position.RIGHT or direction == Position.LEFT:
+            background_width += self.tile_size
+
+        if direction == Position.UP:
+            board_offset_y = self.tile_size
+        elif direction == Position.LEFT:
+            board_offset_x = self.tile_size
+
+        background_tiles = pygame.Surface(
+            (background_width, background_height), pygame.SRCALPHA
+        )
+        self.board.blit(player.background, (player_x, player_y))
+        background_tiles.blit(self.board, (board_offset_x, board_offset_y))
+        ##########################################################
+        # Add code to blit new row or column to background tiles
+        ##########################################################
+
+        for move in range(0, self.tile_size + 1):
+            if direction == Position.DOWN:
+                self.board.blit(background_tiles, (0, -move))
+            elif direction == Position.UP:
+                self.board.blit(background_tiles, (0, move - board_offset_y))
+            elif direction == Position.RIGHT:
+                self.board.blit(background_tiles, (-move, 0))
+            elif direction == Position.LEFT:
+                self.board.blit(background_tiles, (move - board_offset_x, 0))
+            self.board.blit(player.image, (player_x, player_y))
+            pygame.display.flip()
+
 
 if __name__ == "__main__":
     # Create a tileset
