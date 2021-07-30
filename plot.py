@@ -105,6 +105,71 @@ class Plot:
             self.board.blit(tile_placed, (position_placed.x, position_placed.y))
             pygame.display.flip()
 
+    def get_extra_tiles(
+        self,
+        tile_placements,
+        tile_orientations,
+        tiles,
+        row_selection=None,
+        column_selection=None,
+        position_shift=None,
+    ):
+        """
+        Plot tile in position with orientation
+
+        Parameters:
+            tile_placements : numpy.array(width, height)
+                Tile number at each position of the board
+            tile_orientations : numpy.array(width, height)
+                Orientation of tile at each position on the board.
+                0 = no rotation, 1 = 90 degrees rotation anticlockwise
+                2 = 180 degrees rotation, 3 = 90 degrees rotation clockwise
+            tiles : TileSet.tiles
+                Tiles in use
+            row_selection : int
+                If not None then indicates y coordinate of row to be returned
+                (e.g. -1 for row above board, self.y_tiles+1 for row below board)
+            column_selection : int
+                If not None then indicates x coordinate of column to be returned
+                (e.g. -1 for column to left of board, self.x_tiles+1 for column to right of board)
+
+        Keywords:
+            position_shift : int
+                x-y movement vector for viewing area relative to whole board (in 'tile space')
+
+        Returns
+            extra_tiles : pygame.Surface
+                Image of row or column with the required tile images
+        """
+        if not position_shift:
+            position_shift = Position(0, 0)
+
+        row_length = 1
+        column_length = 1
+        if row_selection is not None:
+            row_length = self.x_tiles
+            column_selection = 0
+        elif column_selection is not None:
+            column_length = self.y_tiles
+            row_selection = 0
+
+        extra_tiles = pygame.Surface(
+            (row_length * self.tile_size, column_length * self.tile_size),
+            pygame.SRCALPHA,
+        )
+
+        for x in range(row_length):
+            for y in range(column_length):
+                tile_x = x + position_shift.x + column_selection
+                tile_y = y + position_shift.y + row_selection
+                tile_number = tile_placements[tile_x, tile_y]
+                tile_image = tiles[tile_number].image
+                tile_orientation = tile_orientations[tile_x, tile_y]
+                tile_placed = pygame.transform.rotate(tile_image, tile_orientation * 90)
+                extra_tiles.blit(tile_placed, (x * self.tile_size, y * self.tile_size))
+
+        return extra_tiles
+
     def show_all_tiles(
         self, tile_placements, tile_orientations, tiles, position_shift=None
     ):
@@ -377,7 +442,14 @@ class Plot:
             pygame.display.flip()
 
     def move_player_centred(
-        self, player, direction, player_offset=None, position_shift=None
+        self,
+        player,
+        direction,
+        tile_placements,
+        tile_orientations,
+        tiles,
+        player_offset=None,
+        position_shift=None,
     ):
         """
         Move player in direction specified, but maintain in centre of board.
@@ -409,6 +481,8 @@ class Plot:
         background_height = self.board_height
         board_offset_x = 0
         board_offset_y = 0
+        row_selection = None
+        column_selection = None
 
         if direction == Position.DOWN or direction == Position.UP:
             background_height += self.tile_size
@@ -417,17 +491,35 @@ class Plot:
 
         if direction == Position.UP:
             board_offset_y = self.tile_size
+            row_selection = -1
         elif direction == Position.LEFT:
             board_offset_x = self.tile_size
+            column_selection = -1
+        elif direction == Position.DOWN:
+            row_selection = self.y_tiles + 1
+        elif direction == Position.RIGHT:
+            column_selection = self.x_tiles + 1
 
         background_tiles = pygame.Surface(
             (background_width, background_height), pygame.SRCALPHA
         )
         self.board.blit(player.background, (player_x, player_y))
         background_tiles.blit(self.board, (board_offset_x, board_offset_y))
-        ##########################################################
-        # Add code to blit new row or column to background tiles
-        ##########################################################
+
+        extra_tiles = self.get_extra_tiles(
+            tile_placements,
+            tile_orientations,
+            tiles,
+            row_selection=row_selection,
+            column_selection=column_selection,
+            position_shift=position_shift,
+        )
+        if direction == Position.UP or direction == Position.LEFT:
+            background_tiles.blit(extra_tiles, (0, 0))
+        elif direction == Position.DOWN:
+            background_tiles.blit(extra_tiles, (0, self.y_tiles * self.tile_size))
+        elif direction == Position.RIGHT:
+            background_tiles.blit(extra_tiles, (self.x_tiles * self.tile_size, 0))
 
         for move in range(0, self.tile_size + 1):
             if direction == Position.DOWN:

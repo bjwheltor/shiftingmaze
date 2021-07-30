@@ -105,20 +105,47 @@ while True:
                     direction = Position.DOWN
                 elif event.key == pygame.K_RIGHT:
                     direction = Position.RIGHT
-                if board.check_for_door(
+
+                next_position = player.position.get_next(direction)
+                print(f"Next player position: {next_position}")
+                if (
+                    next_position.x < 0
+                    or next_position.y < 0
+                    or next_position.x >= board_width
+                    or next_position.y >= board_height
+                ):
+                    pass
+                elif board.check_for_door(
                     player.position, direction, tile_set.tiles
                 ) and board.check_for_door(
                     player.position, direction, tile_set.tiles, next=True
                 ):
-                    plot.move_player_centred(
-                        player, direction, position_shift=position_shift
-                    )
-                    # plot.move_player(
-                    #    player, direction, position_shift=position_shift
-                    # )
-                    player.position.move(direction)
-                    position_shift.move(direction)
-                print(f"Player postion: {player.position}")
+                    next_shift = position_shift.get_next(direction)
+                    if (
+                        next_shift.x < 0
+                        or next_shift.y < 0
+                        or next_shift.x > board_width - x_tiles
+                        or next_shift.y > board_height - y_tiles
+                    ):
+                        plot.move_player(
+                            player, direction, position_shift=position_shift
+                        )
+                        player.position.move(direction)
+                    else:
+                        plot.move_player_centred(
+                            player,
+                            direction,
+                            board.tile_placements,
+                            board.tile_orientations,
+                            tile_set.tiles,
+                            position_shift=position_shift,
+                        )
+                        player.position.move(direction)
+                        position_shift.move(direction)
+                print(
+                    f"Player postion: {player.position}    Position shift: {position_shift}"
+                )
+
             elif event.key in ROTATE_KEYS:
                 if event.key == pygame.K_z:
                     rotation = 1
