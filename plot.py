@@ -496,9 +496,9 @@ class Plot:
             board_offset_x = self.tile_size
             column_selection = -1
         elif direction == Position.DOWN:
-            row_selection = self.y_tiles + 1
+            row_selection = self.y_tiles - 1
         elif direction == Position.RIGHT:
-            column_selection = self.x_tiles + 1
+            column_selection = self.x_tiles - 1
 
         background_tiles = pygame.Surface(
             (background_width, background_height), pygame.SRCALPHA

@@ -43,6 +43,13 @@ doors_for_tiles = {
     4: [0, 0, 0, 1],
 }
 tile_counts = {0: 40, 1: 140, 2: 80, 3: 80, 4: 20}
+
+# Create test tileset
+doors_for_tiles = {
+    0: [1, 1, 1, 1],
+}
+tile_counts = {0: 300}
+
 tile_set = TileSet(doors_for_tiles, tile_counts, name="standard")
 tile_bag = TileBag(tile_set)
 
@@ -107,7 +114,8 @@ while True:
                     direction = Position.RIGHT
 
                 next_position = player.position.get_next(direction)
-                print(f"Next player position: {next_position}")
+
+                # trying to move off edge of board
                 if (
                     next_position.x < 0
                     or next_position.y < 0
@@ -115,23 +123,41 @@ while True:
                     or next_position.y >= board_height
                 ):
                     pass
-                elif board.check_for_door(
+                # no door in current room in direction of intended movement
+                elif not board.check_for_door(
                     player.position, direction, tile_set.tiles
-                ) and board.check_for_door(
+                ):
+                    pass
+                # no door in next roon in direction of intended movement
+                elif not board.check_for_door(
                     player.position, direction, tile_set.tiles, next=True
                 ):
-                    next_shift = position_shift.get_next(direction)
-                    if (
-                        next_shift.x < 0
-                        or next_shift.y < 0
-                        or next_shift.x > board_width - x_tiles
-                        or next_shift.y > board_height - y_tiles
+                    pass
+                # movement is possible
+                else:
+                    move_centred = True
+                    if direction == Position.UP and (
+                        position_shift.y == 0
+                        or player.position.y >= (board_height - int(y_tiles / 2))
                     ):
-                        plot.move_player(
-                            player, direction, position_shift=position_shift
-                        )
-                        player.position.move(direction)
-                    else:
+                        move_centred = False
+                    elif direction == Position.LEFT and (
+                        position_shift.x == 0
+                        or player.position.x >= (board_width - int(x_tiles / 2))
+                    ):
+                        move_centred = False
+                    elif direction == Position.DOWN and (
+                        position_shift.y == board_height - y_tiles
+                        or player.position.y <= int(y_tiles / 2) - 1
+                    ):
+                        move_centred = False
+                    elif direction == Position.RIGHT and (
+                        position_shift.x == board_width - x_tiles
+                        or player.position.x <= int(x_tiles / 2) - 1
+                    ):
+                        move_centred = False
+
+                    if move_centred:
                         plot.move_player_centred(
                             player,
                             direction,
@@ -140,8 +166,14 @@ while True:
                             tile_set.tiles,
                             position_shift=position_shift,
                         )
-                        player.position.move(direction)
                         position_shift.move(direction)
+                    else:
+                        plot.move_player(
+                            player, direction, position_shift=position_shift
+                        )
+
+                    player.position.move(direction)
+
                 print(
                     f"Player postion: {player.position}    Position shift: {position_shift}"
                 )
