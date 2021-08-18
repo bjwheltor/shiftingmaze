@@ -78,16 +78,11 @@ position_shift = Position(
     int((board_width - x_tiles) / 2), int((board_height - y_tiles) / 2)
 )
 
-plot = Plot(x_tiles, y_tiles, tile_size)
-plot.show_all_tiles(
-    board.tile_placements,
-    board.tile_orientations,
-    tile_set.tiles,
-    position_shift=position_shift,
-)
+plot = Plot(x_tiles, y_tiles, tile_size, position_shift=position_shift)
+plot.show_all_tiles(board.tile_placements, board.tile_orientations, tile_set.tiles)
 
 # draw player
-plot.show_player(player, position_shift=position_shift)
+plot.show_player(player)
 print(f"Player postion: {player.position}")
 
 # gaming loop
@@ -135,45 +130,14 @@ while True:
                     pass
                 # movement is possible
                 else:
-                    move_centred = True
-                    if direction == Position.UP and (
-                        position_shift.y == 0
-                        or player.position.y >= (board_height - int(y_tiles / 2))
-                    ):
-                        move_centred = False
-                    elif direction == Position.LEFT and (
-                        position_shift.x == 0
-                        or player.position.x >= (board_width - int(x_tiles / 2))
-                    ):
-                        move_centred = False
-                    elif direction == Position.DOWN and (
-                        position_shift.y == board_height - y_tiles
-                        or player.position.y <= int(y_tiles / 2) - 1
-                    ):
-                        move_centred = False
-                    elif direction == Position.RIGHT and (
-                        position_shift.x == board_width - x_tiles
-                        or player.position.x <= int(x_tiles / 2) - 1
-                    ):
-                        move_centred = False
-
-                    if move_centred:
-                        plot.move_player_centred(
-                            player,
-                            direction,
-                            board.tile_placements,
-                            board.tile_orientations,
-                            tile_set.tiles,
-                            position_shift=position_shift,
-                        )
-                        position_shift.move(direction)
-                    else:
-                        plot.move_player(
-                            player, direction, position_shift=position_shift
-                        )
-
+                    plot.move_player(
+                        player,
+                        direction,
+                        board.tile_placements,
+                        board.tile_orientations,
+                        tile_set.tiles,
+                    )
                     player.position.move(direction)
-
                 print(
                     f"Player postion: {player.position}    Position shift: {position_shift}"
                 )

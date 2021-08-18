@@ -16,10 +16,24 @@ from position import *
 
 
 class Plot:
-    def __init__(self, x_tiles, y_tiles, tile_size):
-        """ """
+    def __init__(self, x_tiles, y_tiles, tile_size, position_shift=None):
+        """
+
+        Keywords:
+            position_shift : int
+                x-y movement vector for viewing area relative to whole board (in 'tile space')
+        """
         self.x_tiles = x_tiles
         self.y_tiles = y_tiles
+
+        self.half_x_tiles = int(x_tiles / 2)
+        self.half_y_tiles = int(y_tiles / 2)
+
+        if position_shift:
+            self.position_shift = position_shift
+        else:
+            self.position_shift = Position(0, 0)
+
         self.tile_size = tile_size
 
         self.board_width = self.x_tiles * self.tile_size
@@ -64,23 +78,17 @@ class Plot:
         else:
             return x
 
-    def position_placed(self, tile_position, position_shift):
+    def position_placed(self, tile_position):
         """ """
-        if position_shift:
-            x = tile_position.x - position_shift.x
-            y = tile_position.y - position_shift.y
-        else:
-            x = tile_position.x
-            y = tile_position.y
+        x = tile_position.x - self.position_shift.x
+        y = tile_position.y - self.position_shift.y
 
         if x < 0 or y < 0 or x >= self.x_tiles or y >= self.x_tiles:
             return None
         else:
             return Position(x * self.tile_size, y * self.tile_size)
 
-    def show_tile(
-        self, tile_number, tile_position, tile_orientation, tiles, position_shift=None
-    ):
+    def show_tile(self, tile_number, tile_position, tile_orientation, tiles):
         """
         Plot tile in position with orientation
 
@@ -93,14 +101,10 @@ class Plot:
                 Orientation of tile to be placed
             tiles : TileSet.tiles
                 Tiles in use
-
-        Keywords:
-            position_shift : int
-                x-y movement vector for viewing area relative to whole board (in 'tile space')
         """
         tile_image = tiles[tile_number].image
         tile_placed = pygame.transform.rotate(tile_image, tile_orientation * 90)
-        position_placed = self.position_placed(tile_position, position_shift)
+        position_placed = self.position_placed(tile_position)
         if position_placed:
             self.board.blit(tile_placed, (position_placed.x, position_placed.y))
             pygame.display.flip()
@@ -112,7 +116,6 @@ class Plot:
         tiles,
         row_selection=None,
         column_selection=None,
-        position_shift=None,
     ):
         """
         Plot tile in position with orientation
@@ -133,17 +136,10 @@ class Plot:
                 If not None then indicates x coordinate of column to be returned
                 (e.g. -1 for column to left of board, self.x_tiles+1 for column to right of board)
 
-        Keywords:
-            position_shift : int
-                x-y movement vector for viewing area relative to whole board (in 'tile space')
-
         Returns
             extra_tiles : pygame.Surface
                 Image of row or column with the required tile images
         """
-        if not position_shift:
-            position_shift = Position(0, 0)
-
         row_length = 1
         column_length = 1
         if row_selection is not None:
@@ -160,8 +156,8 @@ class Plot:
 
         for x in range(row_length):
             for y in range(column_length):
-                tile_x = x + position_shift.x + column_selection
-                tile_y = y + position_shift.y + row_selection
+                tile_x = x + self.position_shift.x + column_selection
+                tile_y = y + self.position_shift.y + row_selection
                 tile_number = tile_placements[tile_x, tile_y]
                 tile_image = tiles[tile_number].image
                 tile_orientation = tile_orientations[tile_x, tile_y]
@@ -170,9 +166,7 @@ class Plot:
 
         return extra_tiles
 
-    def show_all_tiles(
-        self, tile_placements, tile_orientations, tiles, position_shift=None
-    ):
+    def show_all_tiles(self, tile_placements, tile_orientations, tiles):
         """
         Plot tile in position with orientation
 
@@ -185,10 +179,6 @@ class Plot:
                 2 = 180 degrees rotation, 3 = 90 degrees rotation clockwise
             tiles : TileSet.tiles
                 Tiles in use
-
-        Keywords:
-            position_shift : int
-                x-y movement vector for viewing area relative to whole board (in 'tile space')
         """
         for tile_x, tile_y in np.ndindex(tile_placements.shape):
             self.show_tile(
@@ -196,10 +186,9 @@ class Plot:
                 Position(tile_x, tile_y),
                 tile_orientations[tile_x, tile_y],
                 tiles,
-                position_shift,
             )
 
-    def rotate_tile(self, tile_position, rotation, position_shift=None):
+    def rotate_tile(self, tile_position, rotation):
         """
         Plot tile in position with orientation
 
@@ -209,18 +198,13 @@ class Plot:
             rotation : int
                 rotation to be applied to tile. Either +1 or -1.
                 +1 = 90 degrees anticlockwise. -1 = 90 degrees clockwise
-
-        Keywords:
-            position_shift : int
-                x-y movement vector for viewing area relative to whole board
-                (in 'tile space')
         """
         start_angle = 0
         end_angle = rotation * 90
         angle_inc = self.sign(end_angle - start_angle)
         end_angle += angle_inc
 
-        position_placed = self.position_placed(tile_position, position_shift)
+        position_placed = self.position_placed(tile_position)
         if not position_placed:
             return
 
@@ -284,10 +268,9 @@ class Plot:
             pygame.display.flip()
             pygame.time.delay(5)
 
-    def slide_row(self, row_y, slide, fill_tile_image, position_shift=None):
+    def slide_row(self, row_y, slide, fill_tile_image):
         """ """
-        if position_shift:
-            row_y -= position_shift.y
+        row_y -= self.position_shift.y
 
         if row_y < 0 or row_y >= self.x_tiles:
             return None
@@ -314,10 +297,9 @@ class Plot:
                 self.board.blit(extended_row, (x, y))
                 pygame.display.flip()
 
-    def slide_column(self, column_x, slide, fill_tile_image, position_shift=None):
+    def slide_column(self, column_x, slide, fill_tile_image):
         """ """
-        if position_shift:
-            column_x -= position_shift.x
+        column_x -= self.position_shift.x
 
         if column_x < 0 or column_x >= self.x_tiles:
             return None
@@ -344,7 +326,7 @@ class Plot:
                 self.board.blit(extended_column, (x, y))
                 pygame.display.flip()
 
-    def show_player(self, player, player_offset=None, position_shift=None):
+    def show_player(self, player, player_offset=None):
         """
         Plot player in position
 
@@ -355,10 +337,8 @@ class Plot:
         Keywords:
             player_offset : Position
                 x,y coordinates of player offset from top left of tile in plot space. Default: Position(20,20)
-            position_shift : int
-                x-y movement vector for viewing area relative to whole board (in 'tile space'). Default: no shift
         """
-        position_placed = self.position_placed(player.position, position_shift)
+        position_placed = self.position_placed(player.position)
 
         if not player_offset:
             player_offset = Position(
@@ -375,7 +355,7 @@ class Plot:
         self.board.blit(player.image, (x, y))
         pygame.display.flip()
 
-    def move_player(self, player, direction, player_offset=None, position_shift=None):
+    def move_player_free(self, player, direction, player_offset=None):
         """
         Move player in direction specified
 
@@ -389,10 +369,8 @@ class Plot:
         Keywords:
             player_offset : Position
                 x,y coordinates of player offset from top left of tile in plot space. Default: Position(20,20)
-            position_shift : int
-                x-y movement vector for viewing area relative to whole board (in 'tile space'). Default: no shift
         """
-        position_placed = self.position_placed(player.position, position_shift)
+        position_placed = self.position_placed(player.position)
         if not player_offset:
             player_offset = Position(
                 int((self.tile_size - player.rect.width) / 2),
@@ -449,7 +427,6 @@ class Plot:
         tile_orientations,
         tiles,
         player_offset=None,
-        position_shift=None,
     ):
         """
         Move player in direction specified, but maintain in centre of board.
@@ -465,10 +442,8 @@ class Plot:
         Keywords:
             player_offset : Position
                 x,y coordinates of player offset from top left of tile in plot space. Default: Position(20,20)
-            position_shift : int
-                x-y movement vector for viewing area relative to whole board (in 'tile space'). Default: no shift
         """
-        position_placed = self.position_placed(player.position, position_shift)
+        position_placed = self.position_placed(player.position)
         if not player_offset:
             player_offset = Position(
                 int((self.tile_size - player.rect.width) / 2),
@@ -512,7 +487,6 @@ class Plot:
             tiles,
             row_selection=row_selection,
             column_selection=column_selection,
-            position_shift=position_shift,
         )
         if direction == Position.UP or direction == Position.LEFT:
             background_tiles.blit(extra_tiles, (0, 0))
@@ -532,6 +506,34 @@ class Plot:
                 self.board.blit(background_tiles, (move - board_offset_x, 0))
             self.board.blit(player.image, (player_x, player_y))
             pygame.display.flip()
+
+    def move_player(self, player, direction, tile_placements, tile_orientations, tiles):
+        """ """
+        total_x_tiles, total_y_tiles = tile_placements.shape
+
+        up_free_move = direction == Position.UP and (
+            self.position_shift.y == 0
+            or player.position.y >= (total_y_tiles - self.half_y_tiles)
+        )
+        left_free_move = direction == Position.LEFT and (
+            self.position_shift.x == 0
+            or player.position.x >= (total_x_tiles - self.half_x_tiles)
+        )
+        down_free_move = direction == Position.DOWN and (
+            self.position_shift.y == (total_y_tiles - self.y_tiles)
+            or player.position.y <= (self.half_y_tiles - 1)
+        )
+        right_free_move = direction == Position.RIGHT and (
+            self.position_shift.x == (total_x_tiles - self.x_tiles)
+            or player.position.x <= (self.half_x_tiles - 1)
+        )
+        if up_free_move or left_free_move or down_free_move or right_free_move:
+            self.move_player_free(player, direction)
+        else:
+            self.move_player_centred(
+                player, direction, tile_placements, tile_orientations, tiles
+            )
+            self.position_shift.move(direction)
 
 
 if __name__ == "__main__":
