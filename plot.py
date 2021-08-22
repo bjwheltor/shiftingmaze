@@ -16,7 +16,15 @@ from position import *
 
 
 class Plot:
-    def __init__(self, x_tiles, y_tiles, tile_size, position_shift=None):
+    def __init__(
+        self,
+        x_tiles,
+        y_tiles,
+        total_x_tiles,
+        total_y_tiles,
+        tile_size,
+        position_shift=None,
+    ):
         """
 
         Keywords:
@@ -26,8 +34,20 @@ class Plot:
         self.x_tiles = x_tiles
         self.y_tiles = y_tiles
 
-        self.half_x_tiles = int(x_tiles / 2)
-        self.half_y_tiles = int(y_tiles / 2)
+        self.total_x_tiles = total_x_tiles
+        self.total_y_tiles = total_y_tiles
+
+        self.half_x_tiles = self.x_tiles // 2
+        self.half_y_tiles = self.y_tiles // 2
+
+        self.total_mid_point = Position(total_x_tiles // 2, total_y_tiles // 2)
+
+        self.centred_move_rect = pygame.Rect(
+            self.half_x_tiles,
+            self.half_y_tiles,
+            total_x_tiles - self.x_tiles + 1,
+            total_y_tiles - self.y_tiles + 1,
+        )
 
         if position_shift:
             self.position_shift = position_shift
@@ -357,13 +377,13 @@ class Plot:
 
     def move_player_free(self, player, direction, player_offset=None):
         """
-        Move player in direction specified
+        Move player in direction specified, as free move
 
         Parameters:
             player: Player
                 player instance
-        direction : int
-            Direction in which presence of door to be checked.
+            direction : int
+                direction in which presence of door to be checked.
             0 = up, 1 = left, 2 = down, 3 = right
 
         Keywords:
@@ -435,10 +455,17 @@ class Plot:
         Parameters:
             player: Player
                 player instance
-        direction : int
-            Direction in which presence of door to be checked.
-            0 = up, 1 = left, 2 = down, 3 = right
-
+            direction : int
+                direction in which presence of door to be checked.
+                0 = up, 1 = left, 2 = down, 3 = right
+            tile_placements : numpy.array(width, height)
+                tile number at each position of the board
+            tile_orientations : numpy.array(width, height)
+                orientation of tile at each position on the board.
+                0 = no rotation, 1 = 90 degrees rotation anticlockwise
+                2 = 180 degrees rotation, 3 = 90 degrees rotation clockwise
+            tiles : TileSet.tiles
+                Tiles in use
         Keywords:
             player_offset : Position
                 x,y coordinates of player offset from top left of tile in plot space. Default: Position(20,20)
@@ -508,32 +535,48 @@ class Plot:
             pygame.display.flip()
 
     def move_player(self, player, direction, tile_placements, tile_orientations, tiles):
-        """ """
-        total_x_tiles, total_y_tiles = tile_placements.shape
+        """
+        Move player in direction specified, deciding whether to keep centred of freely move
 
-        up_free_move = direction == Position.UP and (
-            self.position_shift.y == 0
-            or player.position.y >= (total_y_tiles - self.half_y_tiles)
-        )
-        left_free_move = direction == Position.LEFT and (
-            self.position_shift.x == 0
-            or player.position.x >= (total_x_tiles - self.half_x_tiles)
-        )
-        down_free_move = direction == Position.DOWN and (
-            self.position_shift.y == (total_y_tiles - self.y_tiles)
-            or player.position.y <= (self.half_y_tiles - 1)
-        )
-        right_free_move = direction == Position.RIGHT and (
-            self.position_shift.x == (total_x_tiles - self.x_tiles)
-            or player.position.x <= (self.half_x_tiles - 1)
-        )
-        if up_free_move or left_free_move or down_free_move or right_free_move:
-            self.move_player_free(player, direction)
-        else:
+        Parameters:
+            player: Player
+                player instance
+            direction : int
+                Direction in which presence of door to be checked.
+                0 = up, 1 = left, 2 = down, 3 = right
+            tile_placements : numpy.array(width, height)
+                tile number at each position of the board
+            tile_orientations : numpy.array(width, height)
+                orientation of tile at each position on the board.
+                0 = no rotation, 1 = 90 degrees rotation anticlockwise
+                2 = 180 degrees rotation, 3 = 90 degrees rotation clockwise
+            tiles : TileSet.tiles
+                Tiles in use
+        """
+
+        if (
+            (direction == Position.LEFT or direction == Position.RIGHT)
+            and self.centred_move_rect.collidepoint(
+                player.position.x, self.total_mid_point.y
+            )
+            and self.centred_move_rect.collidepoint(
+                player.position.get_next(direction).x, self.total_mid_point.y
+            )
+        ) or (
+            (direction == Position.UP or direction == Position.DOWN)
+            and self.centred_move_rect.collidepoint(
+                self.total_mid_point.x, player.position.y
+            )
+            and self.centred_move_rect.collidepoint(
+                self.total_mid_point.x, player.position.get_next(direction).y
+            )
+        ):
             self.move_player_centred(
                 player, direction, tile_placements, tile_orientations, tiles
             )
             self.position_shift.move(direction)
+        else:
+            self.move_player_free(player, direction)
 
 
 if __name__ == "__main__":

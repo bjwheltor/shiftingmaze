@@ -25,9 +25,9 @@ class Board:
         height : list
             dimension of board in y direction (up and down)
         tile_placements : numpy.array(width, height)
-            Tile number at each position of the board
+            tile number at each position of the board
         tile_orientations : numpy.array(width, height)
-            Orientation of tile at each position on the board.
+            orientation of tile at each position on the board.
             0 = no rotation, 1 = 90 degrees rotation anticlockwise
             2 = 180 degrees rotation, 3 = 90 degrees rotation clockwise
     """

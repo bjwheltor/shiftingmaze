@@ -34,39 +34,43 @@ ROTATE_KEYS = (pygame.K_z, pygame.K_x)
 SLIDE_ROW_KEYS = (pygame.K_q, pygame.K_w)
 SLIDE_COLUMN_KEYS = (pygame.K_p, pygame.K_l)
 
-# Create a tileset
-doors_for_tiles = {
-    0: [1, 1, 1, 1],
-    1: [0, 1, 1, 1],
-    2: [0, 0, 1, 1],
-    3: [0, 1, 0, 1],
-    4: [0, 0, 0, 1],
-}
-tile_counts = {0: 40, 1: 140, 2: 80, 3: 80, 4: 20}
+# Create a tile set and fill tile bag
+test_tileset = False
 
-# Create test tileset
-doors_for_tiles = {
-    0: [1, 1, 1, 1],
-}
-tile_counts = {0: 300}
+if test_tileset:
+    tileset_name = "test"
+    doors_for_tiles = {
+        0: [1, 1, 1, 1],
+    }
+    tile_counts = {0: 300}
+else:
+    tileset_name = "standard"
+    doors_for_tiles = {
+        0: [1, 1, 1, 1],
+        1: [0, 1, 1, 1],
+        2: [0, 0, 1, 1],
+        3: [0, 1, 0, 1],
+        4: [0, 0, 0, 1],
+    }
+    tile_counts = {0: 40, 1: 140, 2: 80, 3: 80, 4: 20}
 
-tile_set = TileSet(doors_for_tiles, tile_counts, name="standard")
+tile_set = TileSet(doors_for_tiles, tile_counts, name=tileset_name)
 tile_bag = TileBag(tile_set)
 
 # Create board and fill with tiles from tile bag
-board_width = 15
-board_height = 15
-board = Board(width=board_width, height=board_height, tile_bag=tile_bag)
+total_x_tiles = 15
+total_y_tiles = 15
+board = Board(width=total_x_tiles, height=total_y_tiles, tile_bag=tile_bag)
 
-x_tile_range = list(range(board_width))
-y_tile_range = list(range(board_height))
+x_tile_range = list(range(total_x_tiles))
+y_tile_range = list(range(total_y_tiles))
 rotation_range = list(range(-1, 2, 2))
 
 # create player
 player_name = "Bruce"
 player_number = 1
 player_colour = GREEN
-player_position = Position(int(board_width / 2), int(board_height / 2))
+player_position = Position(total_x_tiles // 2, total_y_tiles // 2)
 player = Player(player_name, player_number, player_colour, player_position)
 
 # create board display
@@ -75,10 +79,17 @@ y_tiles = 9
 tile_size = tile_set.tiles[0].size
 
 position_shift = Position(
-    int((board_width - x_tiles) / 2), int((board_height - y_tiles) / 2)
+    (total_x_tiles - x_tiles) // 2, (total_y_tiles - y_tiles) // 2
 )
 
-plot = Plot(x_tiles, y_tiles, tile_size, position_shift=position_shift)
+plot = Plot(
+    x_tiles,
+    y_tiles,
+    total_x_tiles,
+    total_y_tiles,
+    tile_size,
+    position_shift=position_shift,
+)
 plot.show_all_tiles(board.tile_placements, board.tile_orientations, tile_set.tiles)
 
 # draw player
@@ -114,8 +125,8 @@ while True:
                 if (
                     next_position.x < 0
                     or next_position.y < 0
-                    or next_position.x >= board_width
-                    or next_position.y >= board_height
+                    or next_position.x >= total_x_tiles
+                    or next_position.y >= total_y_tiles
                 ):
                     pass
                 # no door in current room in direction of intended movement
@@ -147,7 +158,5 @@ while True:
                     rotation = 1
                 elif event.key == pygame.K_x:
                     rotation = -1
-                plot.rotate_tile(
-                    player.position, rotation, position_shift=position_shift
-                )
+                plot.rotate_tile(player.position, rotation)
                 board.rotate_tile(player.position, rotation)
