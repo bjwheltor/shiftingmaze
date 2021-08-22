@@ -3,10 +3,9 @@ Main game control code
 
 History
 24-Jul-2021 - Initial version
+21-Aug-2021 - Simplified control
 """
-import os
 import sys
-import random
 import pygame
 import numpy as np
 
@@ -56,41 +55,35 @@ else:
 
 tile_set = TileSet(doors_for_tiles, tile_counts, name=tileset_name)
 tile_bag = TileBag(tile_set)
+tile_size = tile_set.tiles[0].size
+
+# Set (full) board and (board) view dimensions in tiles using Position
+# board and view dimensions must be an odd numbers
+board_xy = Position(15, 15)
+view_xy = Position(9, 9)
+player_xy = Position(board_xy.x // 2, board_xy.y // 2)
+shift_xy = Position((board_xy.x - view_xy.x) // 2, (board_xy.y - view_xy.y) // 2)
+
 
 # Create board and fill with tiles from tile bag
-total_x_tiles = 15
-total_y_tiles = 15
-board = Board(width=total_x_tiles, height=total_y_tiles, tile_bag=tile_bag)
-
-x_tile_range = list(range(total_x_tiles))
-y_tile_range = list(range(total_y_tiles))
-rotation_range = list(range(-1, 2, 2))
+board = Board(board_xy, tile_bag=tile_bag)
 
 # create player
 player_name = "Bruce"
 player_number = 1
 player_colour = GREEN
-player_position = Position(total_x_tiles // 2, total_y_tiles // 2)
-player = Player(player_name, player_number, player_colour, player_position)
+player = Player(player_name, player_number, player_colour, player_xy)
 
-# create board display
-x_tiles = 9
-y_tiles = 9
-tile_size = tile_set.tiles[0].size
-
-position_shift = Position(
-    (total_x_tiles - x_tiles) // 2, (total_y_tiles - y_tiles) // 2
-)
-
+# create display
 plot = Plot(
-    x_tiles,
-    y_tiles,
-    total_x_tiles,
-    total_y_tiles,
+    view_xy.x,
+    view_xy.y,
+    board_xy.x,
+    board_xy.y,
     tile_size,
-    position_shift=position_shift,
+    position_shift=shift_xy,
 )
-plot.show_all_tiles(board.tile_placements, board.tile_orientations, tile_set.tiles)
+plot.show_all_tiles(board.placements, board.orientations, tile_set.tiles)
 
 # draw player
 plot.show_player(player)

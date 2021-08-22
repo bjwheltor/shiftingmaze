@@ -41,7 +41,7 @@ class Position:
             none
 
         Returns
-            coords : tuple
+            xy : tuple
                 position as a tuple
         """
         return (self.x, self.y)
