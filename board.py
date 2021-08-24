@@ -21,51 +21,51 @@ class Board:
     Represents the state of the board for Shifting Maze game.
 
     Attributes:
-        xy : Postion
-            dimensions of board in tiles (x, y)
-        x : int
-            dimension of board in tiles in x direction (left and right)
-        y : list
-            dimension of board in tiles y direction (up and down)
+        wh : Postion
+            (x, y) dimensions of board in tiles: (width (w), height (h))
+        w : int
+            x-dimension of board in tiles in x direction (left and right): width
+        h : int
+            y-dimension of board in tiles y direction (up and down): height
         size : int
-            total number of tiles on board (x * y)
-        placements : numpy.array(x, y)
+            total number of tiles on board (w * h)
+        placements : numpy.array(w, h)
             tile number at each position of the board
-        orientations : numpy.array(x, y)
+        orientations : numpy.array(w, h)
             orientation of tile at each position on the board.
             0 = no rotation, 1 = 90 degrees rotation anticlockwise
             2 = 180 degrees rotation, 3 = 90 degrees rotation clockwise
     """
 
-    def __init__(self, xy, tile_bag=None):
+    def __init__(self, wh, tile_bag=None):
         """
         Create board of specified size and fill with tiles drawn randomly from the tile bag
         and assigned random orientations.
 
         Parameters:
-        xy : Position
-            dimensions of board in tiles (x, y)
+        wh : Position
+            (x, y) dimensions of board in tiles: (width (w), height (h))
 
         Keywords:
             tile_bag : TileBag
                 represents the bag of tiles from which random ones can be drawn.
                 Default is None, which sets empty placement and orientation arrays
         """
-        self.xy = xy
-        self.x = self.xy.x
-        self.y = self.xy.y
-        self.size = self.x * self.y
+        self.wh = wh
+        self.w = self.wh.x
+        self.h = self.wh.y
+        self.size = self.w * self.h
 
         if tile_bag:
             self.placements = np.array(tile_bag.draw_tiles(self.size), dtype=int)
             self.orientations = np.array(
                 random.choices([0, 1, 2, 3], k=self.size), dtype=int
             )
-            self.placements.shape = (self.x, self.y)
-            self.orientations.shape = (self.x, self.y)
+            self.placements.shape = (self.w, self.h)
+            self.orientations.shape = (self.w, self.h)
         else:
-            self.placements = np.empty([self.x, self.y], dtype=int)
-            self.orientations = np.array([self.x, self.y], dtype=int)
+            self.placements = np.empty([self.w, self.h], dtype=int)
+            self.orientations = np.array([self.w, self.h], dtype=int)
 
     def place_tile(self, xy, tile, orientation=0):
         """
@@ -143,12 +143,12 @@ class Board:
                 How many places to slide (-ve = left, +ve = right). Default = 1
         """
         abs_slide = abs(slide)
-        extended_placements = np.zeros(self.x + abs_slide, dtype=int)
+        extended_placements = np.zeros(self.w + abs_slide, dtype=int)
         if slide > 0:
             extended_placements[abs_slide:] = self.placements[:, row]
-            self.placements[:, row] = extended_placements[: self.width]
+            self.placements[:, row] = extended_placements[: self.w]
         else:
-            extended_placements[: self.x] = self.placements[:, row]
+            extended_placements[: self.w] = self.placements[:, row]
             self.placements[:, row] = extended_placements[abs_slide:]
 
     def slide_column(self, column, slide=1):
@@ -164,11 +164,11 @@ class Board:
                 How many places to slide (-ve = left, +ve = right). Default = 1
         """
         abs_slide = abs(slide)
-        extended_placements = np.zeros(self.y + abs_slide, dtype=int)
+        extended_placements = np.zeros(self.h + abs_slide, dtype=int)
         if slide > 0:
             # update board positions
             extended_placements[abs_slide:] = self.placements[column, :]
-            self.placements[column, :] = extended_placements[: self.y]
+            self.placements[column, :] = extended_placements[: self.h]
         else:
-            extended_placements[: self.y] = self.placements[column, :]
+            extended_placements[: self.h] = self.placements[column, :]
             self.placements[column, :] = extended_placements[abs_slide:]

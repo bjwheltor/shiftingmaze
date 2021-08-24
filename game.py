@@ -59,14 +59,13 @@ tile_size = tile_set.tiles[0].size
 
 # Set (full) board and (board) view dimensions in tiles using Position
 # board and view dimensions must be an odd numbers
-board_xy = Position(15, 15)
-view_xy = Position(9, 9)
-player_xy = Position(board_xy.x // 2, board_xy.y // 2)
-shift_xy = Position((board_xy.x - view_xy.x) // 2, (board_xy.y - view_xy.y) // 2)
-
+board_wh = Position(15, 15)
+view_wh = Position(9, 9)
+player_xy = Position(board_wh.x // 2, board_wh.y // 2)
+shift_xy = Position((board_wh.x - view_wh.x) // 2, (board_wh.y - view_wh.y) // 2)
 
 # Create board and fill with tiles from tile bag
-board = Board(board_xy, tile_bag=tile_bag)
+board = Board(board_wh, tile_bag=tile_bag)
 
 # create player
 player_name = "Bruce"
@@ -75,19 +74,12 @@ player_colour = GREEN
 player = Player(player_name, player_number, player_colour, player_xy)
 
 # create display
-plot = Plot(
-    view_xy.x,
-    view_xy.y,
-    board_xy.x,
-    board_xy.y,
-    tile_size,
-    position_shift=shift_xy,
-)
+plot = Plot(view_wh, board_wh, tile_size, shift_xy)
 plot.show_all_tiles(board.placements, board.orientations, tile_set.tiles)
 
 # draw player
 plot.show_player(player)
-print(f"Player postion: {player.position}")
+print(f"Player postion: {player.xy}")
 
 # gaming loop
 while True:
@@ -112,24 +104,22 @@ while True:
                 elif event.key == pygame.K_RIGHT:
                     direction = Position.RIGHT
 
-                next_position = player.position.get_next(direction)
+                next_position = player.xy.get_next(direction)
 
                 # trying to move off edge of board
                 if (
                     next_position.x < 0
                     or next_position.y < 0
-                    or next_position.x >= total_x_tiles
-                    or next_position.y >= total_y_tiles
+                    or next_position.x >= board.w
+                    or next_position.y >= board.h
                 ):
                     pass
                 # no door in current room in direction of intended movement
-                elif not board.check_for_door(
-                    player.position, direction, tile_set.tiles
-                ):
+                elif not board.check_for_door(player.xy, direction, tile_set.tiles):
                     pass
                 # no door in next roon in direction of intended movement
                 elif not board.check_for_door(
-                    player.position, direction, tile_set.tiles, next=True
+                    player.xy, direction, tile_set.tiles, next=True
                 ):
                     pass
                 # movement is possible
@@ -137,13 +127,13 @@ while True:
                     plot.move_player(
                         player,
                         direction,
-                        board.tile_placements,
-                        board.tile_orientations,
+                        board.placements,
+                        board.orientations,
                         tile_set.tiles,
                     )
-                    player.position.move(direction)
+                    player.xy.move(direction)
                 print(
-                    f"Player postion: {player.position}    Position shift: {position_shift}"
+                    f"Player postion: {player.xy}    Position shift: {position_shift}"
                 )
 
             elif event.key in ROTATE_KEYS:
@@ -151,5 +141,5 @@ while True:
                     rotation = 1
                 elif event.key == pygame.K_x:
                     rotation = -1
-                plot.rotate_tile(player.position, rotation)
-                board.rotate_tile(player.position, rotation)
+                plot.rotate_tile(player.xy, rotation)
+                board.rotate_tile(player.xy, rotation)
