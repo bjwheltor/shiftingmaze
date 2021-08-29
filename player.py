@@ -3,7 +3,7 @@ Player
 History
 
  17-Jul-2021 - Initial version
- 21-Aug-2021 - Simplified variables and naming - more use of Position, noted as xy variables
+ 21-Aug-2021 - Simplified variables and naming - more use of Position, noted as pos variables
 """
 import pygame
 from board import *
@@ -23,11 +23,11 @@ class Player:
             image of player avatar
         rect: pygame.Rect
             rectangle for player image
-        xy : Position
+        pos : Position
             x, y coordinates of tile placement. (0, 0) = (left, top)
     """
 
-    def __init__(self, number, name, colour, xy):
+    def __init__(self, number, name, colour, pos):
         """
         Create player and place player
 
@@ -38,13 +38,13 @@ class Player:
                 name of player
             colour: RGB colour tuple
                 colour of player image
-            xy : Position
+            pos : Position
                 x, y coordinates of tile placement. (0, 0) = (left, top)
         """
         self.number = number
         self.name = name
         self.colour = colour
-        self.xy = xy
+        self.pos = pos
         self.size = 40
         self.image = pygame.Surface((self.size, self.size), pygame.SRCALPHA)
         self.rect = self.image.get_rect()

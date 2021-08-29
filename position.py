@@ -99,9 +99,45 @@ class Position:
         return f"x = {self.x}, y = {self.y}"
 
 
-if __name__ == "__main__":
-    # test position
-    print(f"Position.UP = {Position.UP}")
-    print(f"Position.UP = {Position.LEFT}")
-    print(f"Position.UP = {Position.DOWN}")
-    print(f"Position.UP = {Position.RIGHT}")
+class Dimensions:
+    """
+    Represents the dimensions as a set of coordinates
+
+    Attributes
+        w : int
+            width (x-coordinate)
+        h : int
+            height (y-coordinate)
+    """
+
+    def __init__(self, w, h):
+        """
+        Parameters
+            w : int
+                width (x-coordinate)
+            h : int
+                height (y-coordinate)
+        """
+        self.w = w
+        self.h = h
+
+    def coords(self):
+        """
+        Return position as a tuple
+
+        Parameters
+            none
+
+        Returns
+            wh : tuple
+                dimensions as a tuple
+        """
+        return (self.w, self.h)
+
+    def __repr__(self):
+        """Display dimemsions"""
+        return f"Dimensions( w = {self.w}, h = {self.h} )"
+
+    def __str__(self):
+        """Print dimemsions"""
+        return f"w = {self.w}, h = {self.h}"

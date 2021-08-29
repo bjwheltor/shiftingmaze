@@ -10,6 +10,7 @@ import sys
 import random
 import pygame
 
+
 class Tile:
     """
     Represents a tile in the Shifting Maze game, including image of tile.
@@ -156,7 +157,7 @@ class TileSet:
 
 class TileBag:
     """
-    Represents the bag of tilesfrom which random ones can be drawn for the Shifting Maze game.
+    Represents the bag of tiles from which random ones can be drawn for the Shifting Maze game.
 
     Attributes
         tile_numbers : list

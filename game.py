@@ -57,31 +57,29 @@ tile_set = TileSet(doors_for_tiles, tile_counts, name=tileset_name)
 tile_bag = TileBag(tile_set)
 tile_size = tile_set.tiles[0].size
 
-# Set (full) board and (board) view dimensions in tiles using Position
-# board and view dimensions must be an odd numbers
-board_wh = Position(15, 15)
-view_wh = Position(9, 9)
-player_xy = Position(board_wh.x // 2, board_wh.y // 2)
-shift_xy = Position((board_wh.x - view_wh.x) // 2, (board_wh.y - view_wh.y) // 2)
-
+# Set (full) board dimensions in tiles using Position - must be an odd numbers
 # Create board and fill with tiles from tile bag
-board = Board(board_wh, tile_bag=tile_bag)
+board_dim = Dimensions(15, 15)
+board = Board(board_dim, tile_bag=tile_bag)
 
-# create player
+# Set (board) view dimensions in tiles using Position - must be an odd numbers
+# Set shift to centre view in the middle of the full boaes
+# Create display
+view_dim = Dimensions(9, 9)
+shift_pos = Position((board.w - view_dim.w) // 2, (board.h - view_dim.h) // 2)
+plot = Plot(view_dim, board.dim, tile_size, shift_pos)
+plot.show_all_tiles(board.placements, board.orientations, tile_set.tiles)
+
+# Set player position to be in centre of the board
+# Create player and plot on board
+player_pos = Position(shift_pos.x + (view_dim.w // 2), shift_pos.y + (view_dim.h // 2))
 player_name = "Bruce"
 player_number = 1
 player_colour = GREEN
-player = Player(player_name, player_number, player_colour, player_xy)
-
-# create display
-plot = Plot(view_wh, board_wh, tile_size, shift_xy)
-plot.show_all_tiles(board.placements, board.orientations, tile_set.tiles)
-
-# draw player
+player = Player(player_name, player_number, player_colour, player_pos)
 plot.show_player(player)
-print(f"Player postion: {player.xy}")
 
-# gaming loop
+# Gaming loop
 while True:
 
     pygame.display.update()
@@ -104,7 +102,7 @@ while True:
                 elif event.key == pygame.K_RIGHT:
                     direction = Position.RIGHT
 
-                next_position = player.xy.get_next(direction)
+                next_position = player.pos.get_next(direction)
 
                 # trying to move off edge of board
                 if (
@@ -115,11 +113,11 @@ while True:
                 ):
                     pass
                 # no door in current room in direction of intended movement
-                elif not board.check_for_door(player.xy, direction, tile_set.tiles):
+                elif not board.check_for_door(player.pos, direction, tile_set.tiles):
                     pass
                 # no door in next roon in direction of intended movement
                 elif not board.check_for_door(
-                    player.xy, direction, tile_set.tiles, next=True
+                    player.pos, direction, tile_set.tiles, next=True
                 ):
                     pass
                 # movement is possible
@@ -131,15 +129,13 @@ while True:
                         board.orientations,
                         tile_set.tiles,
                     )
-                    player.xy.move(direction)
-                print(
-                    f"Player postion: {player.xy}    Position shift: {position_shift}"
-                )
+                    player.pos.move(direction)
+                print(f"Player postion: {player.pos}    Position shift: {shift_pos}")
 
             elif event.key in ROTATE_KEYS:
                 if event.key == pygame.K_z:
                     rotation = 1
                 elif event.key == pygame.K_x:
                     rotation = -1
-                plot.rotate_tile(player.xy, rotation)
-                board.rotate_tile(player.xy, rotation)
+                plot.rotate_tile(player.pos, rotation)
+                board.rotate_tile(player.pos, rotation)

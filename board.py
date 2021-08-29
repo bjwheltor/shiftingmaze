@@ -4,12 +4,10 @@ Board
 History
 17-Jul-2021 - Initial version
 24-Jul-2021 - Position class moved into a separate file
-21-Aug-2021 - Simplified variables and naming - more use of Position, noted as xy variables
+21-Aug-2021 - Simplified variables and naming - more use of Position and Dimensions, 
+              noted as pos and dim variables
 """
-import os
-import sys
 import random
-import pygame
 import numpy as np
 
 from tiles import *
@@ -21,7 +19,7 @@ class Board:
     Represents the state of the board for Shifting Maze game.
 
     Attributes:
-        wh : Postion
+        dim : Postion
             (x, y) dimensions of board in tiles: (width (w), height (h))
         w : int
             x-dimension of board in tiles in x direction (left and right): width
@@ -37,23 +35,23 @@ class Board:
             2 = 180 degrees rotation, 3 = 90 degrees rotation clockwise
     """
 
-    def __init__(self, wh, tile_bag=None):
+    def __init__(self, dim, tile_bag=None):
         """
         Create board of specified size and fill with tiles drawn randomly from the tile bag
         and assigned random orientations.
 
         Parameters:
-        wh : Position
+        dim : Position
             (x, y) dimensions of board in tiles: (width (w), height (h))
 
         Keywords:
             tile_bag : TileBag
-                represents the bag of tiles from which random ones can be drawn.
-                Default is None, which sets empty placement and orientation arrays
+                represents the bag of tiles from dimich random ones can be drawn.
+                Default is None, dimich sets empty placement and orientation arrays
         """
-        self.wh = wh
-        self.w = self.wh.x
-        self.h = self.wh.y
+        self.dim = dim
+        self.w = self.dim.w
+        self.h = self.dim.h
         self.size = self.w * self.h
 
         if tile_bag:
@@ -67,45 +65,45 @@ class Board:
             self.placements = np.empty([self.w, self.h], dtype=int)
             self.orientations = np.array([self.w, self.h], dtype=int)
 
-    def place_tile(self, xy, tile, orientation=0):
+    def place_tile(self, pos, tile, orientation=0):
         """
         Place a tile onto the board.
         Set the position to the tile number and the orientation.
 
         Parameters:
-            xy : Position
+            pos : Position
                 x, y coordinates of tile placement. (0, 0) = (left, top)
             tile : int
                 number of tile to be placed
             orientation : int
                 orientation of tile to be placed
         """
-        self.placements[xy.coords()] = tile
-        self.orientations[xy.coords()] = orientation
+        self.placements[pos.coords()] = tile
+        self.orientations[pos.coords()] = orientation
 
-    def rotate_tile(self, xy, rotation):
+    def rotate_tile(self, pos, rotation):
         """
         Rotate a tile on the board. Reset the orientation.
 
         Parameters:
-            xy : Position
+            pos : Position
                 x, y coordinates of tile placement. (0, 0) = (left, top)
             rotation : int
                 rotation to be applied to tile.
                 +1 = 90 degrees anticlockwise. -1 = 90 degrees clockwise
         """
-        orientation = self.orientations[xy.coords()]
-        self.orientations[xy.coords()] = (orientation + rotation) % 4
+        orientation = self.orientations[pos.coords()]
+        self.orientations[pos.coords()] = (orientation + rotation) % 4
 
-    def check_for_door(self, xy, direction, tiles, next=None):
+    def check_for_door(self, pos, direction, tiles, next=None):
         """
         Check if exit exists in a particular direction from a tile on the board
 
         Parameters:
-            xy : Position
+            pos : Position
                 x, y coordinates of tile placement. (0, 0) = (left, top)
             direction : int
-                Direction in which presence of door to be checked.
+                Direction in dimich presence of door to be checked.
                 0 = up, 1 = left, 2 = down, 3 = right
             tiles : TileSet.tiles
                 Tiles in use
@@ -119,13 +117,13 @@ class Board:
                 True if door is present, False if not
         """
         if next:
-            xy_to_check = xy.get_next(direction)
+            pos_to_check = pos.get_next(direction)
             direction_to_check = (direction + 2) % 4
         else:
-            xy_to_check = xy
+            pos_to_check = pos
             direction_to_check = direction
-        tile = self.placements[xy_to_check.coords()]
-        orientation = self.orientations[xy_to_check.coords()]
+        tile = self.placements[pos_to_check.coords()]
+        orientation = self.orientations[pos_to_check.coords()]
         doors = tiles[tile].doors
         door_index = (direction_to_check - orientation) % 4
         return doors[door_index]
