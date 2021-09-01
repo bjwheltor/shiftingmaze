@@ -5,8 +5,6 @@ History
 17-Jul-2021 - Initial version-controlled code for tile generation and management. 
  Note: walls now changes to access with opposite truth values.
 """
-import os
-import sys
 import random
 import pygame
 
@@ -149,10 +147,17 @@ class TileSet:
         """
         self.name = name
         self.tile_counts = tile_counts
+        self.different_tiles = len(tile_counts)
         self.tiles = {}
         for tile_number, doors in doors_for_tiles.items():
             self.tiles[tile_number] = Tile(tile_number, doors)
-        random.shuffle(self.tiles)
+
+    def __str__(self):
+        """Print set of tiles"""
+        string = f"Tile set: {self.name}\n"
+        for number in range(self.different_tiles):
+            string += f" {number}:{self.tiles[number].doors}\n"
+        return string
 
 
 class TileBag:
@@ -223,7 +228,14 @@ class TileBag:
         return tile_list
 
 
+#
+# Some tests in isolation
+#
 if __name__ == "__main__":
+    # extra imports for testing
+    import os
+    import sys
+
     # screen set-up to test
     WHITE = (255, 255, 255)
     GREY = (128, 128, 128)

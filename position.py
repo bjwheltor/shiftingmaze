@@ -33,18 +33,26 @@ class Position:
         self.x = x
         self.y = y
 
-    def coords(self):
+    def coords(self, rev=None):
         """
         Return position as a tuple
 
         Parameters
             none
 
+        keywords
+            rev: bool
+                true is coordinate order to be reversed, i.e. (y, x) rather then (x, y)
+
         Returns
             xy : tuple
                 position as a tuple
         """
-        return (self.x, self.y)
+        if rev:
+            coords = (self.y, self.x)
+        else:
+            coords = (self.x, self.y)
+        return coords
 
     def get_next(self, direction):
         """

@@ -14,6 +14,7 @@ from tiles import *
 from player import *
 from board import *
 from plot import *
+from text import *
 
 pygame.init()
 
@@ -79,6 +80,14 @@ player_colour = GREEN
 player = Player(player_name, player_number, player_colour, player_pos)
 plot.show_player(player)
 
+# Initialise text output
+text = Text()
+print()
+print(tile_set)
+print(board)
+print("Game Start")
+text.player_state(player, plot, board, tile_set)
+
 # Gaming loop
 while True:
 
@@ -130,7 +139,8 @@ while True:
                         tile_set.tiles,
                     )
                     player.pos.move(direction)
-                print(f"Player postion: {player.pos}    Position shift: {shift_pos}")
+
+                text.player_state(player, plot, board, tile_set)
 
             elif event.key in ROTATE_KEYS:
                 if event.key == pygame.K_z:
@@ -139,3 +149,5 @@ while True:
                     rotation = -1
                 plot.rotate_tile(player.pos, rotation)
                 board.rotate_tile(player.pos, rotation)
+
+                text.player_state(player, plot, board, tile_set)

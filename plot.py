@@ -6,7 +6,6 @@ History
 """
 import os
 import sys
-import random
 import pygame
 import numpy as np
 
@@ -157,10 +156,10 @@ class Plot:
                 Tiles in use
             row_selection : int
                 If not None then indicates y coordinate of row to be returned
-                (e.g. -1 for row above (board) view, self.view_h+1 for row below board)
+                (e.g. -1 for row above (board) view, self.view_h for row below board)
             column_selection : int
                 If not None then indicates x coordinate of column to be returned
-                (e.g. -1 for column to left of (board) view, self.view_w+1 for column to right of board)
+                (e.g. -1 for column to left of (board) view, self.view_w for column to right of board)
 
         Returns
             extra_tiles : pygame.Surface
@@ -184,9 +183,9 @@ class Plot:
             for y in range(column_length):
                 board_x = x + self.shift_pos.x + column_selection
                 board_y = y + self.shift_pos.y + row_selection
-                number = placements[board_x, board_y]
+                number = placements[board_y, board_x]
                 image = tiles[number].image
-                orientation = orientations[board_x, board_y]
+                orientation = orientations[board_y, board_x]
                 rotated_image = pygame.transform.rotate(image, orientation * 90)
                 extra_tiles.blit(
                     rotated_image, (x * self.tile_size, y * self.tile_size)
@@ -210,9 +209,9 @@ class Plot:
         """
         for board_x, board_y in np.ndindex(placements.shape):
             self.show_tile(
-                placements[board_x, board_y],
+                placements[board_y, board_x],
                 Position(board_x, board_y),
-                orientations[board_x, board_y],
+                orientations[board_y, board_x],
                 tiles,
             )
 
@@ -227,6 +226,8 @@ class Plot:
                 rotation to be applied to tile. Either +1 or -1.
                 +1 = 90 degrees anticlockwise. -1 = 90 degrees clockwise
         """
+        print(f"Action: Rotate tile   rotation: {rotation}")
+
         start_angle = 0
         end_angle = rotation * 90
         angle_inc = self.sign(end_angle - start_angle)
@@ -306,14 +307,14 @@ class Plot:
             pygame.display.flip()
             pygame.time.delay(5)
 
-    def slide_row(self, row_y, slide, fill_tile_image):
+    def slide_row(self, row, slide, fill_tile_image):
         """ """
-        row_y -= self.shift_pos.y
+        row -= self.shift_pos.y
 
-        if row_y < 0 or row_y >= self.view_w:
+        if row < 0 or row >= self.view_w:
             return None
 
-        y = row_y * self.tile_size
+        y = row * self.tile_size
 
         extended_row = pygame.Surface(
             (self.board_width + self.tile_size, self.tile_size), pygame.SRCALPHA
@@ -323,7 +324,7 @@ class Plot:
 
         if slide == "right":
             extended_row.blit(self.board, (0, 0), row_rect)
-            extended_row.blit(fill_tile_image, (self.board_width, 0))
+            extended_row.blit(fill_tile_image, (self.board_w, 0))
             for x in range(-self.tile_size, 1):
                 self.board.blit(extended_row, (x, y))
                 pygame.display.flip()
@@ -335,33 +336,33 @@ class Plot:
                 self.board.blit(extended_row, (x, y))
                 pygame.display.flip()
 
-    def slide_column(self, column_x, slide, fill_tile_image):
+    def slide_column(self, col, slide, fill_tile_image):
         """ """
-        column_x -= self.shift_pos.x
+        col -= self.shift_pos.x
 
-        if column_x < 0 or column_x >= self.view_w:
+        if col < 0 or col >= self.view_w:
             return None
 
-        x = column_x * self.tile_size
+        x = col * self.tile_size
 
-        extended_column = pygame.Surface(
-            (self.tile_size, self.board_height + self.tile_size), pygame.SRCALPHA
+        extended_col = pygame.Surface(
+            (self.tile_size, self.board_h + self.tile_size), pygame.SRCALPHA
         )
 
-        column_rect = pygame.Rect(x, 0, self.tile_size, self.board_height)
+        col_rect = pygame.Rect(x, 0, self.tile_size, self.board_h)
 
         if slide == "down":
-            extended_column.blit(self.board, (0, 0), column_rect)
-            extended_column.blit(fill_tile_image, (0, self.board_height))
+            extended_col.blit(self.board, (0, 0), col_rect)
+            extended_col.blit(fill_tile_image, (0, self.board_h))
             for y in range(-self.tile_size, 1):
-                self.board.blit(extended_column, (x, y))
+                self.board.blit(extended_col, (x, y))
                 pygame.display.flip()
 
         elif slide == "up":
-            extended_column.blit(self.board, (0, self.tile_size), column_rect)
-            extended_column.blit(fill_tile_image, (0, 0))
+            extended_col.blit(self.board, (0, self.tile_size), col_rect)
+            extended_col.blit(fill_tile_image, (0, 0))
             for y in range(0, -self.tile_size - 1, -1):
-                self.board.blit(extended_column, (x, y))
+                self.board.blit(extended_col, (x, y))
                 pygame.display.flip()
 
     def show_player(self, player, player_offset=None):
@@ -380,8 +381,8 @@ class Plot:
 
         if not player_offset:
             player_offset = Position(
-                int((self.tile_size - player.rect.width) / 2),
-                int((self.tile_size - player.rect.height) / 2),
+                int((self.tile_size - player.rect.w) / 2),
+                int((self.tile_size - player.rect.h) / 2),
             )
 
         x = plot_pos.x + player_offset.x
@@ -411,8 +412,8 @@ class Plot:
         plot_pos = self.get_plot_position(player.pos)
         if not player_offset:
             player_offset = Position(
-                int((self.tile_size - player.rect.width) / 2),
-                int((self.tile_size - player.rect.height) / 2),
+                int((self.tile_size - player.rect.w) / 2),
+                int((self.tile_size - player.rect.h) / 2),
             )
         player_x = plot_pos.x + player_offset.x
         player_y = plot_pos.y + player_offset.y
@@ -489,8 +490,8 @@ class Plot:
         plot_pos = self.get_plot_position(player.pos)
         if not player_offset:
             player_offset = Position(
-                (self.tile_size - player.rect.width) // 2,
-                (self.tile_size - player.rect.height) // 2,
+                (self.tile_size - player.rect.w) // 2,
+                (self.tile_size - player.rect.h) // 2,
             )
         player_x = plot_pos.x + player_offset.x
         player_y = plot_pos.y + player_offset.y
@@ -514,9 +515,9 @@ class Plot:
             plot_offset_x = self.tile_size
             column_selection = -1
         elif direction == Position.DOWN:
-            row_selection = self.view_h - 1
+            row_selection = self.view_h
         elif direction == Position.RIGHT:
-            column_selection = self.view_w - 1
+            column_selection = self.view_w
 
         background_tiles = pygame.Surface((background_w, background_h), pygame.SRCALPHA)
         self.board.blit(player.background, (player_x, player_y))
@@ -581,9 +582,97 @@ class Plot:
                 self.board_mid_pos.x, player.pos.get_next(direction).y
             )
         ):
-            print("Centred move")
+            print(f"Action: Move (centred)    direction: {direction}")
             self.move_player_centred(player, direction, placements, orientations, tiles)
             self.shift_pos.move(direction)
         else:
-            print("Free move")
+            print(f"Action: Move (free)    direction: {direction}")
             self.move_player_free(player, direction)
+
+
+#
+# Some tests in isolation
+#
+if __name__ == "__main__":
+    # extra imports for testing and initialise
+    from player import *
+    from text import *
+
+    pygame.init()
+
+    # Define colours
+    GREEN = (100, 200, 100)
+
+    MOVE_KEYS = (pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_RIGHT)
+    ROTATE_KEYS = (pygame.K_z, pygame.K_x)
+    SLIDE_ROW_KEYS = (pygame.K_q, pygame.K_w)
+    SLIDE_COLUMN_KEYS = (pygame.K_p, pygame.K_l)
+
+    # Create a tile set and fixed tile list
+    tileset_name = "test"
+    doors_for_tiles = {
+        0: [1, 1, 1, 1],
+        1: [0, 1, 1, 1],
+        2: [0, 0, 1, 1],
+        3: [0, 1, 0, 1],
+        4: [0, 0, 0, 1],
+    }
+    tile_counts = {0: 1, 1: 1, 2: 1, 3: 1, 4: 1}
+    tile_set = TileSet(doors_for_tiles, tile_counts, name=tileset_name)
+    tile_size = tile_set.tiles[0].size
+    tile_list = (
+        [1, 1, 1, 4, 4]
+        + [1, 0, 0, 0, 4]
+        + [2, 0, 0, 0, 4]
+        + [2, 0, 0, 0, 3]
+        + [2, 2, 3, 3, 3]
+    )
+
+    # Set (full) board dimensions in tiles using Position - must be an odd numbers
+    # Create board and fill with tiles from tile bag
+    board_dim = Dimensions(5, 5)
+    board = Board(board_dim, tile_list=tile_list)
+
+    # Set (board) view dimensions in tiles using Position - must be an odd numbers
+    # Set shift to centre view in the middle of the full boaes
+    # Create display
+    view_dim = Dimensions(3, 3)
+    shift_pos = Position((board.w - view_dim.w) // 2, (board.h - view_dim.h) // 2)
+    plot = Plot(view_dim, board.dim, tile_size, shift_pos)
+    plot.show_all_tiles(board.placements, board.orientations, tile_set.tiles)
+
+    #
+    # Start Testing
+    # print tile set and board set-up for reference
+    print()
+    print(tile_set)
+    print(board)
+
+    # test get_extra_tiles
+    # set row_selection and column_selection below by indexing list
+    # bearing in mind one should be set to None
+    row_selection = [None, -1, plot.view_h][0]
+    column_selection = [None, -1, plot.view_w][2]
+
+    extra_tiles = plot.get_extra_tiles(
+        board.placements,
+        board.orientations,
+        tile_set.tiles,
+        row_selection=row_selection,
+        column_selection=column_selection,
+    )
+
+    plot.board.blit(extra_tiles, (0, 0))
+    pygame.display.flip()
+
+    # hold screen until escaped
+    while True:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
