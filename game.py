@@ -77,7 +77,9 @@ player_pos = Position(shift_pos.x + (view_dim.w // 2), shift_pos.y + (view_dim.h
 player_name = "Bruce"
 player_number = 1
 player_colour = GREEN
-player = Player(player_name, player_number, player_colour, player_pos)
+floor_colour = tile_set.tiles[board.placements[player_pos.x, player_pos.y]].floor_colour
+print(f"floor_colour: {floor_colour}")
+player = Player(player_name, player_number, player_colour, player_pos, floor_colour)
 plot.show_player(player)
 
 # Initialise text output
@@ -113,22 +115,25 @@ while True:
 
                 next_position = player.pos.get_next(direction)
 
+                orientation = board.orientations[player.pos.y, player.pos.x]
+                placement = board.placements[player.pos.y, player.pos.x]
+                tile = tile_set.tiles[placement]
+                # no door in current room in direction of intended movement
+                if not board.check_for_door(player.pos, direction, tile_set.tiles):
+                    plot.bounce_player(player, direction, tile, orientation)
                 # trying to move off edge of board
-                if (
+                elif (
                     next_position.x < 0
                     or next_position.y < 0
                     or next_position.x >= board.w
                     or next_position.y >= board.h
                 ):
-                    pass
-                # no door in current room in direction of intended movement
-                elif not board.check_for_door(player.pos, direction, tile_set.tiles):
-                    pass
+                    plot.bounce_player(player, direction, tile, orientation, next=True)
                 # no door in next roon in direction of intended movement
                 elif not board.check_for_door(
                     player.pos, direction, tile_set.tiles, next=True
                 ):
-                    pass
+                    plot.bounce_player(player, direction, tile, orientation, next=True)
                 # movement is possible
                 else:
                     plot.move_player(

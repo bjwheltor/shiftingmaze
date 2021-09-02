@@ -107,7 +107,7 @@ class Board:
             pos : Position
                 x, y coordinates of tile placement. (0, 0) = (left, top)
             direction : int
-                Direction in dimich presence of door to be checked.
+                Direction in which presence of door to be checked.
                 0 = up, 1 = left, 2 = down, 3 = right
             tiles : TileSet.tiles
                 Tiles in use

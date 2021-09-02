@@ -6,12 +6,14 @@ History
 """
 import os
 import sys
+from numpy.core.fromnumeric import nonzero
 import pygame
 import numpy as np
 
 from tiles import *
 from board import *
 from position import *
+from player import *
 
 
 class Plot:
@@ -588,6 +590,74 @@ class Plot:
         else:
             print(f"Action: Move (free)    direction: {direction}")
             self.move_player_free(player, direction)
+
+    def bounce_player(
+        self, player, direction, tile, orientation, next=None, player_offset=None
+    ):
+        """
+        Move player in direction specified, deciding dimether to keep centred of freely move
+
+        Parameters:
+            player: Player
+                player instance
+            direction : int
+                direction in dimich presence of door to be checked.
+                0 = up, 1 = left, 2 = down, 3 = right
+            tile : Tile
+               current tile occupied by player
+
+        Keywords:
+            next : logical
+                if true check for door coming from next tile
+            player_offset : Position
+                x,y coordinates of player offset from top left of tile in plot space. Default: Position(20,20)
+        """
+        plot_pos = self.get_plot_position(player.pos)
+        if not player_offset:
+            player_offset = Position(
+                int((self.tile_size - player.rect.w) / 2),
+                int((self.tile_size - player.rect.h) / 2),
+            )
+        x = plot_pos.x + player_offset.x
+        y = plot_pos.y + player_offset.y
+
+        background_tile = pygame.transform.rotate(tile.image, orientation * 90)
+
+        if direction == Position.UP:
+            distance = player_offset.y
+        elif direction == Position.DOWN:
+            distance = self.tile_size - player.size - player_offset.y
+        elif direction == Position.LEFT:
+            distance = player_offset.x
+        elif direction == Position.RIGHT:
+            distance = self.tile_size - player.size - player_offset.x
+
+        if not next:
+            distance -= tile.wall_width
+
+        for move in range(0, distance):
+            self.board.blit(background_tile, plot_pos.coords())
+            if direction == Position.DOWN:
+                self.board.blit(player.image, (x, y + move))
+            elif direction == Position.UP:
+                self.board.blit(player.image, (x, y - move))
+            elif direction == Position.RIGHT:
+                self.board.blit(player.image, (x + move, y))
+            elif direction == Position.LEFT:
+                self.board.blit(player.image, (x - move, y))
+            pygame.display.flip()
+
+        for move in range(distance, 0, -1):
+            self.board.blit(background_tile, plot_pos.coords())
+            if direction == Position.DOWN:
+                self.board.blit(player.image, (x, y + move))
+            elif direction == Position.UP:
+                self.board.blit(player.image, (x, y - move))
+            elif direction == Position.RIGHT:
+                self.board.blit(player.image, (x + move, y))
+            elif direction == Position.LEFT:
+                self.board.blit(player.image, (x - move, y))
+            pygame.display.flip()
 
 
 #

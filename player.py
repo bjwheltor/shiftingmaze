@@ -25,9 +25,11 @@ class Player:
             rectangle for player image
         pos : Position
             x, y coordinates of tile placement. (0, 0) = (left, top)
+        floor_colour : tuple
+            Red, green, blue tuple for colour of floor.
     """
 
-    def __init__(self, number, name, colour, pos):
+    def __init__(self, number, name, colour, pos, floor_colour):
         """
         Create player and place player
 
@@ -49,7 +51,8 @@ class Player:
         self.image = pygame.Surface((self.size, self.size), pygame.SRCALPHA)
         self.rect = self.image.get_rect()
         pygame.draw.ellipse(self.image, self.colour, self.rect)
+
         self.background = pygame.Surface((self.size, self.size), pygame.SRCALPHA)
         pygame.draw.ellipse(
-            self.background, self.colour, self.rect
+            self.background, floor_colour, self.rect
         )  # TODO: correct to set correct colour and use later
