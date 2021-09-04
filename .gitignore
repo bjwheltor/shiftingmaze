@@ -1,0 +1,3 @@
+# local temporary bytecode files
+__pycache__/
+*.pyc

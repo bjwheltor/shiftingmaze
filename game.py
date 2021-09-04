@@ -3,10 +3,9 @@ Main game control code
 
 History
 24-Jul-2021 - Initial version
+21-Aug-2021 - Simplified control
 """
-import os
 import sys
-import random
 import pygame
 import numpy as np
 
@@ -15,6 +14,7 @@ from tiles import *
 from player import *
 from board import *
 from plot import *
+from text import *
 
 pygame.init()
 
@@ -56,47 +56,41 @@ else:
 
 tile_set = TileSet(doors_for_tiles, tile_counts, name=tileset_name)
 tile_bag = TileBag(tile_set)
+tile_size = tile_set.tiles[0].size
 
+# Set (full) board dimensions in tiles using Position - must be an odd numbers
 # Create board and fill with tiles from tile bag
-total_x_tiles = 15
-total_y_tiles = 15
-board = Board(width=total_x_tiles, height=total_y_tiles, tile_bag=tile_bag)
+board_dim = Dimensions(15, 15)
+board = Board(board_dim, tile_bag=tile_bag)
 
-x_tile_range = list(range(total_x_tiles))
-y_tile_range = list(range(total_y_tiles))
-rotation_range = list(range(-1, 2, 2))
+# Set (board) view dimensions in tiles using Position - must be an odd numbers
+# Set shift to centre view in the middle of the full boaes
+# Create display
+view_dim = Dimensions(9, 9)
+shift_pos = Position((board.w - view_dim.w) // 2, (board.h - view_dim.h) // 2)
+plot = Plot(view_dim, board.dim, tile_size, shift_pos)
+plot.show_all_tiles(board.placements, board.orientations, tile_set.tiles)
 
-# create player
+# Set player position to be in centre of the board
+# Create player and plot on board
+player_pos = Position(shift_pos.x + (view_dim.w // 2), shift_pos.y + (view_dim.h // 2))
 player_name = "Bruce"
 player_number = 1
 player_colour = GREEN
-player_position = Position(total_x_tiles // 2, total_y_tiles // 2)
-player = Player(player_name, player_number, player_colour, player_position)
-
-# create board display
-x_tiles = 9
-y_tiles = 9
-tile_size = tile_set.tiles[0].size
-
-position_shift = Position(
-    (total_x_tiles - x_tiles) // 2, (total_y_tiles - y_tiles) // 2
-)
-
-plot = Plot(
-    x_tiles,
-    y_tiles,
-    total_x_tiles,
-    total_y_tiles,
-    tile_size,
-    position_shift=position_shift,
-)
-plot.show_all_tiles(board.tile_placements, board.tile_orientations, tile_set.tiles)
-
-# draw player
+floor_colour = tile_set.tiles[board.placements[player_pos.x, player_pos.y]].floor_colour
+print(f"floor_colour: {floor_colour}")
+player = Player(player_name, player_number, player_colour, player_pos, floor_colour)
 plot.show_player(player)
-print(f"Player postion: {player.position}")
 
-# gaming loop
+# Initialise text output
+text = Text()
+print()
+print(tile_set)
+print(board)
+print("Game Start")
+text.player_state(player, plot, board, tile_set)
+
+# Gaming loop
 while True:
 
     pygame.display.update()
@@ -119,44 +113,46 @@ while True:
                 elif event.key == pygame.K_RIGHT:
                     direction = Position.RIGHT
 
-                next_position = player.position.get_next(direction)
+                next_position = player.pos.get_next(direction)
 
+                orientation = board.orientations[player.pos.y, player.pos.x]
+                placement = board.placements[player.pos.y, player.pos.x]
+                tile = tile_set.tiles[placement]
+                # no door in current room in direction of intended movement
+                if not board.check_for_door(player.pos, direction, tile_set.tiles):
+                    plot.bounce_player(player, direction, tile, orientation)
                 # trying to move off edge of board
-                if (
+                elif (
                     next_position.x < 0
                     or next_position.y < 0
-                    or next_position.x >= total_x_tiles
-                    or next_position.y >= total_y_tiles
+                    or next_position.x >= board.w
+                    or next_position.y >= board.h
                 ):
-                    pass
-                # no door in current room in direction of intended movement
-                elif not board.check_for_door(
-                    player.position, direction, tile_set.tiles
-                ):
-                    pass
+                    plot.bounce_player(player, direction, tile, orientation, next=True)
                 # no door in next roon in direction of intended movement
                 elif not board.check_for_door(
-                    player.position, direction, tile_set.tiles, next=True
+                    player.pos, direction, tile_set.tiles, next=True
                 ):
-                    pass
+                    plot.bounce_player(player, direction, tile, orientation, next=True)
                 # movement is possible
                 else:
                     plot.move_player(
                         player,
                         direction,
-                        board.tile_placements,
-                        board.tile_orientations,
+                        board.placements,
+                        board.orientations,
                         tile_set.tiles,
                     )
-                    player.position.move(direction)
-                print(
-                    f"Player postion: {player.position}    Position shift: {position_shift}"
-                )
+                    player.pos.move(direction)
+
+                text.player_state(player, plot, board, tile_set)
 
             elif event.key in ROTATE_KEYS:
                 if event.key == pygame.K_z:
                     rotation = 1
                 elif event.key == pygame.K_x:
                     rotation = -1
-                plot.rotate_tile(player.position, rotation)
-                board.rotate_tile(player.position, rotation)
+                plot.rotate_tile(player.pos, rotation)
+                board.rotate_tile(player.pos, rotation)
+
+                text.player_state(player, plot, board, tile_set)
