@@ -309,64 +309,6 @@ class Plot:
             pygame.display.flip()
             pygame.time.delay(5)
 
-    def slide_row(self, row, slide, fill_tile_image):
-        """ """
-        row -= self.shift_pos.y
-
-        if row < 0 or row >= self.view_w:
-            return None
-
-        y = row * self.tile_size
-
-        extended_row = pygame.Surface(
-            (self.board_width + self.tile_size, self.tile_size), pygame.SRCALPHA
-        )
-
-        row_rect = pygame.Rect(0, y, self.board_width, self.tile_size)
-
-        if slide == "right":
-            extended_row.blit(self.board, (0, 0), row_rect)
-            extended_row.blit(fill_tile_image, (self.board_w, 0))
-            for x in range(-self.tile_size, 1):
-                self.board.blit(extended_row, (x, y))
-                pygame.display.flip()
-
-        elif slide == "left":
-            extended_row.blit(self.board, (self.tile_size, 0))
-            extended_row.blit(fill_tile_image, (0, 0), row_rect)
-            for x in range(0, -self.tile_size - 1, -1):
-                self.board.blit(extended_row, (x, y))
-                pygame.display.flip()
-
-    def slide_column(self, col, slide, fill_tile_image):
-        """ """
-        col -= self.shift_pos.x
-
-        if col < 0 or col >= self.view_w:
-            return None
-
-        x = col * self.tile_size
-
-        extended_col = pygame.Surface(
-            (self.tile_size, self.board_h + self.tile_size), pygame.SRCALPHA
-        )
-
-        col_rect = pygame.Rect(x, 0, self.tile_size, self.board_h)
-
-        if slide == "down":
-            extended_col.blit(self.board, (0, 0), col_rect)
-            extended_col.blit(fill_tile_image, (0, self.board_h))
-            for y in range(-self.tile_size, 1):
-                self.board.blit(extended_col, (x, y))
-                pygame.display.flip()
-
-        elif slide == "up":
-            extended_col.blit(self.board, (0, self.tile_size), col_rect)
-            extended_col.blit(fill_tile_image, (0, 0))
-            for y in range(0, -self.tile_size - 1, -1):
-                self.board.blit(extended_col, (x, y))
-                pygame.display.flip()
-
     def show_player(self, player, player_offset=None):
         """
         Plot player in position
@@ -405,7 +347,7 @@ class Plot:
                 player instance
             direction : int
                 direction in dimich presence of door to be checked.
-            0 = up, 1 = left, 2 = down, 3 = right
+                0 = up, 1 = left, 2 = down, 3 = right
 
         Keywords:
             player_offset : Position
@@ -659,6 +601,117 @@ class Plot:
                 self.board.blit(player.image, (x - move, y))
             pygame.display.flip()
 
+    def get_tile_patch(self, board_patch_rect, board, tiles, tile_bag):
+        """
+        Get an image of a section of the board, with random tiles are drawn from bag
+        where this goes out of the boards of the board
+
+        Parameters:
+            board_patch_rect : pygame.Rect
+                rectangle defining tile set required in (full) board x, y coordinates
+            board : Board
+                tile board information
+            tiles : TileSet.tiles
+                dictionary of tiles indexed by the tile number
+            tile_bag : TileBag
+                bag of tiles from which random ones can be drawn
+
+        Returns
+            tile_patch : pygame.Surface
+                image of tiles for section of board specificed
+                where this goes out of the boards of the board random tiles are dranwn from bag
+        """
+        bp_t = board_patch_rect.top
+        bp_b = board_patch_rect.bottom
+        bp_l = board_patch_rect.left
+        bp_r = board_patch_rect.right
+        bp_w = board_patch_rect.width
+        bp_h = board_patch_rect.height
+
+        tile_patch = pygame.Surface(
+            (bp_w * self.tile_size, bp_h * self.tile_size), pygame.SRCALPHA
+        )
+
+        for board_x in range(bp_l, bp_r):
+            for board_y in range(bp_t, bp_b):
+                if (
+                    board_x < 0
+                    or board_y < 0
+                    or board_x >= board.w
+                    or board_y >= board.h
+                ):
+                    placement = tile_bag.draw_tile()
+                    orientation = random.choice([0, 1, 2, 3])
+                else:
+                    placement = board.placements[board_y, board_x]
+                    orientation = board.orientations[board_y, board_x]
+                tile_image = tiles[placement].image
+                rotated_tile_image = pygame.transform.rotate(
+                    tile_image, orientation * 90
+                )
+                tp_x = (board_x - bp_l) * self.tile_size
+                tp_y = (board_y - bp_t) * self.tile_size
+                tile_patch.blit(rotated_tile_image, (tp_x, tp_y))
+
+        return tile_patch
+
+    def slide_tiles(self, view_patch_rect, direction, board, tiles, tile_bag):
+        """
+        Slide a section of the board in specificed direction
+
+        Parameters:
+            view_patch_rect : pygame.Rect
+                rectangle defining tile set required in (board) view x, y coordinates
+            direction : int
+                direction in dimich presence of door to be checked.
+                0 = up, 1 = left, 2 = down, 3 = right
+            board : Board
+                tile board information
+            tiles : TileSet.tiles
+                dictionary of tiles indexed by the tile number
+            tile_bag : TileBag
+                bag of tiles from which random ones can be drawn
+        """
+        vp_t = view_patch_rect.top
+        vp_l = view_patch_rect.left
+        vp_w = view_patch_rect.width
+        vp_h = view_patch_rect.height
+
+        board_patch_rect = pygame.Rect(
+            vp_l + self.shift_pos.x, vp_t + self.shift_pos.y, vp_w, vp_h
+        )
+
+        plot_x = vp_t * self.tile_size
+        plot_y = vp_t * self.tile_size
+
+        if direction == Position.RIGHT:
+            board_patch_rect.x -= 1
+            board_patch_rect.w += 1
+
+        if direction == Position.UP:
+            board_patch_rect.h += 1
+        elif direction == Position.DOWN:
+            board_patch_rect.y -= 1
+            board_patch_rect.h += 1
+        if direction == Position.LEFT:
+            plot_y = vp_t * self.tile_size
+            board_patch_rect.w += 1
+
+        tile_patch = self.get_tile_patch(board_patch_rect, board, tiles, tile_bag)
+
+        for move in range(self.tile_size + 1):
+            if direction == Position.RIGHT:
+                plot_x = move - self.tile_size
+            elif direction == Position.LEFT:
+                plot_x = -move
+            elif direction == Position.DOWN:
+                plot_y = move - self.tile_size
+            elif direction == Position.UP:
+                plot_y = -move
+            self.board.blit(tile_patch, (plot_x, plot_y))
+            pygame.display.flip()
+            pygame.time.delay(10)
+
 
 #
 # Some tests in isolation
@@ -687,8 +740,9 @@ if __name__ == "__main__":
         3: [0, 1, 0, 1],
         4: [0, 0, 0, 1],
     }
-    tile_counts = {0: 1, 1: 1, 2: 1, 3: 1, 4: 1}
+    tile_counts = {0: 40, 1: 140, 2: 80, 3: 80, 4: 20}
     tile_set = TileSet(doors_for_tiles, tile_counts, name=tileset_name)
+    tile_bag = TileBag(tile_set)
     tile_size = tile_set.tiles[0].size
     tile_list = (
         [1, 1, 1, 4, 4]
@@ -718,6 +772,7 @@ if __name__ == "__main__":
     print(tile_set)
     print(board)
 
+    """
     # test get_extra_tiles
     # set row_selection and column_selection below by indexing list
     # bearing in mind one should be set to None
@@ -731,9 +786,20 @@ if __name__ == "__main__":
         row_selection=row_selection,
         column_selection=column_selection,
     )
-
     plot.board.blit(extra_tiles, (0, 0))
     pygame.display.flip()
+
+    # test get_tile_patch
+    board_patch_rect = pygame.Rect(-1, -1, 3, 3)
+    tile_patch = plot.get_tile_patch(board, board_patch_rect, tile_set.tiles, tile_bag)
+
+    plot.board.blit(tile_patch, (0, 0))
+    pygame.display.flip()
+    """
+    # test slide_tiles
+    view_patch_rect = pygame.Rect(0, 0, 3, 3)
+    for direction in [0, 1, 2, 3]:
+        plot.slide_tiles(view_patch_rect, direction, board, tile_set.tiles, tile_bag)
 
     # hold screen until escaped
     while True:
