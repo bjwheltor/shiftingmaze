@@ -29,10 +29,14 @@ YELLOW = (200, 200, 0)
 RED = (200, 100, 100)
 GREEN = (100, 200, 100)
 
+# Set up event information
 MOVE_KEYS = (pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_RIGHT)
 ROTATE_KEYS = (pygame.K_z, pygame.K_x)
 SLIDE_ROW_KEYS = (pygame.K_q, pygame.K_w)
 SLIDE_COLUMN_KEYS = (pygame.K_p, pygame.K_l)
+RANDOM = pygame.USEREVENT + 0
+
+pygame.time.set_timer(RANDOM, 3000)
 
 # Create a tile set and fill tile bag
 test_tileset = False
@@ -90,19 +94,36 @@ print(board)
 print("Game Start")
 text.player_state(player, plot, board, tile_set)
 
+running = True
 # Gaming loop
-while True:
+while running:
 
     pygame.display.update()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+            running = False
+        elif event.type == RANDOM:
+            random_event = random.choice([0])
+            if random_event == 0:
+                direction = random.choice(Position.DIRECTIONS)
+                patch_len = 1
+                if direction == Position.UP or direction == Position.DOWN:
+                    patch_board_start = random.choice(range(board.h))
+                elif direction == Position.RIGHT or direction == Position.LEFT:
+                    patch_board_start = random.choice(range(board.w))
+                plot.slide_tiles(
+                    patch_board_start,
+                    patch_len,
+                    direction,
+                    board,
+                    tile_set.tiles,
+                    tile_bag,
+                    move_board=True,
+                )
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                pygame.quit()
-                sys.exit()
+                running = False
             elif event.key in MOVE_KEYS:
                 if event.key == pygame.K_UP:
                     direction = Position.UP
@@ -156,3 +177,6 @@ while True:
                 board.rotate_tile(player.pos, rotation)
 
                 text.player_state(player, plot, board, tile_set)
+
+pygame.quit()
+sys.exit()

@@ -175,6 +175,80 @@ class Board:
             extended_placements[: self.h] = self.placements[:, col]
             self.placements[:, col] = extended_placements[abs_slide:]
 
+    def get_tile_sect(self, view_patch_rect, direction, board, tiles, tile_bag):
+        """
+        Slide a section of the board in specificed direction
+
+        Parameters:
+            view_patch_rect : pygame.Rect
+                rectangle defining tile set required in (board) view x, y coordinates
+            direction : int
+                direction in dimich presence of door to be checked.
+                0 = up, 1 = left, 2 = down, 3 = right
+            board : Board
+                tile board information
+            tiles : TileSet.tiles
+                dictionary of tiles indexed by the tile number
+            tile_bag : TileBag
+                bag of tiles from which random ones can be drawn
+        """
+        vp_t = view_patch_rect.top
+        vp_l = view_patch_rect.left
+        vp_w = view_patch_rect.width
+        vp_h = view_patch_rect.height
+
+        board_sect_rect = pygame.Rect(
+            vp_l + plot.shift_pos.x, vp_t + self.shift_pos.y, vp_w, vp_h
+        )
+        if direction == Position.RIGHT or direction == Position.LEFT:
+            board_sect_rect.w = self.w
+        elif direction == Position.UP or direction == Position.DOWN:
+            board_sect_rect.h = self.h
+
+        if direction == Position.RIGHT:
+            board_sect_rect.w = self.w + 1
+            board_sect_rect.l -= 1
+        elif direction == Position.LEFT:
+            board_sect_rect.w = self.w + 1
+        elif direction == Position.UP:
+            board_sect_rect.h = self.h + 1
+        elif direction == Position.DOWN:
+            board_sect_rect.h = self.h + 1
+            board_sect_rect.t -= 1
+
+        board_sect_placements = np.empty(
+            [board_sect_rect.height, board_sect_rect.width], dtype=int
+        )
+        board_sect_orientations = np.array(
+            [board_sect_rect.height, board_sect_rect.width], dtype=int
+        )
+
+        for board_x in range(board_sect_rect.left, board_sect_rect.right):
+            for board_y in range(board_sect_rect.top, board_sect_rect.bottom):
+                board_sect_x = board_x - board_sect_rect.left
+                board_sect_y = board_y - board_sect_rect.top
+                if (
+                    board_x < 0
+                    or board_y < 0
+                    or board_x >= board.w
+                    or board_y >= board.h
+                ):
+                    board_sect_placements[
+                        board_sect_x, board_sect_y
+                    ] = tile_bag.draw_tile()
+                    board_sect_orientations[board_sect_x, board_sect_y] = random.choice(
+                        [0, 1, 2, 3]
+                    )
+                else:
+                    board_sect_placements[
+                        board_sect_x, board_sect_y
+                    ] = board.placements[board_y, board_x]
+                    board_sect_orientations[
+                        board_sect_x, board_sect_y
+                    ] = board.orientations[board_y, board_x]
+
+        return board_sect
+
     def __str__(self):
         """Print board details"""
         string = f"Board layout: {self.w} x {self.h} tiles\n"

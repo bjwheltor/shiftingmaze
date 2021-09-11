@@ -17,6 +17,7 @@ class Position:
             y-coordinate
     """
 
+    DIRECTIONS = [0, 1, 2, 3]
     UP = 0
     LEFT = 1
     DOWN = 2

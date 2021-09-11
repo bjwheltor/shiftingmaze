@@ -601,67 +601,24 @@ class Plot:
                 self.board.blit(player.image, (x - move, y))
             pygame.display.flip()
 
-    def get_tile_patch(self, board_patch_rect, board, tiles, tile_bag):
-        """
-        Get an image of a section of the board, with random tiles are drawn from bag
-        where this goes out of the boards of the board
-
-        Parameters:
-            board_patch_rect : pygame.Rect
-                rectangle defining tile set required in (full) board x, y coordinates
-            board : Board
-                tile board information
-            tiles : TileSet.tiles
-                dictionary of tiles indexed by the tile number
-            tile_bag : TileBag
-                bag of tiles from which random ones can be drawn
-
-        Returns
-            tile_patch : pygame.Surface
-                image of tiles for section of board specificed
-                where this goes out of the boards of the board random tiles are dranwn from bag
-        """
-        bp_t = board_patch_rect.top
-        bp_b = board_patch_rect.bottom
-        bp_l = board_patch_rect.left
-        bp_r = board_patch_rect.right
-        bp_w = board_patch_rect.width
-        bp_h = board_patch_rect.height
-
-        tile_patch = pygame.Surface(
-            (bp_w * self.tile_size, bp_h * self.tile_size), pygame.SRCALPHA
-        )
-
-        for board_x in range(bp_l, bp_r):
-            for board_y in range(bp_t, bp_b):
-                if (
-                    board_x < 0
-                    or board_y < 0
-                    or board_x >= board.w
-                    or board_y >= board.h
-                ):
-                    placement = tile_bag.draw_tile()
-                    orientation = random.choice([0, 1, 2, 3])
-                else:
-                    placement = board.placements[board_y, board_x]
-                    orientation = board.orientations[board_y, board_x]
-                tile_image = tiles[placement].image
-                rotated_tile_image = pygame.transform.rotate(
-                    tile_image, orientation * 90
-                )
-                tp_x = (board_x - bp_l) * self.tile_size
-                tp_y = (board_y - bp_t) * self.tile_size
-                tile_patch.blit(rotated_tile_image, (tp_x, tp_y))
-
-        return tile_patch
-
-    def slide_tiles(self, view_patch_rect, direction, board, tiles, tile_bag):
+    def slide_tiles(
+        self,
+        patch_board_start,
+        patch_len,
+        direction,
+        board,
+        tiles,
+        tile_bag,
+        move_board=False,
+    ):
         """
         Slide a section of the board in specificed direction
 
         Parameters:
-            view_patch_rect : pygame.Rect
-                rectangle defining tile set required in (board) view x, y coordinates
+            patch_board_start : int
+                (full) board x or y (tile) coordinate (depending on direction) of start of patch
+             patch_len: int
+                (tile) coordinate w or h length (depending on direction) of patch
             direction : int
                 direction in dimich presence of door to be checked.
                 0 = up, 1 = left, 2 = down, 3 = right
@@ -672,45 +629,108 @@ class Plot:
             tile_bag : TileBag
                 bag of tiles from which random ones can be drawn
         """
-        vp_t = view_patch_rect.top
-        vp_l = view_patch_rect.left
-        vp_w = view_patch_rect.width
-        vp_h = view_patch_rect.height
+        if direction == Position.RIGHT or direction == Position.LEFT:
+            patch_board_x = -1
+            patch_board_y = patch_board_start
+            patch_board_w = board.w + 2
+            patch_board_h = patch_len
+        elif direction == Position.UP or direction == Position.DOWN:
+            patch_board_x = patch_board_start
+            patch_board_y = -1
+            patch_board_w = patch_len
+            patch_board_h = board.h + 2
 
-        board_patch_rect = pygame.Rect(
-            vp_l + self.shift_pos.x, vp_t + self.shift_pos.y, vp_w, vp_h
+        patch_placements = np.empty([patch_board_h, patch_board_w], dtype=int)
+        patch_orientations = np.empty([patch_board_h, patch_board_w], dtype=int)
+
+        plot_patch = pygame.Surface(
+            (
+                patch_board_w * self.tile_size,
+                patch_board_h * self.tile_size,
+            ),
+            pygame.SRCALPHA,
         )
 
-        plot_x = vp_t * self.tile_size
-        plot_y = vp_t * self.tile_size
+        for board_x in range(patch_board_x, patch_board_x + patch_board_w):
+            for board_y in range(patch_board_y, patch_board_y + patch_board_h):
+                patch_x = board_x - patch_board_x
+                patch_y = board_y - patch_board_y
+                if (
+                    board_x < 0
+                    or board_y < 0
+                    or board_x >= board.w
+                    or board_y >= board.h
+                ):
+                    patch_placements[patch_y, patch_x] = tile_bag.draw_tile()
+                    patch_orientations[patch_y, patch_x] = random.choice([0, 1, 2, 3])
+                else:
+                    patch_placements[patch_y, patch_x] = board.placements[
+                        board_y, board_x
+                    ]
+                    patch_orientations[patch_y, patch_x] = board.orientations[
+                        board_y, board_x
+                    ]
 
-        if direction == Position.RIGHT:
-            board_patch_rect.x -= 1
-            board_patch_rect.w += 1
+                tile_image = tiles[patch_placements[patch_y, patch_x]].image
+                rotated_tile_image = pygame.transform.rotate(
+                    tile_image, patch_orientations[patch_y, patch_x] * 90
+                )
+                patch_plot_x = patch_x * self.tile_size
+                patch_plot_y = patch_y * self.tile_size
+                plot_patch.blit(rotated_tile_image, (patch_plot_x, patch_plot_y))
 
-        if direction == Position.UP:
-            board_patch_rect.h += 1
-        elif direction == Position.DOWN:
-            board_patch_rect.y -= 1
-            board_patch_rect.h += 1
-        if direction == Position.LEFT:
-            plot_y = vp_t * self.tile_size
-            board_patch_rect.w += 1
+        print()
+        print("Patch")
+        print(patch_placements)
+        print()
 
-        tile_patch = self.get_tile_patch(board_patch_rect, board, tiles, tile_bag)
+        plot_x = (patch_board_x - self.shift_pos.x) * self.tile_size
+        plot_y = (patch_board_y - self.shift_pos.y) * self.tile_size
 
-        for move in range(self.tile_size + 1):
+        for move in range(self.tile_size):
             if direction == Position.RIGHT:
-                plot_x = move - self.tile_size
+                plot_x += 1
             elif direction == Position.LEFT:
-                plot_x = -move
+                plot_x -= 1
             elif direction == Position.DOWN:
-                plot_y = move - self.tile_size
+                plot_y += 1
             elif direction == Position.UP:
-                plot_y = -move
-            self.board.blit(tile_patch, (plot_x, plot_y))
+                plot_y -= 1
+            self.board.blit(plot_patch, (plot_x, plot_y))
             pygame.display.flip()
-            pygame.time.delay(10)
+            pygame.time.delay(5)
+
+        if move_board:
+            if direction == Position.RIGHT:
+                board.placements[patch_board_start:patch_len, :] = patch_placements[
+                    :, : board.w
+                ]
+                board.orientations[patch_board_start:patch_len, :] = patch_placements[
+                    :, : board.w
+                ]
+            elif direction == Position.LEFT:
+                board.placements[patch_board_start:patch_len, :] = patch_placements[
+                    :, 2:
+                ]
+                board.orientations[patch_board_start:patch_len, :] = patch_placements[
+                    :, 2:
+                ]
+            elif direction == Position.UP:
+                board.placements[:, patch_board_start:patch_len] = patch_placements[
+                    2:, :
+                ]
+                board.orientations[:, patch_board_start:patch_len] = patch_placements[
+                    2:, :
+                ]
+            elif direction == Position.DOWN:
+                board.placements[:, patch_board_start:patch_len] = patch_placements[
+                    : board.h, :
+                ]
+                board.orientations[:, patch_board_start:patch_len] = patch_placements[
+                    : board.h, :
+                ]
+
+        # NEED TO ADD TILE RECYCING
 
 
 #
@@ -772,43 +792,30 @@ if __name__ == "__main__":
     print(tile_set)
     print(board)
 
-    """
-    # test get_extra_tiles
-    # set row_selection and column_selection below by indexing list
-    # bearing in mind one should be set to None
-    row_selection = [None, -1, plot.view_h][0]
-    column_selection = [None, -1, plot.view_w][2]
-
-    extra_tiles = plot.get_extra_tiles(
-        board.placements,
-        board.orientations,
-        tile_set.tiles,
-        row_selection=row_selection,
-        column_selection=column_selection,
-    )
-    plot.board.blit(extra_tiles, (0, 0))
-    pygame.display.flip()
-
-    # test get_tile_patch
-    board_patch_rect = pygame.Rect(-1, -1, 3, 3)
-    tile_patch = plot.get_tile_patch(board, board_patch_rect, tile_set.tiles, tile_bag)
-
-    plot.board.blit(tile_patch, (0, 0))
-    pygame.display.flip()
-    """
     # test slide_tiles
-    view_patch_rect = pygame.Rect(0, 0, 3, 3)
-    for direction in [0, 1, 2, 3]:
-        plot.slide_tiles(view_patch_rect, direction, board, tile_set.tiles, tile_bag)
-
+    patch_board_start = 1
+    patch_len = 1
+    for direction in [0, 0, 0, 1, 1, 1]:
+        plot.slide_tiles(
+            patch_board_start,
+            patch_len,
+            direction,
+            board,
+            tile_set.tiles,
+            tile_bag,
+            move_board=True,
+        )
+        print()
+        print(board)
     # hold screen until escaped
-    while True:
+    running = True
+    while running:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+                running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    sys.exit()
+                    running = False
+    pygame.quit()
+    sys.exit()
