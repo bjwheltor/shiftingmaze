@@ -57,7 +57,7 @@ class Board:
         if tile_bag:
             self.placements = np.array(tile_bag.draw_tiles(self.size), dtype=int)
             self.orientations = np.array(
-                random.choices([0, 1, 2, 3], k=self.size), dtype=int
+                random.choices(Position.DIRECTIONS, k=self.size), dtype=int
             )
             self.placements.shape = (self.h, self.w)
             self.orientations.shape = (self.h, self.w)
@@ -132,122 +132,26 @@ class Board:
         door_index = (direction_to_check - orientation) % 4
         return doors[door_index]
 
-    def slide_row(self, row, slide=1):
+    def apply_patch(self, pos, patch_placements, patch_orientations):
         """
-        Slide a row a number of tiles along
+        Apply a patch (new set of values) to a section of the placements and orientations
 
         Parameters:
-            row : int
-                y-coordinate of row
-
-        Keywords:
-            slide : int
-                How many places to slide (-ve = left, +ve = right). Default = 1
+            pos : Position
+                (full) board x, y (tile) coordinates of top left of where patch to be applied
+        patch_placements : numpy.array
+            tile number at each position of the board - ordering (y, x)
+        orientations : numpy.array
+            orientation of tile at each position on the board - ordering (y, x)
+            0 = no rotation, 1 = 90 degrees rotation anticlockwise
+            2 = 180 degrees rotation, 3 = 90 degrees rotation clockwis
         """
-        abs_slide = abs(slide)
-        extended_placements = np.zeros(self.w + abs_slide, dtype=int)
-        if slide > 0:
-            extended_placements[abs_slide:] = self.placements[row, :]
-            self.placements[row, :] = extended_placements[: self.w]
-        else:
-            extended_placements[: self.w] = self.placements[row, :]
-            self.placements[row, :] = extended_placements[abs_slide:]
-
-    def slide_column(self, col, slide=1):
-        """
-        Slide a column number of tiles along
-
-        Parameters:
-            col : int
-                x-coordinate of column
-
-        Keywords:
-            slide : int
-                How many places to slide (-ve = left, +ve = right). Default = 1
-        """
-        abs_slide = abs(slide)
-        extended_placements = np.zeros(self.h + abs_slide, dtype=int)
-        if slide > 0:
-            # update board positions
-            extended_placements[abs_slide:] = self.placements[:, col]
-            self.placements[:, col] = extended_placements[: self.h]
-        else:
-            extended_placements[: self.h] = self.placements[:, col]
-            self.placements[:, col] = extended_placements[abs_slide:]
-
-    def get_tile_sect(self, view_patch_rect, direction, board, tiles, tile_bag):
-        """
-        Slide a section of the board in specificed direction
-
-        Parameters:
-            view_patch_rect : pygame.Rect
-                rectangle defining tile set required in (board) view x, y coordinates
-            direction : int
-                direction in dimich presence of door to be checked.
-                0 = up, 1 = left, 2 = down, 3 = right
-            board : Board
-                tile board information
-            tiles : TileSet.tiles
-                dictionary of tiles indexed by the tile number
-            tile_bag : TileBag
-                bag of tiles from which random ones can be drawn
-        """
-        vp_t = view_patch_rect.top
-        vp_l = view_patch_rect.left
-        vp_w = view_patch_rect.width
-        vp_h = view_patch_rect.height
-
-        board_sect_rect = pygame.Rect(
-            vp_l + plot.shift_pos.x, vp_t + self.shift_pos.y, vp_w, vp_h
-        )
-        if direction == Position.RIGHT or direction == Position.LEFT:
-            board_sect_rect.w = self.w
-        elif direction == Position.UP or direction == Position.DOWN:
-            board_sect_rect.h = self.h
-
-        if direction == Position.RIGHT:
-            board_sect_rect.w = self.w + 1
-            board_sect_rect.l -= 1
-        elif direction == Position.LEFT:
-            board_sect_rect.w = self.w + 1
-        elif direction == Position.UP:
-            board_sect_rect.h = self.h + 1
-        elif direction == Position.DOWN:
-            board_sect_rect.h = self.h + 1
-            board_sect_rect.t -= 1
-
-        board_sect_placements = np.empty(
-            [board_sect_rect.height, board_sect_rect.width], dtype=int
-        )
-        board_sect_orientations = np.array(
-            [board_sect_rect.height, board_sect_rect.width], dtype=int
-        )
-
-        for board_x in range(board_sect_rect.left, board_sect_rect.right):
-            for board_y in range(board_sect_rect.top, board_sect_rect.bottom):
-                board_sect_x = board_x - board_sect_rect.left
-                board_sect_y = board_y - board_sect_rect.top
-                if (
-                    board_x < 0
-                    or board_y < 0
-                    or board_x >= board.w
-                    or board_y >= board.h
-                ):
-                    board_sect_placements[
-                        board_sect_x, board_sect_y
-                    ] = tile_bag.draw_tile()
-                    board_sect_orientations[board_sect_x, board_sect_y] = random.choice(
-                        [0, 1, 2, 3]
-                    )
-                else:
-                    board_sect_placements[
-                        board_sect_x, board_sect_y
-                    ] = board.placements[board_y, board_x]
-                    board_sect_orientations[
-                        board_sect_x, board_sect_y
-                    ] = board.orientations[board_y, board_x]
-
-        return board_sect
+        h, w = patch_placements.shape
+        x, y = pos.coords()
+        x_end = x + w
+        y_end = y + h
+        self.placements[y:y_end, x:x_end] = patch_placements[:, :]
+        self.orientations[y:y_end, x:x_end] = patch_orientations[:, :]
 
     def __str__(self):
         """Print board details"""
@@ -263,3 +167,58 @@ class Board:
                 orientations_row += str(self.orientations[y, x])
             string += f"{placements_row} {orientations_row}\n"
         return string
+
+
+#
+# Some tests in isolation
+#
+if __name__ == "__main__":
+    # extra imports for testing and initialise
+    from player import *
+    from text import *
+
+    # Create a tile set and fixed tile list
+    tileset_name = "test"
+    doors_for_tiles = {
+        0: [1, 1, 1, 1],
+        1: [0, 1, 1, 1],
+        2: [0, 0, 1, 1],
+        3: [0, 1, 0, 1],
+        4: [0, 0, 0, 1],
+    }
+    tile_counts = {0: 40, 1: 140, 2: 80, 3: 80, 4: 20}
+    tile_set = TileSet(doors_for_tiles, tile_counts, name=tileset_name)
+    tile_bag = TileBag(tile_set)
+    tile_size = tile_set.tiles[0].size
+    tile_list = (
+        [1, 1, 1, 4, 4]
+        + [1, 0, 0, 0, 4]
+        + [2, 0, 0, 0, 4]
+        + [2, 0, 0, 0, 3]
+        + [2, 2, 3, 3, 3]
+    )
+
+    # Set (full) board dimensions in tiles using Position - must be an odd numbers
+    # Create board and fill with tiles from tile bag
+    board_dim = Dimensions(5, 5)
+    board = Board(board_dim, tile_list=tile_list)
+
+    #
+    # Start Testing
+    # print tile set and board set-up for reference
+    print()
+    print(tile_set)
+    print(board)
+
+    # test apply patch
+    pos = Position(1, 0)
+    patch_placements = np.array([[5], [6], [7], [8], [9]], dtype=int)
+    patch_orientations = np.array([[1], [1], [1], [1], [1]], dtype=int)
+
+    print()
+    print(patch_placements)
+    print(patch_orientations)
+    board.apply_patch(pos, patch_placements, patch_orientations)
+
+    print()
+    print(board)

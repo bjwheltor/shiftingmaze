@@ -679,11 +679,6 @@ class Plot:
                 patch_plot_y = patch_y * self.tile_size
                 plot_patch.blit(rotated_tile_image, (patch_plot_x, patch_plot_y))
 
-        print()
-        print("Patch")
-        print(patch_placements)
-        print()
-
         plot_x = (patch_board_x - self.shift_pos.x) * self.tile_size
         plot_y = (patch_board_y - self.shift_pos.y) * self.tile_size
 
@@ -702,33 +697,26 @@ class Plot:
 
         if move_board:
             if direction == Position.RIGHT:
-                board.placements[patch_board_start:patch_len, :] = patch_placements[
-                    :, : board.w
-                ]
-                board.orientations[patch_board_start:patch_len, :] = patch_placements[
-                    :, : board.w
-                ]
+                pos = Position(0, patch_board_y)
+                placements = patch_placements[:, : board.w]
+                orientations = patch_orientations[:, : board.w]
             elif direction == Position.LEFT:
-                board.placements[patch_board_start:patch_len, :] = patch_placements[
-                    :, 2:
-                ]
-                board.orientations[patch_board_start:patch_len, :] = patch_placements[
-                    :, 2:
-                ]
+                pos = Position(0, patch_board_y)
+                placements = patch_placements[:, 2:]
+                orientations = patch_orientations[:, 2:]
             elif direction == Position.UP:
-                board.placements[:, patch_board_start:patch_len] = patch_placements[
-                    2:, :
-                ]
-                board.orientations[:, patch_board_start:patch_len] = patch_placements[
-                    2:, :
-                ]
+                pos = Position(patch_board_x, 0)
+                placements = patch_placements[2:, :]
+                orientations = patch_orientations[2:, :]
             elif direction == Position.DOWN:
-                board.placements[:, patch_board_start:patch_len] = patch_placements[
-                    : board.h, :
-                ]
-                board.orientations[:, patch_board_start:patch_len] = patch_placements[
-                    : board.h, :
-                ]
+                pos = Position(patch_board_x, 0)
+                placements = patch_placements[: board.h, :]
+                orientations = patch_orientations[: board.h, :]
+            print()
+            print(f"Patch: pos = {pos}    direction = {direction}")
+            print(patch_placements)
+            print()
+            board.apply_patch(pos, placements, orientations)
 
         # NEED TO ADD TILE RECYCING
 
