@@ -81,9 +81,9 @@ player_pos = Position(shift_pos.x + (view_dim.w // 2), shift_pos.y + (view_dim.h
 player_name = "Bruce"
 player_number = 1
 player_colour = GREEN
-floor_colour = tile_set.tiles[board.placements[player_pos.x, player_pos.y]].floor_colour
-print(f"floor_colour: {floor_colour}")
-player = Player(player_name, player_number, player_colour, player_pos, floor_colour)
+start_tile = tile_set.tiles[board.placements[player_pos.x, player_pos.y]]
+
+player = Player(player_name, player_number, player_colour, player_pos, start_tile)
 plot.show_player(player)
 
 # Initialise text output
@@ -109,17 +109,21 @@ while running:
                 direction = random.choice(Position.DIRECTIONS)
                 patch_len = 1
                 if direction == Position.UP or direction == Position.DOWN:
-                    patch_board_start = random.choice(range(board.h))
+                    # patch_board_start = random.choice(range(board.h))
+                    patch_board_start = random.choice([6, 7, 8])
                 elif direction == Position.RIGHT or direction == Position.LEFT:
-                    patch_board_start = random.choice(range(board.w))
+                    # patch_board_start = random.choice(range(board.w))
+                    patch_board_start = random.choice([6, 7, 8])
                 plot.slide_tiles(
                     patch_board_start,
                     patch_len,
                     direction,
                     board,
+                    player,
                     tile_set.tiles,
                     tile_bag,
                     move_board=True,
+                    move_player=Player.MOVE_WITH_TILES,
                 )
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
