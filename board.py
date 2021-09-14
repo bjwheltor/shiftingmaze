@@ -6,6 +6,9 @@ History
 24-Jul-2021 - Position class moved into a separate file
 21-Aug-2021 - Simplified variables and naming - more use of Position and Dimensions, 
               noted as pos and dim variables
+14-Sep-2021 - Separation of concerns - updated to focus board on key functionality,
+              including placements anr orientations into a single array to simplify
+              passing of information and allow for future extension
 """
 import random
 import numpy as np
@@ -19,7 +22,7 @@ class Board:
     Represents the state of the board for Shifting Maze game.
 
     Attributes:
-        dim : Postion
+        dim : Dimension
             (x, y) dimensions of board in tiles: (width (w), height (h))
         w : int
             x-dimension of board in tiles in x direction (left and right): width
@@ -27,13 +30,19 @@ class Board:
             y-dimension of board in tiles y direction (up and down): height
         size : int
             total number of tiles on board (w * h)
-        placements : numpy.array(h, w)
-            tile number at each position of the board - ordering (y, x)
-        orientations : numpy.array(h, w)
-            orientation of tile at each position on the board - ordering (y, x)
-            0 = no rotation, 1 = 90 degrees rotation anticlockwise
-            2 = 180 degrees rotation, 3 = 90 degrees rotation clockwise
+        placements : numpy.array(h, w, n)
+            holds all information on the state of the each square on the board.
+            h is the y dimension
+            w is the x dimension
+            n is the board square attribute:
+                TILE = 0 is the tile number
+                ROT = 1 is the rotation or orientation of each tile,
+                0 = no rotation, 1 = 90 degrees rotation anticlockwise
+                2 = 180 degrees rotation, 3 = 90 degrees rotation clockwise
     """
+
+    TILE = 0
+    ROT = 1
 
     def __init__(self, dim, tile_bag=None, tile_list=None):
         """
@@ -53,23 +62,24 @@ class Board:
         self.w = self.dim.w
         self.h = self.dim.h
         self.size = self.w * self.h
+        self.n = 2
+
+        self.placements = np.empty([self.h, self.w, self.n], dtype=int)
 
         if tile_bag:
-            self.placements = np.array(tile_bag.draw_tiles(self.size), dtype=int)
-            self.orientations = np.array(
-                random.choices(Position.DIRECTIONS, k=self.size), dtype=int
-            )
-            self.placements.shape = (self.h, self.w)
-            self.orientations.shape = (self.h, self.w)
+            tiles = np.array(tile_bag.draw_tiles(self.size), dtype=int)
+            rots = np.array(random.choices(Position.DIRECTIONS, k=self.size), dtype=int)
+            tiles.shape = (self.h, self.w)
+            rots.shape = (self.h, self.w)
         elif tile_list:
-            self.placements = np.array(tile_list, dtype=int)
-            self.placements.shape = (self.h, self.w)
-            self.orientations = np.zeros((self.h, self.w), dtype=int)
-        else:
-            self.placements = np.empty([self.h, self.w], dtype=int)
-            self.orientations = np.array([self.h, self.w], dtype=int)
+            tiles = np.array(tile_list, dtype=int)
+            tiles.shape = (self.h, self.w)
+            rots = np.zeros((self.h, self.w), dtype=int)
 
-    def place_tile(self, pos, tile, orientation=0):
+        self.placements[:, :, self.TILE] = tiles
+        self.placements[:, :, self.ROT] = rots
+
+    def place_tile(self, pos, tile, rot=0):
         """
         Place a tile onto the board.
         Set the position to the tile number and the orientation.
@@ -79,34 +89,33 @@ class Board:
                 x, y coordinates of tile placement. (0, 0) = (left, top)
             tile : int
                 number of tile to be placed
-            orientation : int
-                orientation of tile to be placed
+            rot : int
+                rotation of tile to be placed
         """
-        self.placements[pos.coords(rev=True)] = tile
-        self.orientations[pos.coords(rev=True)] = orientation
+        self.placements[pos.y, pos.x, self.TILE] = tile
+        self.placements[pos.y, pos.x, self.ROT] = rot
 
-    def rotate_tile(self, pos, rotation):
+    def rotate_tile(self, pos, rotate):
         """
         Rotate a tile on the board. Reset the orientation.
 
         Parameters:
             pos : Position
                 x, y coordinates of tile placement. (0, 0) = (left, top)
-            rotation : int
-                rotation to be applied to tile.
-                +1 = 90 degrees anticlockwise. -1 = 90 degrees clockwise
+            rotate : int
+                rotate tile: +1 = 90 degrees anticlockwise. -1 = 90 degrees clockwise
         """
-        orientation = self.orientations[pos.coords(rev=True)]
-        self.orientations[pos.coords(rev=True)] = (orientation + rotation) % 4
+        rot = self.placements[pos.y, pos.x, self.ROT]
+        self.placements[pos.y, pos.x, self.ROT] = (rot + rotate) % 4
 
-    def check_for_door(self, pos, direction, tiles, next=None):
+    def check_for_door(self, pos, dir, tiles, next=False):
         """
         Check if exit exists in a particular direction from a tile on the board
 
         Parameters:
             pos : Position
                 x, y coordinates of tile placement. (0, 0) = (left, top)
-            direction : int
+            dir : int
                 Direction in which presence of door to be checked.
                 0 = up, 1 = left, 2 = down, 3 = right
             tiles : TileSet.tiles
@@ -121,51 +130,73 @@ class Board:
                 True if door is present, False if not
         """
         if next:
-            pos_to_check = pos.get_next(direction)
-            direction_to_check = (direction + 2) % 4
+            pos_to_check = pos.get_next(dir)
+            dir_to_check = (dir + 2) % 4
         else:
             pos_to_check = pos
-            direction_to_check = direction
-        tile = self.placements[pos_to_check.coords(rev=True)]
-        orientation = self.orientations[pos_to_check.coords(rev=True)]
+            dir_to_check = dir
+        tile = self.placements[pos_to_check.y, pos_to_check.x, self.TILE]
+        rot = self.placements[pos_to_check.y, pos_to_check.x, self.ROT]
         doors = tiles[tile].doors
-        door_index = (direction_to_check - orientation) % 4
+        door_index = (dir_to_check - rot) % 4
         return doors[door_index]
 
-    def apply_patch(self, pos, patch_placements, patch_orientations):
+    ### NEED TO RE-WRITE
+    def slide_row(self, row, slide=1):
         """
-        Apply a patch (new set of values) to a section of the placements and orientations
-
+        Slide a row a number of tiles along
         Parameters:
-            pos : Position
-                (full) board x, y (tile) coordinates of top left of where patch to be applied
-        patch_placements : numpy.array
-            tile number at each position of the board - ordering (y, x)
-        orientations : numpy.array
-            orientation of tile at each position on the board - ordering (y, x)
-            0 = no rotation, 1 = 90 degrees rotation anticlockwise
-            2 = 180 degrees rotation, 3 = 90 degrees rotation clockwis
+            row : int
+                y-coordinate of row
+        Keywords:
+            slide : int
+                How many places to slide (-ve = left, +ve = right). Default = 1
         """
-        h, w = patch_placements.shape
-        x, y = pos.coords()
-        x_end = x + w
-        y_end = y + h
-        self.placements[y:y_end, x:x_end] = patch_placements[:, :]
-        self.orientations[y:y_end, x:x_end] = patch_orientations[:, :]
+        abs_slide = abs(slide)
+        extended_placements = np.zeros(self.w + abs_slide, dtype=int)
+        if slide > 0:
+            extended_placements[abs_slide:] = self.placements[row, :]
+            self.placements[row, :] = extended_placements[: self.w]
+        else:
+            extended_placements[: self.w] = self.placements[row, :]
+            self.placements[row, :] = extended_placements[abs_slide:]
+
+    def slide_column(self, col, slide=1):
+        """
+        Slide a column number of tiles along
+        Parameters:
+            col : int
+                x-coordinate of column
+        Keywords:
+            slide : int
+                How many places to slide (-ve = left, +ve = right). Default = 1
+        """
+        abs_slide = abs(slide)
+        extended_placements = np.zeros(self.h + abs_slide, dtype=int)
+        if slide > 0:
+            # update board positions
+            extended_placements[abs_slide:] = self.placements[:, col]
+            self.placements[:, col] = extended_placements[: self.h]
+        else:
+            extended_placements[: self.h] = self.placements[:, col]
+            self.placements[:, col] = extended_placements[abs_slide:]
+
+    ### END OF REQUIRED RE-WRITE
 
     def __str__(self):
         """Print board details"""
         string = f"Board layout: {self.w} x {self.h} tiles\n"
-        header1 = "Placements" + " " * max(0, (self.w - len("Placements")))
-        header2 = "Orientations" + " " * max(0, (self.w - len("Orientations")))
+
+        header1 = "Tiles" + " " * max(0, (self.w - len("Tiles")))
+        header2 = "Rotations" + " " * max(0, (self.w - len("Rotations")))
         string += header1 + " " + header2 + "\n"
         for y in range(self.h):
-            placements_row = ""
-            orientations_row = ""
+            tiles_row = ""
+            rots_row = ""
             for x in range(self.w):
-                placements_row += str(self.placements[y, x])
-                orientations_row += str(self.orientations[y, x])
-            string += f"{placements_row} {orientations_row}\n"
+                tiles_row += str(self.placements[y, x, self.TILE])
+                rots_row += str(self.placements[y, x, self.ROT])
+            string += f"{tiles_row} {rots_row}\n"
         return string
 
 
@@ -176,6 +207,8 @@ if __name__ == "__main__":
     # extra imports for testing and initialise
     from player import *
     from text import *
+
+    print("START TESTING")
 
     # Create a tile set and fixed tile list
     tileset_name = "test"
@@ -200,25 +233,39 @@ if __name__ == "__main__":
 
     # Set (full) board dimensions in tiles using Position - must be an odd numbers
     # Create board and fill with tiles from tile bag
+    print("Create Board")
     board_dim = Dimensions(5, 5)
     board = Board(board_dim, tile_list=tile_list)
+    print(board)
 
-    #
-    # Start Testing
-    # print tile set and board set-up for reference
-    print()
+    # Place tile
+    pos = Position(1, 1)
+    tile = 4
+    rot = 3
+    print("Place Tile")
+    print(f"pos: {pos}  tile: {tile}  rot: {rot}")
+    board.place_tile(pos, tile, rot=rot)
+    print(board)
+
+    # Test rotate tile
+    rotate = -1
+    print("Rotate Tile")
+    print(f"pos: {pos}  rot: {rot}")
+    board.rotate_tile(pos, rotate=rotate)
+    print(board)
+
+    # Check for door
     print(tile_set)
-    print(board)
+    dir = Position.UP
+    print("Check for door")
+    print(f"pos: {pos}  dir: {dir}")
+    print(f"tile: {board.placements[pos.y,pos.x, Board.TILE]}")
+    door = board.check_for_door(pos, dir, tile_set.tiles)
+    print(f"door is {door}")
 
-    # test apply patch
-    pos = Position(1, 0)
-    patch_placements = np.array([[5], [6], [7], [8], [9]], dtype=int)
-    patch_orientations = np.array([[1], [1], [1], [1], [1]], dtype=int)
-
-    print()
-    print(patch_placements)
-    print(patch_orientations)
-    board.apply_patch(pos, patch_placements, patch_orientations)
-
-    print()
-    print(board)
+    # Check for door in next tile
+    dir = Position.UP
+    print("\nCheck for door in next tile")
+    print(f"pos: {pos}  dir: {dir}")
+    door = board.check_for_door(pos, dir, tile_set.tiles, next=True)
+    print(f"door is {door}")
