@@ -76,8 +76,8 @@ class Board:
             tiles.shape = (self.h, self.w)
             rots = np.zeros((self.h, self.w), dtype=int)
 
-        self.placements[:, :, self.TILE] = tiles
-        self.placements[:, :, self.ROT] = rots
+        self.placements[:, :, Board.TILE] = tiles
+        self.placements[:, :, Board.ROT] = rots
 
     def place_tile(self, pos, tile, rot=0):
         """
@@ -92,8 +92,8 @@ class Board:
             rot : int
                 rotation of tile to be placed
         """
-        self.placements[pos.y, pos.x, self.TILE] = tile
-        self.placements[pos.y, pos.x, self.ROT] = rot
+        self.placements[pos.y, pos.x, Board.TILE] = tile
+        self.placements[pos.y, pos.x, Board.ROT] = rot
 
     def rotate_tile(self, pos, rotate):
         """
@@ -105,8 +105,8 @@ class Board:
             rotate : int
                 rotate tile: +1 = 90 degrees anticlockwise. -1 = 90 degrees clockwise
         """
-        rot = self.placements[pos.y, pos.x, self.ROT]
-        self.placements[pos.y, pos.x, self.ROT] = (rot + rotate) % 4
+        rot = self.placements[pos.y, pos.x, Board.ROT]
+        self.placements[pos.y, pos.x, Board.ROT] = (rot + rotate) % 4
 
     def check_for_door(self, pos, dir, tiles, next=False):
         """
@@ -135,53 +135,65 @@ class Board:
         else:
             pos_to_check = pos
             dir_to_check = dir
-        tile = self.placements[pos_to_check.y, pos_to_check.x, self.TILE]
-        rot = self.placements[pos_to_check.y, pos_to_check.x, self.ROT]
+        tile = self.placements[pos_to_check.y, pos_to_check.x, Board.TILE]
+        rot = self.placements[pos_to_check.y, pos_to_check.x, Board.ROT]
         doors = tiles[tile].doors
         door_index = (dir_to_check - rot) % 4
         return doors[door_index]
 
-    ### NEED TO RE-WRITE
-    def slide_row(self, row, slide=1):
+    def slide_row(self, row, dir, tile_bag):
         """
-        Slide a row a number of tiles along
+        Slide column nup or down 1 tile
         Parameters:
             row : int
-                y-coordinate of row
-        Keywords:
-            slide : int
-                How many places to slide (-ve = left, +ve = right). Default = 1
+                (full) board y (tile) coordinate of row
+            dir : int
+                Direction in column to be slid
+                0 = up, 2 = down
+            tile_bag : TileBag
+                bag of tiles from which random ones can be drawn
         """
-        abs_slide = abs(slide)
-        extended_placements = np.zeros(self.w + abs_slide, dtype=int)
-        if slide > 0:
-            extended_placements[abs_slide:] = self.placements[row, :]
-            self.placements[row, :] = extended_placements[: self.w]
-        else:
-            extended_placements[: self.w] = self.placements[row, :]
-            self.placements[row, :] = extended_placements[abs_slide:]
+        patch_placements = np.empty([1, self.w + 1, self.n], dtype=int)
+        if dir == Position.LEFT:
+            patch_placements[0, : self.w, :] = board.placements[row, ...]
+            patch_placements[0, self.w, Board.TILE] = tile_bag.draw_tile()
+            patch_placements[0, self.w, Board.ROT] = random.choice(Position.DIRECTIONS)
+            self.placements[row, ...] = patch_placements[0, 1:, :]
+            # put patch_placements[0, 0, Board.TILE] back in bag
+        elif dir == Position.RIGHT:
+            patch_placements[0, 1:, :] = self.placements[row, ...]
+            patch_placements[0, 0, Board.TILE] = tile_bag.draw_tile()
+            patch_placements[0, 0, Board.ROT] = random.choice(Position.DIRECTIONS)
+            self.placements[row, ...] = patch_placements[0, : self.w, :]
+            # put patch_placements[self.h+1, 0, Board.TILE] back in bag
+        return patch_placements
 
-    def slide_column(self, col, slide=1):
+    def slide_col(self, col, dir, tile_bag):
         """
-        Slide a column number of tiles along
+        Slide column nup or down 1 tile
         Parameters:
             col : int
-                x-coordinate of column
-        Keywords:
-            slide : int
-                How many places to slide (-ve = left, +ve = right). Default = 1
+                (full) board x (tile) coordinate of column
+            dir : int
+                Direction in column to be slid
+                0 = up, 2 = down
+            tile_bag : TileBag
+                bag of tiles from which random ones can be drawn
         """
-        abs_slide = abs(slide)
-        extended_placements = np.zeros(self.h + abs_slide, dtype=int)
-        if slide > 0:
-            # update board positions
-            extended_placements[abs_slide:] = self.placements[:, col]
-            self.placements[:, col] = extended_placements[: self.h]
-        else:
-            extended_placements[: self.h] = self.placements[:, col]
-            self.placements[:, col] = extended_placements[abs_slide:]
-
-    ### END OF REQUIRED RE-WRITE
+        patch_placements = np.empty([self.h + 1, 1, self.n], dtype=int)
+        if dir == Position.UP:
+            patch_placements[: self.h, 0, :] = self.placements[:, col, :]
+            patch_placements[self.h, 0, Board.TILE] = tile_bag.draw_tile()
+            patch_placements[self.h, 0, Board.ROT] = random.choice(Position.DIRECTIONS)
+            self.placements[:, col, :] = patch_placements[1:, 0, :]
+            # put patch_placements[0, 0, Board.TILE] back in bag
+        elif dir == Position.DOWN:
+            patch_placements[1:, 0, :] = self.placements[:, col, :]
+            patch_placements[0, 0, Board.TILE] = tile_bag.draw_tile()
+            patch_placements[0, 0, Board.ROT] = random.choice(Position.DIRECTIONS)
+            self.placements[:, col, :] = patch_placements[: self.h, 0, :]
+            # put patch_placements[0, self.h+1, Board.TILE] back in bag
+        return patch_placements
 
     def __str__(self):
         """Print board details"""
@@ -194,8 +206,8 @@ class Board:
             tiles_row = ""
             rots_row = ""
             for x in range(self.w):
-                tiles_row += str(self.placements[y, x, self.TILE])
-                rots_row += str(self.placements[y, x, self.ROT])
+                tiles_row += str(self.placements[y, x, Board.TILE])
+                rots_row += str(self.placements[y, x, Board.ROT])
             string += f"{tiles_row} {rots_row}\n"
         return string
 
@@ -253,6 +265,24 @@ if __name__ == "__main__":
     print(f"pos: {pos}  rot: {rot}")
     board.rotate_tile(pos, rotate=rotate)
     print(board)
+
+    # Check for slide row
+    row = 1
+    dir = Position.RIGHT
+    print("\nSlide row")
+    print(f"row: {row}  dir: {dir}")
+    patch = board.slide_row(row, dir, tile_bag)
+    print(board)
+    print(f"\npatch: {patch}")
+
+    # Check for slide column
+    col = 1
+    dir = Position.UP
+    print("\nSlide column")
+    print(f"col: {col}  dir: {dir}")
+    patch = board.slide_col(col, dir, tile_bag)
+    print(board)
+    print(f"\npatch: {patch}")
 
     # Check for door
     print(tile_set)
