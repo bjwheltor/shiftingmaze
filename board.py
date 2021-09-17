@@ -7,7 +7,7 @@ History
 21-Aug-2021 - Simplified variables and naming - more use of Position and Dimensions, 
               noted as pos and dim variables
 14-Sep-2021 - Separation of concerns - updated to focus board on key functionality,
-              including placements anr orientations into a single array to simplify
+              including placements and orientations into a single array to simplify
               passing of information and allow for future extension
 """
 import random
@@ -28,6 +28,8 @@ class Board:
             x-dimension of board in tiles in x direction (left and right): width
         h : int
             y-dimension of board in tiles y direction (up and down): height
+        n : int
+            number of board quare attributes
         size : int
             total number of tiles on board (w * h)
         placements : numpy.array(h, w, n)
@@ -144,6 +146,7 @@ class Board:
     def slide_row(self, row, dir, tile_bag):
         """
         Slide column nup or down 1 tile
+
         Parameters:
             row : int
                 (full) board y (tile) coordinate of row
@@ -152,6 +155,10 @@ class Board:
                 0 = up, 2 = down
             tile_bag : TileBag
                 bag of tiles from which random ones can be drawn
+
+        Returns
+            patch_placements : numpy.array(h, w, n)
+                holds all information on the state of the each square on the board.in the 'patch'
         """
         patch_placements = np.empty([1, self.w + 1, self.n], dtype=int)
         if dir == Position.LEFT:
@@ -171,6 +178,7 @@ class Board:
     def slide_col(self, col, dir, tile_bag):
         """
         Slide column nup or down 1 tile
+
         Parameters:
             col : int
                 (full) board x (tile) coordinate of column
@@ -179,6 +187,10 @@ class Board:
                 0 = up, 2 = down
             tile_bag : TileBag
                 bag of tiles from which random ones can be drawn
+
+        Returns
+            patch_placements : numpy.array(h, w, n)
+                holds all information on the state of the each square on the board.in the 'patch'
         """
         patch_placements = np.empty([self.h + 1, 1, self.n], dtype=int)
         if dir == Position.UP:
@@ -299,3 +311,10 @@ if __name__ == "__main__":
     print(f"pos: {pos}  dir: {dir}")
     door = board.check_for_door(pos, dir, tile_set.tiles, next=True)
     print(f"door is {door}")
+
+    print()
+    print(board.placements.shape)
+    print(board.placements.ndim)
+    print(board.placements.shape[0])
+    print(board.placements.shape[1])
+    print(board.placements.shape[2])
