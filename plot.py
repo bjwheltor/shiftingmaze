@@ -18,17 +18,81 @@ from player import *
 
 
 class Plot:
+    """
+    Concerned with the display of the section of the tile board that is visible.
+
+    View Attributes:
+        These are in tile coordinates relative to the top left corner
+        of the field of view (a subset of the full board)
+
+        view_dim : Dimension
+            dimensions of (board) view in tiles (x, y)
+        view_w : int
+            x-dimension of (board) view in tiles
+        view_h : int
+            y-dimension of (board) view in tiles
+        view_half_w : int
+            half of view_w rounded down
+        view_half_h : int
+            half of view_h rounded down
+
+    Board Attributess:
+        These are in tile coordinates relative to the top left corner of the full board
+
+        board_dim :
+            dimensions of (full) board in tiles (x, y)
+        board_w : int
+            x-dimension of (full) board in tiles
+        board_h : int
+            y-dimension of (full) board in tiles
+        n : int
+            number of placement attributes (e.g. Board.TILE, Board.ROT)
+        board_half_w  : int
+            half of board_w rounded down
+        board_half_h : int
+            half of board_h rounded down
+        board_mid_pos : Position
+            mid point of board in tile coordinates (x, y)
+        centred_move_rect: pygame.Rect
+            rectangle defining the board area in which 'centred movement' occurs
+        shift_pos : Position
+            x, y coordinates for (full) board of top left corner of (board) view
+
+    Plot Attributes:
+        These are in pixel coordinates relative to the top left corner of the display window
+
+        board : pygame.Surface
+            display window forming (board) view
+        tile_size : int
+            dimension of (square) tiles in pixels
+        plot_w : int
+            x-dimension of plot area (pixels)
+        plot_h : int
+            y-dimension of plot area (pixels)
+        plot_dim : Dimensions
+            dimensions of plot area in pixels (x, y)
+        board_colour : Colour tuple
+            default colour of board ( (0, 0, 0) = BLACK )
+        tile_colour : Colour tuple
+            default colour of tile ( (150, 150, 255) = BLUE )
+        empty_tile : pygame.Surface
+            tile sized surface with the default board colour
+    """
+
     def __init__(self, view_dim, placements, tiles, shift_pos=None):
         """
-        view_dim : Position
-            dimensions of (board) view in tiles (x, y)
-        placements : numpy.array(h, w, n)
-            holds all information on the state of the each square on the board.
-            h is the y dimension
-            w is the x dimension
-            n is the board square attribute:
-        tile_size : integer
-            Length of one edge of a square tile
+        Set-up view of board displaying tiles
+
+        Parameters
+            view_dim : Position
+                dimensions of (board) view in tiles (x, y)
+            placements : numpy.array(h, w, n)
+                holds all information on the state of the each square on the board.
+                h is the y dimension
+                w is the x dimension
+                n is the board square attribute
+            tiles : TileSet
+                Details of the set of tiles being used
 
         Keywords:
             shift_pos : Position
@@ -40,12 +104,10 @@ class Plot:
         self.view_half_w = self.view_w // 2
         self.view_half_h = self.view_h // 2
 
-        #### NEW CODE
         self.board_h = placements.shape[0]
         self.board_w = placements.shape[1]
         self.n = placements.shape[2]
         self.board_dim = Dimensions(self.board_w, self.board_h)
-        ###
         self.board_half_w = self.board_w // 2
         self.board_half_h = self.board_h // 2
         self.board_mid_pos = Position(self.board_half_w, self.board_half_h)
@@ -103,6 +165,10 @@ class Plot:
         pygame.display.set_caption("Shifting Maze")
 
     def sign(self, x):
+        """
+        Return the sign in the form +1 or -1 (or 0 for a ) input
+        (return the inout form anyhting else)
+        """
         if x > 0:
             return 1
         elif x < 0:
@@ -114,15 +180,21 @@ class Plot:
 
     def get_plot_pos(self, board_pos, shift_pos=None, offset=None):
         """
-        Take tile absolute position and convert to plot position
+        Take tile (full) boaes position and convert to plot position
 
         Parameters:
             board_pos : Position
                 (full) board position in tiles (x, y)
 
+        Keywords:
+            shift_pos : Position
+                (x, y) offset in (full) board coordinates to be applied
+            offset : Position
+                (x, y) offset in plot coordinates to be applied
+
         Returns
             plot_pos : Position
-                image position in pixels (x,y)
+                image position in pixels (x, y)
         """
         if shift_pos is None:
             shift_pos = Position(0, 0)
