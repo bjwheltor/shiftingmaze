@@ -18,12 +18,15 @@ from player import *
 
 
 class Plot:
-    def __init__(self, view_dim, board_dim, tile_size, shift_pos=None):
+    def __init__(self, view_dim, placements, tiles, shift_pos=None):
         """
         view_dim : Position
             dimensions of (board) view in tiles (x, y)
-        board_dim : Position
-            dimensions of (full) board in tiles (x, y)
+        placements : numpy.array(h, w, n)
+            holds all information on the state of the each square on the board.
+            h is the y dimension
+            w is the x dimension
+            n is the board square attribute:
         tile_size : integer
             Length of one edge of a square tile
 
@@ -37,9 +40,12 @@ class Plot:
         self.view_half_w = self.view_w // 2
         self.view_half_h = self.view_h // 2
 
-        self.board_dim = board_dim
-        self.board_w = self.board_dim.w
-        self.board_h = self.board_dim.h
+        #### NEW CODE
+        self.board_h = placements.shape[0]
+        self.board_w = placements.shape[1]
+        self.n = placements.shape[2]
+        self.board_dim = Dimensions(self.board_w, self.board_h)
+        ###
         self.board_half_w = self.board_w // 2
         self.board_half_h = self.board_h // 2
         self.board_mid_pos = Position(self.board_half_w, self.board_half_h)
@@ -56,7 +62,7 @@ class Plot:
         else:
             self.shift_pos = Position(0, 0)
 
-        self.tile_size = tile_size
+        self.tile_size = tiles[0].size
 
         self.plot_w = self.view_w * self.tile_size
         self.plot_h = self.view_h * self.tile_size
@@ -80,8 +86,18 @@ class Plot:
         os.environ["SDL_VIDEO_WINDOW_POS"] = (
             str(SCREEN_X_ORIGIN) + "," + str(SCREEN_Y_ORIGIN)
         )
+
+        # display tiles
         self.board = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
-        self.board.fill(self.board_colour)
+        patch_view_placements = np.empty([self.view_h, self.view_w, self.n], dtype=int)
+        patch_view_placements[...] = placements[
+            self.shift_pos.y : self.shift_pos.y + self.view_h,
+            self.shift_pos.x : self.shift_pos.x + self.view_h,
+            :,
+        ]
+        patch = self.get_patch(patch_view_placements, tiles)
+        print(f"self.shift_pos: {self.shift_pos}")
+        self.board.blit(patch, (0, 0))
 
         pygame.display.flip()
         pygame.display.set_caption("Shifting Maze")
@@ -176,58 +192,6 @@ class Plot:
                 )
 
         return extra_tiles
-
-    def show_all_tiles(self, placements, tiles):
-        """
-        Plot tile in position with orientation
-
-        Parameters:
-            placements : numpy.array(h, w, n)
-                holds all information on the state of the each square on the board.
-            tiles : TileSet.tiles
-                Tiles in use
-        """
-        board_h = placements.shape[0]
-        board_w = placements.shape[1]
-
-        for y in range(board_h):
-            for x in range(board_w):
-                plot_pos = self.get_plot_pos(Position(x, y), shift_pos=self.shift_pos)
-                if plot_pos:
-                    tile_image = tiles[placements[y, x, Board.TILE]].image
-                    rotated_tile_image = pygame.transform.rotate(
-                        tile_image, placements[y, x, Board.ROT] * 90
-                    )
-                    self.board.blit(rotated_tile_image, plot_pos.coords())
-
-        pygame.display.flip()
-
-    def plot_tiles(self, surface, placements, tiles, shift_pos=None, flip=False):
-        """
-        Plot tile in position with orientation on surface
-
-        Parameters:
-            surface : pygame.Surface
-                surface on which tiles are to be plotted (could be main board)
-            placements : numpy.array(h, w, n)
-                holds all information on the state of the each square on the board.
-            tiles : TileSet.tiles
-                Tiles in use
-        """
-        h = placements.shape[0]
-        w = placements.shape[1]
-
-        for y in range(h):
-            for x in range(w):
-                plot_pos = self.get_plot_pos(Position(x, y), shift_pos=shift_pos)
-                if plot_pos:
-                    tile_image = tiles[placements[y, x, Board.TILE]].image
-                    rotated_tile_image = pygame.transform.rotate(
-                        tile_image, placements[y, x, Board.ROT] * 90
-                    )
-                    surface.blit(rotated_tile_image, plot_pos.coords())
-        if flip:
-            pygame.display.flip()
 
     def get_patch(self, placements, tiles):
         """
@@ -816,7 +780,6 @@ class Plot:
             patch_view_placements = np.empty(
                 [patch_view_h, patch_view_w, patch_n], dtype=int
             )
-            print(f"patch_view placements shape: {patch_view_placements.shape}")
             patch_view_placements[...] = patch_placements[
                 :, self.shift_pos.x : self.shift_pos.x + self.view_w + 1, :
             ]
@@ -826,8 +789,6 @@ class Plot:
             patch_view_placements = np.empty(
                 [patch_view_h, patch_view_w, patch_n], dtype=int
             )
-            print(f"patch_view placements shape: {patch_view_placements.shape}")
-            print(f"self.shift_pos.y, self.view_h: {self.shift_pos.y}, {self.view_h}")
             patch_view_placements[...] = patch_placements[
                 self.shift_pos.y : self.shift_pos.y + self.view_h + 1, ...
             ]
@@ -877,12 +838,11 @@ class Plot:
             pygame.time.delay(5)
 
 
-#
+# ===============================
 # Some tests in isolation
-#
+# ===============================
 if __name__ == "__main__":
     # extra imports for testing and initialise
-    from player import *
     from text import *
 
     pygame.init()
@@ -926,14 +886,7 @@ if __name__ == "__main__":
     # Create display
     view_dim = Dimensions(3, 3)
     shift_pos = Position((board.w - view_dim.w) // 2, (board.h - view_dim.h) // 2)
-    plot = Plot(view_dim, board.dim, tile_size, shift_pos)
-    plot.plot_tiles(
-        plot.board,
-        board.placements,
-        tile_set.tiles,
-        shift_pos=plot.shift_pos,
-        flip=True,
-    )
+    plot = Plot(view_dim, board.placements, tile_set.tiles, shift_pos=shift_pos)
 
     # Set player position to be in centre of the board
     # Create player and plot on board
