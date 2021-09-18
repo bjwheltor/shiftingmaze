@@ -166,13 +166,13 @@ class Board:
             patch_placements[0, self.w, Board.TILE] = tile_bag.draw_tile()
             patch_placements[0, self.w, Board.ROT] = random.choice(Position.DIRECTIONS)
             self.placements[row, ...] = patch_placements[0, 1:, :]
-            # put patch_placements[0, 0, Board.TILE] back in bag
+            tile_bag.return_tile(patch_placements[0, 0, Board.TILE])
         elif dir == Position.RIGHT:
             patch_placements[0, 1:, :] = self.placements[row, ...]
             patch_placements[0, 0, Board.TILE] = tile_bag.draw_tile()
             patch_placements[0, 0, Board.ROT] = random.choice(Position.DIRECTIONS)
             self.placements[row, ...] = patch_placements[0, : self.w, :]
-            # put patch_placements[self.h+1, 0, Board.TILE] back in bag
+            tile_bag.return_tile(patch_placements[0, self.w, Board.TILE])
         return patch_placements
 
     def slide_col(self, col, dir, tile_bag):
@@ -198,13 +198,13 @@ class Board:
             patch_placements[self.h, 0, Board.TILE] = tile_bag.draw_tile()
             patch_placements[self.h, 0, Board.ROT] = random.choice(Position.DIRECTIONS)
             self.placements[:, col, :] = patch_placements[1:, 0, :]
-            # put patch_placements[0, 0, Board.TILE] back in bag
+            tile_bag.return_tile(patch_placements[0, 0, Board.TILE])
         elif dir == Position.DOWN:
             patch_placements[1:, 0, :] = self.placements[:, col, :]
             patch_placements[0, 0, Board.TILE] = tile_bag.draw_tile()
             patch_placements[0, 0, Board.ROT] = random.choice(Position.DIRECTIONS)
             self.placements[:, col, :] = patch_placements[: self.h, 0, :]
-            # put patch_placements[0, self.h+1, Board.TILE] back in bag
+            tile_bag.return_tile(patch_placements[self.h, 0, Board.TILE])
         return patch_placements
 
     def __str__(self):
