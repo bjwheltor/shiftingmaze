@@ -162,7 +162,7 @@ class Board:
         """
         patch_placements = np.empty([1, self.w + 1, self.n], dtype=int)
         if dir == Position.LEFT:
-            patch_placements[0, : self.w, :] = board.placements[row, ...]
+            patch_placements[0, : self.w, :] = self.placements[row, ...]
             patch_placements[0, self.w, Board.TILE] = tile_bag.draw_tile()
             patch_placements[0, self.w, Board.ROT] = random.choice(Position.DIRECTIONS)
             self.placements[row, ...] = patch_placements[0, 1:, :]
