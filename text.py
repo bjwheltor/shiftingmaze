@@ -4,6 +4,7 @@ Provide text output as game info and for debugging
 History
 30-Aug-2021 - Initial version
 """
+from board import *
 
 
 class Text:
@@ -19,10 +20,9 @@ class Text:
 
     def player_state(self, player, plot, board, tile_set):
         """ """
-        pos = player.pos.coords(rev=True)
-        placement = board.placements[pos]
-        orientation = board.orientations[pos]
-        doors = tile_set.tiles[placement].doors
+        tiles = board.placements[player.pos.x, player.pos.y, Board.TILE]
+        rots = board.placements[player.pos.x, player.pos.y, Board.ROT]
+        doors = tile_set.tiles[tiles].doors
 
-        print(f"Player pos: {pos}    Plot shift pos: {plot.shift_pos}")
-        print(f"Board tile: {placement} {doors}   orientation: {orientation}\n")
+        print(f"Player pos: {player.pos}    Plot shift pos: {plot.shift_pos}")
+        print(f"Board tile: {tiles} {doors}   orientation: {rots}\n")

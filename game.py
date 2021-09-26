@@ -64,16 +64,15 @@ tile_size = tile_set.tiles[0].size
 
 # Set (full) board dimensions in tiles using Position - must be an odd numbers
 # Create board and fill with tiles from tile bag
-board_dim = Dimensions(15, 15)
+board_dim = Dimensions(7, 7)
 board = Board(board_dim, tile_bag=tile_bag)
 
 # Set (board) view dimensions in tiles using Position - must be an odd numbers
 # Set shift to centre view in the middle of the full boaes
 # Create display
-view_dim = Dimensions(9, 9)
+view_dim = Dimensions(5, 5)
 shift_pos = Position((board.w - view_dim.w) // 2, (board.h - view_dim.h) // 2)
-plot = Plot(view_dim, board.dim, tile_size, shift_pos)
-plot.show_all_tiles(board.placements, board.orientations, tile_set.tiles)
+plot = Plot(view_dim, board.placements, tile_set.tiles, shift_pos=shift_pos)
 
 # Set player position to be in centre of the board
 # Create player and plot on board
@@ -81,7 +80,7 @@ player_pos = Position(shift_pos.x + (view_dim.w // 2), shift_pos.y + (view_dim.h
 player_name = "Bruce"
 player_number = 1
 player_colour = GREEN
-start_tile = tile_set.tiles[board.placements[player_pos.x, player_pos.y]]
+start_tile = tile_set.tiles[0]
 
 player = Player(player_name, player_number, player_colour, player_pos, start_tile)
 plot.show_player(player)
@@ -94,8 +93,89 @@ print(board)
 print("Game Start")
 text.player_state(player, plot, board, tile_set)
 
+## NEW GAME LOOP CODE
 running = True
-# Gaming loop
+
+while running:
+
+    pygame.display.update()
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                running = False
+
+            elif event.key in MOVE_KEYS:
+
+                tile = tile_set.tiles[
+                    board.placements[player.pos.y, player.pos.x, Board.TILE]
+                ]
+                rot = board.placements[player.pos.y, player.pos.x, Board.ROT]
+
+                if event.key == pygame.K_UP:
+                    dir = Position.UP
+                elif event.key == pygame.K_LEFT:
+                    dir = Position.LEFT
+                elif event.key == pygame.K_DOWN:
+                    dir = Position.DOWN
+                elif event.key == pygame.K_RIGHT:
+                    dir = Position.RIGHT
+
+                # moving off edge of board
+                if plot.is_moving_off_board(player.pos, dir):
+                    print(f"Bounce off edge of board - direction: {dir}")
+                    plot.bounce_player_free(player, dir, tile, rot, next=True)
+                # no door in current room in direction of intended movement
+                # TODO: add centred bounce
+                elif not board.check_for_door(player.pos, dir, tile_set.tiles):
+                    print(f"Bounce off door in current room - direction: {dir}")
+                    plot.bounce_player_free(player, dir, tile, rot)
+
+                # no door in next roon in direction of intended movement
+                # TODO: add centred bounce
+                elif not board.check_for_door(
+                    player.pos, dir, tile_set.tiles, next=True
+                ):
+                    print(f"Bounce off door in next room - direction: {dir}")
+                    plot.bounce_player_free(player, dir, tile, rot, next=True)
+
+                # movement is possible
+                else:
+                    if plot.is_centred_move(player.pos, dir):
+                        print(f"Centred move - direction: {dir}")
+                        plot.move_player_centred(
+                            player, dir, board.placements, tile_set.tiles
+                        )
+                    else:
+                        print(f"Free move - direction: {dir}")
+                        plot.move_player_free(
+                            player, dir, board.placements, tile_set.tiles
+                        )
+                    player.pos.move(dir)
+
+            elif event.key in ROTATE_KEYS:
+                if event.key == pygame.K_z:
+                    rotation = 1
+                elif event.key == pygame.K_x:
+                    rotation = -1
+                plot.rotate_tile(player.pos, rotation)
+                board.rotate_tile(player.pos, rotation)
+
+            tile = tile_set.tiles[
+                board.placements[player.pos.y, player.pos.x, Board.TILE]
+            ]
+            rot = board.placements[player.pos.y, player.pos.x, Board.ROT]
+            doors = tile.doors
+            print(f"Player pos: {player.pos}    Plot shift pos: {plot.shift_pos}")
+            print(f"Current tile: {tile.number} {doors}   rotation: {rot}\n")
+
+
+# Old Gaming loop code
+
+running = True
+
 while running:
 
     pygame.display.update()
@@ -104,27 +184,50 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         elif event.type == RANDOM:
+            text.player_state(player, plot, board, tile_set)
             random_event = random.choice([0])
             if random_event == 0:
-                direction = random.choice(Position.DIRECTIONS)
-                patch_len = 1
-                if direction == Position.UP or direction == Position.DOWN:
-                    # patch_board_start = random.choice(range(board.h))
-                    patch_board_start = random.choice([6, 7, 8])
-                elif direction == Position.RIGHT or direction == Position.LEFT:
-                    # patch_board_start = random.choice(range(board.w))
-                    patch_board_start = random.choice([6, 7, 8])
+                dir = random.choice(Position.DIRECTIONS)
+                if dir == Position.RIGHT or dir == Position.LEFT:
+                    col_or_row = random.choice(
+                        range(shift_pos.y, shift_pos.y + plot.view_h)
+                    )
+                    print("\nSlide row")
+                    print(f"row: {col_or_row}  dir: {dir}")
+                    patch_placements = board.slide_row(col_or_row, dir, tile_bag)
+                    if player.pos.y == col_or_row:
+                        move_player = Player.MOVE_WITH_TILES
+                    else:
+                        move_player = Player.DO_NOT_MOVE
+                elif dir == Position.UP or dir == Position.DOWN:
+                    col_or_row = random.choice(
+                        range(shift_pos.x, shift_pos.x + plot.view_w)
+                    )
+                    print("\nSlide column")
+                    print(f"col: {col_or_row}  dir: {dir}")
+                    patch_placements = board.slide_col(col_or_row, dir, tile_bag)
+                    if player.pos.x == col_or_row:
+                        move_player = Player.MOVE_WITH_TILES
+                    else:
+                        move_player = Player.DO_NOT_MOVE
+                print(board)
                 plot.slide_tiles(
-                    patch_board_start,
-                    patch_len,
-                    direction,
-                    board,
-                    player,
+                    patch_placements,
+                    dir,
+                    col_or_row,
                     tile_set.tiles,
-                    tile_bag,
-                    move_board=True,
-                    move_player=Player.MOVE_WITH_TILES,
+                    player,
+                    move_player,
                 )
+                # Re-adjust view of board so player is in middle - need to:
+                ## ADD CHECK FOR RE-CENTRING BEING SENSIBLE (i.e. shift_pos > 0)
+                if move_player == Player.MOVE_WITH_TILES:
+                    player.pos.move(dir)
+                    dir_corr = (dir + 2) % 4
+                    plot.move_player_centred(
+                        player, dir_corr, board.placements, tile_set.tiles, move_player
+                    )
+                    plot.shift_pos.move(dir)
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
@@ -140,7 +243,6 @@ while running:
 
                 next_position = player.pos.get_next(direction)
 
-                orientation = board.orientations[player.pos.y, player.pos.x]
                 placement = board.placements[player.pos.y, player.pos.x]
                 tile = tile_set.tiles[placement]
                 # no door in current room in direction of intended movement
@@ -165,7 +267,6 @@ while running:
                         player,
                         direction,
                         board.placements,
-                        board.orientations,
                         tile_set.tiles,
                     )
                     player.pos.move(direction)

@@ -112,6 +112,8 @@ class Plot:
         self.board_half_h = self.board_h // 2
         self.board_mid_pos = Position(self.board_half_w, self.board_half_h)
 
+        self.board_rect = pygame.Rect(0, 0, self.board_w, self.board_h)
+
         self.centred_move_rect = pygame.Rect(
             self.view_half_w,
             self.view_half_h,
@@ -206,388 +208,48 @@ class Plot:
         )
         return plot_pos
 
-    def get_extra_tiles(
-        self,
-        placements,
-        orientations,
-        tiles,
-        row_selection=None,
-        column_selection=None,
-    ):
-        """
-        Plot tile in position with orientation
-
-        Parameters:
-            placements : numpy.array(width, height)
-                Tile number at each position of the board
-            orientations : numpy.array(width, height)
-                Orientation of tile at each position on the board.
-                0 = no rotation, 1 = 90 degrees rotation anticlockwise
-                2 = 180 degrees rotation, 3 = 90 degrees rotation clockwise
-            tiles : TileSet.tiles
-                Tiles in use
-            row_selection : int
-                If not None then indicates y coordinate of row to be returned
-                (e.g. -1 for row above (board) view, self.view_h for row below board)
-            column_selection : int
-                If not None then indicates x coordinate of column to be returned
-                (e.g. -1 for column to left of (board) view, self.view_w for column to right of board)
-
-        Returns
-            extra_tiles : pygame.Surface
-                Image of row or column with the required tile images
-        """
-        row_length = 1
-        column_length = 1
-        if row_selection is not None:
-            row_length = self.view_w
-            column_selection = 0
-        elif column_selection is not None:
-            column_length = self.view_h
-            row_selection = 0
-
-        extra_tiles = pygame.Surface(
-            (row_length * self.tile_size, column_length * self.tile_size),
-            pygame.SRCALPHA,
-        )
-
-        for x in range(row_length):
-            for y in range(column_length):
-                board_x = x + self.shift_pos.x + column_selection
-                board_y = y + self.shift_pos.y + row_selection
-                number = placements[board_y, board_x]
-                image = tiles[number].image
-                orientation = orientations[board_y, board_x]
-                rotated_image = pygame.transform.rotate(image, orientation * 90)
-                extra_tiles.blit(
-                    rotated_image, (x * self.tile_size, y * self.tile_size)
-                )
-
-        return extra_tiles
-
-    def get_patch(self, placements, tiles):
-        """
-        Plot tile in position with orientation on surface
-
-        Parameters:
-            placements : numpy.array(h, w, n)
-                holds all information on the state of the each square for patch
-            tiles : TileSet.tiles
-                Tiles in use
-
-        Returns
-            patch : pygame.Surface
-                image of the patch tiles
-        """
-        h = placements.shape[0]
-        w = placements.shape[1]
-
-        patch = pygame.Surface(
-            (w * self.tile_size, h * self.tile_size), pygame.SRCALPHA
-        )
-
-        for y in range(h):
-            print(f"\n{y}")
-            for x in range(w):
-                print(f"    {x}")
-                plot_pos = self.get_plot_pos(Position(x, y))
-                print(f"        {plot_pos}")
-                tile_image = tiles[placements[y, x, Board.TILE]].image
-                rotated_tile_image = pygame.transform.rotate(
-                    tile_image, placements[y, x, Board.ROT] * 90
-                )
-                patch.blit(rotated_tile_image, plot_pos.coords())
-        return patch
-
-    def rotate_tile(self, board_pos, rotation):
-        """
-        Plot tile in position with orientation
-
-        Parameters:
-            board_pos : Position
-                (full) board position in tiles (x, y)
-            rotation : int
-                rotation to be applied to tile. Either +1 or -1.
-                +1 = 90 degrees anticlockwise. -1 = 90 degrees clockwise
-        """
-        print(f"Action: Rotate tile   rotation: {rotation}")
-
-        start_angle = 0
-        end_angle = rotation * 90
-        angle_inc = self.sign(end_angle - start_angle)
-        end_angle += angle_inc
-
-        plot_pos = self.get_plot_position(board_pos, shift_pos=self.shift_pos)
-        if not plot_pos:
-            return
-
-        # extract tile from the board
-        tile_rect = pygame.Rect(plot_pos.x, plot_pos.y, self.tile_size, self.tile_size)
-        image = pygame.Surface(tile_rect.size, pygame.SRCALPHA)
-        image.blit(self.board, (0, 0), tile_rect)
-        image_rect = image.get_rect()
-
-        left_row_rect = pygame.Rect(
-            0, plot_pos.y, plot_pos.x + self.tile_size, self.tile_size
-        )
-        left_row = pygame.Surface(left_row_rect.size)
-        left_row.blit(self.board, (0, 0), left_row_rect)
-        left_row.blit(self.empty_tile, (plot_pos.x, 0))
-
-        right_row_rect = pygame.Rect(
-            plot_pos.x,
-            plot_pos.y,
-            self.plot_w - plot_pos.x + self.tile_size,
-            self.tile_size,
-        )
-        right_row = pygame.Surface(right_row_rect.size)
-        right_row.blit(self.board, (0, 0), right_row_rect)
-        right_row.blit(self.empty_tile, (0, 0))
-
-        top_column_rect = pygame.Rect(
-            plot_pos.x, 0, self.tile_size, plot_pos.y + self.tile_size
-        )
-        top_column = pygame.Surface(top_column_rect.size)
-        top_column.blit(self.board, (0, 0), top_column_rect)
-        top_column.blit(self.empty_tile, (0, plot_pos.y))
-
-        bottom_column_rect = pygame.Rect(
-            plot_pos.x,
-            plot_pos.y,
-            self.tile_size,
-            self.plot_h - plot_pos.y + self.tile_size,
-        )
-        bottom_column = pygame.Surface(bottom_column_rect.size)
-        bottom_column.blit(self.board, (0, 0), bottom_column_rect)
-        bottom_column.blit(self.empty_tile, (0, 0))
-
-        for angle in range(start_angle, end_angle, angle_inc):
-
-            rotated_image = pygame.transform.rotate(image, angle)
-            rotated_image_rect = rotated_image.get_rect()
-
-            rotate_adjust_x = (rotated_image_rect.right - image_rect.right) / 2
-            rotate_adjust_y = (rotated_image_rect.bottom - image_rect.bottom) / 2
-
-            self.board.blit(
-                left_row, (left_row_rect.left - rotate_adjust_x, left_row_rect.top)
-            )
-            self.board.blit(
-                right_row, (right_row_rect.left + rotate_adjust_x, right_row_rect.top)
-            )
-            self.board.blit(
-                top_column,
-                (top_column_rect.left, top_column_rect.top - rotate_adjust_y),
-            )
-            self.board.blit(
-                bottom_column,
-                (bottom_column_rect.left, bottom_column_rect.top + rotate_adjust_y),
-            )
-            self.board.blit(
-                rotated_image,
-                (plot_pos.x - rotate_adjust_x, plot_pos.y - rotate_adjust_y),
-            )
-
-            pygame.display.flip()
-            pygame.time.delay(5)
-
-    def show_player(self, player):
-        """
-        Plot player in position
-
-        Parameters:
-            player: Player
-                player instance
-        """
-        plot_pos = self.get_plot_pos(player.pos, shift_pos=self.shift_pos)
-
-        x = plot_pos.x + player.offset.x
-        y = plot_pos.y + player.offset.y
-
-        background_rect = pygame.Rect(x, y, player.size, player.size)
-        player.background.blit(self.board, (0, 0), background_rect)
-
-        self.board.blit(player.image, (x, y))
-        pygame.display.flip()
-
-    def move_player_free(self, player, direction):
-        """
-        Move player in direction specified, as free move
-
-        Parameters:
-            player: Player
-                player instance
-            direction : int
-                direction in dimich presence of door to be checked.
-                0 = up, 1 = left, 2 = down, 3 = right
-        """
-        plot_pos = self.get_plot_position(player.pos, shift_pos=self.shift_pos)
-
-        player_x = plot_pos.x + player.offset.x
-        player_y = plot_pos.y + player.offset.y
-
-        background_w = self.tile_size
-        background_h = self.tile_size
-        background_x = plot_pos.x
-        background_y = plot_pos.y
-
-        if direction == Position.DOWN or direction == Position.UP:
-            background_h *= 2
-        elif direction == Position.RIGHT or direction == Position.LEFT:
-            background_w *= 2
-
-        if direction == Position.UP:
-            background_y -= self.tile_size
-            player.offset.y += self.tile_size
-        elif direction == Position.LEFT:
-            background_x -= self.tile_size
-            player.offset.x += self.tile_size
-
-        background_tiles = pygame.Surface((background_w, background_h), pygame.SRCALPHA)
-        background_rect = pygame.Rect(
-            background_x, background_y, background_w, background_h
-        )
-        background_tiles.blit(self.board, (0, 0), background_rect)
-        background_tiles.blit(player.background, (player.offset.x, player.offset.y))
-
-        for move in range(0, self.tile_size + 1):
-            self.board.blit(background_tiles, (background_x, background_y))
-            if direction == Position.DOWN:
-                self.board.blit(player.image, (player_x, player_y + move))
-            elif direction == Position.UP:
-                self.board.blit(player.image, (player_x, player_y - move))
-            elif direction == Position.RIGHT:
-                self.board.blit(player.image, (player_x + move, player_y))
-            elif direction == Position.LEFT:
-                self.board.blit(player.image, (player_x - move, player_y))
-            pygame.display.flip()
-
-    def move_player_centred(
-        self,
-        player,
-        direction,
-        placements,
-        orientations,
-        tiles,
-    ):
-        """
-        Move player in direction specified, but maintain in centre of board.
-        i.e. the board appears to move rather than then player.
-
-        Parameters:
-            player: Player
-                player instance
-            direction : int
-                direction in dimich presence of door to be checked.
-                0 = up, 1 = left, 2 = down, 3 = right
-            placements : numpy.array(width, height)
-                tile number at each position of the board
-            orientations : numpy.array(width, height)
-                orientation of tile at each position on the board.
-                0 = no rotation, 1 = 90 degrees rotation anticlockwise
-                2 = 180 degrees rotation, 3 = 90 degrees rotation clockwise
-            tiles : TileSet.tiles
-                Tiles in use
-        """
-        plot_pos = self.get_plot_position(player.pos, shift_pos=self.shift_pos)
-
-        player_x = plot_pos.x + player.offset.x
-        player_y = plot_pos.y + player.offset.y
-
-        background_w = self.plot_w
-        background_h = self.plot_h
-        plot_offset_x = 0
-        plot_offset_y = 0
-        row_selection = None
-        column_selection = None
-
-        if direction == Position.RIGHT or direction == Position.LEFT:
-            background_w += self.tile_size
-        elif direction == Position.DOWN or direction == Position.UP:
-            background_h += self.tile_size
-
-        if direction == Position.UP:
-            plot_offset_y = self.tile_size
-            row_selection = -1
-        elif direction == Position.LEFT:
-            plot_offset_x = self.tile_size
-            column_selection = -1
-        elif direction == Position.DOWN:
-            row_selection = self.view_h
-        elif direction == Position.RIGHT:
-            column_selection = self.view_w
-
-        background_tiles = pygame.Surface((background_w, background_h), pygame.SRCALPHA)
-        self.board.blit(player.background, (player_x, player_y))
-        background_tiles.blit(self.board, (plot_offset_x, plot_offset_y))
-
-        extra_tiles = self.get_extra_tiles(
-            placements,
-            orientations,
-            tiles,
-            row_selection=row_selection,
-            column_selection=column_selection,
-        )
-        if direction == Position.UP or direction == Position.LEFT:
-            background_tiles.blit(extra_tiles, (0, 0))
-        elif direction == Position.DOWN:
-            background_tiles.blit(extra_tiles, (0, self.view_h * self.tile_size))
-        elif direction == Position.RIGHT:
-            background_tiles.blit(extra_tiles, (self.view_w * self.tile_size, 0))
-
-        for move in range(0, self.tile_size + 1):
-            if direction == Position.DOWN:
-                self.board.blit(background_tiles, (0, -move))
-            elif direction == Position.UP:
-                self.board.blit(background_tiles, (0, move - plot_offset_y))
-            elif direction == Position.RIGHT:
-                self.board.blit(background_tiles, (-move, 0))
-            elif direction == Position.LEFT:
-                self.board.blit(background_tiles, (move - plot_offset_x, 0))
-            self.board.blit(player.image, (player_x, player_y))
-            pygame.display.flip()
-
-    def move_player(self, player, direction, placements, orientations, tiles):
+    def is_centred_move(self, player_pos, dir):
         """
         Move player in direction specified, deciding dimether to keep centred of freely move
 
         Parameters:
-            player: Player
-                player instance
-            direction : int
+            player_pos: Position
+                player position
+            dir : int
                 Direction in dimich presence of door to be checked.
-                0 = up, 1 = left, 2 = down, 3 = right
-            placements : numpy.array(width, height)
-                tile number at each position of the board
-            orientations : numpy.array(width, height)
-                orientation of tile at each position on the board.
-                0 = no rotation, 1 = 90 degrees rotation anticlockwise
-                2 = 180 degrees rotation, 3 = 90 degrees rotation clockwise
-            tiles : TileSet.tiles
-                Tiles in use
+                0 = UP, 1 = LEFT, 2 = DOWN, 3 = RIGHT
         """
-
         if (
-            (direction == Position.LEFT or direction == Position.RIGHT)
-            and self.centred_move_rect.collidepoint(player.pos.x, self.board_mid_pos.y)
+            (dir == Position.LEFT or dir == Position.RIGHT)
+            and self.centred_move_rect.collidepoint(player_pos.x, self.board_mid_pos.y)
             and self.centred_move_rect.collidepoint(
-                player.pos.get_next(direction).x, self.board_mid_pos.y
+                player_pos.get_next(dir).x, self.board_mid_pos.y
             )
         ) or (
-            (direction == Position.UP or direction == Position.DOWN)
-            and self.centred_move_rect.collidepoint(self.board_mid_pos.x, player.pos.y)
+            (dir == Position.UP or dir == Position.DOWN)
+            and self.centred_move_rect.collidepoint(self.board_mid_pos.x, player_pos.y)
             and self.centred_move_rect.collidepoint(
-                self.board_mid_pos.x, player.pos.get_next(direction).y
+                self.board_mid_pos.x, player_pos.get_next(dir).y
             )
         ):
-            print(f"Action: Move (centred)    direction: {direction}")
-            self.move_player_centred(player, direction, placements, orientations, tiles)
-            self.shift_pos.move(direction)
+            return True
         else:
-            print(f"Action: Move (free)    direction: {direction}")
-            self.move_player_free(player, direction)
+            return False
 
-    def bounce_player(self, player, direction, tile, orientation, next=None):
+    def is_moving_off_board(self, player_pos, dir):
+        """
+        Move player in direction specified, deciding dimether to keep centred of freely move
+
+        Parameters:
+            player_pos: Position
+                player position
+            dir : int
+                Direction in dimich presence of door to be checked.
+                0 = UP, 1 = LEFT, 2 = DOWN, 3 = RIGHT
+        """
+        return not self.board_rect.collidepoint(player_pos.get_next(dir).coords())
+
+    def bounce_player_free(self, player, dir, tile, rot, next=None):
         """
         Move player in direction specified, deciding dimether to keep centred of freely move
 
@@ -599,25 +261,27 @@ class Plot:
                 0 = up, 1 = left, 2 = down, 3 = right
             tile : Tile
                current tile occupied by player
+            rot : int
+               tile rotation
 
         Keywords:
             next : logical
                 if true check for door coming from next tile
         """
-        plot_pos = self.get_plot_position(player.pos, shift_pos=self.shift_pos)
+        plot_pos = self.get_plot_pos(player.pos, shift_pos=self.shift_pos)
 
         x = plot_pos.x + player.offset.x
         y = plot_pos.y + player.offset.y
 
-        background_tile = pygame.transform.rotate(tile.image, orientation * 90)
+        background_tile = pygame.transform.rotate(tile.image, rot * 90)
 
-        if direction == Position.UP:
+        if dir == Position.UP:
             distance = player.offset.y
-        elif direction == Position.DOWN:
+        elif dir == Position.DOWN:
             distance = self.tile_size - player.size - player.offset.y
-        elif direction == Position.LEFT:
+        elif dir == Position.LEFT:
             distance = player.offset.x
-        elif direction == Position.RIGHT:
+        elif dir == Position.RIGHT:
             distance = self.tile_size - player.size - player.offset.x
 
         if not next:
@@ -625,30 +289,157 @@ class Plot:
 
         for move in range(0, distance):
             self.board.blit(background_tile, plot_pos.coords())
-            if direction == Position.DOWN:
+            if dir == Position.DOWN:
                 self.board.blit(player.image, (x, y + move))
-            elif direction == Position.UP:
+            elif dir == Position.UP:
                 self.board.blit(player.image, (x, y - move))
-            elif direction == Position.RIGHT:
+            elif dir == Position.RIGHT:
                 self.board.blit(player.image, (x + move, y))
-            elif direction == Position.LEFT:
+            elif dir == Position.LEFT:
                 self.board.blit(player.image, (x - move, y))
             pygame.display.flip()
 
         for move in range(distance, 0, -1):
             self.board.blit(background_tile, plot_pos.coords())
-            if direction == Position.DOWN:
+            if dir == Position.DOWN:
                 self.board.blit(player.image, (x, y + move))
-            elif direction == Position.UP:
+            elif dir == Position.UP:
                 self.board.blit(player.image, (x, y - move))
-            elif direction == Position.RIGHT:
+            elif dir == Position.RIGHT:
                 self.board.blit(player.image, (x + move, y))
-            elif direction == Position.LEFT:
+            elif dir == Position.LEFT:
                 self.board.blit(player.image, (x - move, y))
+
+            pygame.display.flip()
+
+    def move_player_centred(self, player, player_dir, placements, tiles):
+        """
+        Move player in direction specified, but maintain in centre of board.
+        i.e. the board appears to move rather than then player.
+
+        Parameters:
+            player: Player
+                player instance
+            player_dir : int
+                direction in which player is moving
+                0 = UP, 1 = LEFT, 2 = DOWN, 3 = RIGHT
+            placements : numpy.array(h, w, n)
+                holds all information on the state of the each square of the board
+            tiles : TileSet.tiles
+                Tiles in use
+        """
+        dir = (player_dir + 2) % 4
+        if dir == Position.RIGHT:
+            patch_placements = np.empty(
+                [self.view_h, self.board_w + 1, self.n], dtype=int
+            )
+            patch_placements[:, 1:, :] = placements[
+                self.shift_pos.y : self.shift_pos.y + self.view_h, ...
+            ]
+            row_or_col = self.shift_pos.y
+        elif dir == Position.LEFT:
+            patch_placements = np.empty(
+                [self.view_h, self.board_w + 1, self.n], dtype=int
+            )
+            patch_placements[:, : self.board_w, :] = placements[
+                self.shift_pos.y : self.shift_pos.y + self.view_h, ...
+            ]
+            row_or_col = self.shift_pos.y
+        elif dir == Position.DOWN:
+            patch_placements = np.empty(
+                [self.board_h + 1, self.view_w, self.n], dtype=int
+            )
+            patch_placements[1:, ...] = placements[
+                :, self.shift_pos.x : self.shift_pos.x + self.view_w, :
+            ]
+            row_or_col = self.shift_pos.x
+        elif dir == Position.UP:
+            patch_placements = np.empty(
+                [self.board_h + 1, self.view_w, self.n], dtype=int
+            )
+            patch_placements[: self.board_h, ...] = placements[
+                :, self.shift_pos.x : self.shift_pos.x + self.view_w, :
+            ]
+            row_or_col = self.shift_pos.x
+
+        self.slide_tiles(
+            patch_placements,
+            dir,
+            row_or_col,
+            tiles,
+            player,
+            move_player=Player.STAY_AS_TILES_MOVE,
+        )
+
+        self.shift_pos.move(player_dir)
+
+    def move_player_free(self, player, dir, placements, tiles):
+        """
+        Move player in direction specified, as free move
+
+        Parameters:
+            player: Player
+                player instance
+            dir : int
+                direction in which player is moving
+                0 = UP, 1 = LEFT, 2 = DOWN, 3 = RIGHT
+            placements : numpy.array(h, w, n)
+                holds all information on the state of the each square of the board
+            tiles : TileSet.tiles
+                Tiles in use
+        """
+        plot_pos = self.get_plot_pos(player.pos, shift_pos=self.shift_pos)
+
+        player_x = plot_pos.x + player.offset.x
+        player_y = plot_pos.y + player.offset.y
+
+        if dir == Position.RIGHT:
+            patch_placements = np.empty([1, 2, self.n], dtype=int)
+            patch_placements[...] = placements[
+                player.pos.y : player.pos.y + 1, player.pos.x : player.pos.x + 2, :
+            ]
+        elif dir == Position.LEFT:
+            patch_placements = np.empty([1, 2, self.n], dtype=int)
+            patch_placements[...] = placements[
+                player.pos.y : player.pos.y + 1, player.pos.x - 1 : player.pos.x + 1, :
+            ]
+        elif dir == Position.DOWN:
+            patch_placements = np.empty([2, 1, self.n], dtype=int)
+            patch_placements[...] = placements[
+                player.pos.y : player.pos.y + 2, player.pos.x : player.pos.x + 1, :
+            ]
+        elif dir == Position.UP:
+            patch_placements = np.empty([2, 1, self.n], dtype=int)
+            patch_placements[...] = placements[
+                player.pos.y - 1 : player.pos.y + 1, player.pos.x : player.pos.x + 1, :
+            ]
+
+        patch = self.get_patch(patch_placements, tiles)
+
+        for move in range(0, self.tile_size + 1):
+            if dir == Position.DOWN:
+                self.board.blit(patch, (plot_pos.x, plot_pos.y))
+                self.board.blit(player.image, (player_x, player_y + move))
+            elif dir == Position.UP:
+                self.board.blit(patch, (plot_pos.x, plot_pos.y - self.tile_size))
+                self.board.blit(player.image, (player_x, player_y - move))
+            elif dir == Position.RIGHT:
+                self.board.blit(patch, (plot_pos.x, plot_pos.y))
+                self.board.blit(player.image, (player_x + move, player_y))
+            elif dir == Position.LEFT:
+                self.board.blit(patch, (plot_pos.x - self.tile_size, plot_pos.y))
+                self.board.blit(player.image, (player_x - move, player_y))
+
             pygame.display.flip()
 
     def slide_tiles(
-        self, patch_placements, dir, row_or_col, tiles, player=None, move_player=0
+        self,
+        patch_placements,
+        dir,
+        row_or_col,
+        tiles,
+        player=None,
+        move_player=Player.DO_NOT_MOVE,
     ):
         """
         Slide a section of the board in specificed direction
@@ -728,7 +519,7 @@ class Plot:
         delta_plot_y = 0
 
         # Slide the patch, overplotting the player if required
-        for move in range(self.tile_size):
+        for move in range(self.tile_size + 1):
             if dir == Position.RIGHT:
                 delta_plot_x = move
             elif dir == Position.LEFT:
@@ -751,6 +542,507 @@ class Plot:
 
             pygame.display.flip()
             pygame.time.delay(5)
+
+    def get_patch(self, placements, tiles):
+        """
+        Plot tile in position with orientation on surface
+
+        Parameters:
+            placements : numpy.array(h, w, n)
+                holds all information on the state of the each square for patch
+            tiles : TileSet.tiles
+                Tiles in use
+
+        Returns
+            patch : pygame.Surface
+                image of the patch tiles
+        """
+        h = placements.shape[0]
+        w = placements.shape[1]
+
+        patch = pygame.Surface(
+            (w * self.tile_size, h * self.tile_size), pygame.SRCALPHA
+        )
+
+        for y in range(h):
+            for x in range(w):
+                plot_pos = self.get_plot_pos(Position(x, y))
+                tile_image = tiles[placements[y, x, Board.TILE]].image
+                rotated_tile_image = pygame.transform.rotate(
+                    tile_image, placements[y, x, Board.ROT] * 90
+                )
+                patch.blit(rotated_tile_image, plot_pos.coords())
+        return patch
+
+    def rotate_tile(self, board_pos, rotation):
+        """
+        Plot tile in position with orientation
+
+        Parameters:
+            board_pos : Position
+                (full) board position in tiles (x, y)
+            rotation : int
+                rotation to be applied to tile. Either +1 or -1.
+                +1 = 90 degrees anticlockwise. -1 = 90 degrees clockwise
+        """
+        print(f"Action: Rotate tile   rotation: {rotation}")
+
+        start_angle = 0
+        end_angle = rotation * 90
+        angle_inc = self.sign(end_angle - start_angle)
+        end_angle += angle_inc
+
+        plot_pos = self.get_plot_pos(board_pos, shift_pos=self.shift_pos)
+        if not plot_pos:
+            return
+
+        # extract tile from the board
+        tile_rect = pygame.Rect(plot_pos.x, plot_pos.y, self.tile_size, self.tile_size)
+        image = pygame.Surface(tile_rect.size, pygame.SRCALPHA)
+        image.blit(self.board, (0, 0), tile_rect)
+        image_rect = image.get_rect()
+
+        left_row_rect = pygame.Rect(
+            0, plot_pos.y, plot_pos.x + self.tile_size, self.tile_size
+        )
+        left_row = pygame.Surface(left_row_rect.size)
+        left_row.blit(self.board, (0, 0), left_row_rect)
+        left_row.blit(self.empty_tile, (plot_pos.x, 0))
+
+        right_row_rect = pygame.Rect(
+            plot_pos.x,
+            plot_pos.y,
+            self.plot_w - plot_pos.x + self.tile_size,
+            self.tile_size,
+        )
+        right_row = pygame.Surface(right_row_rect.size)
+        right_row.blit(self.board, (0, 0), right_row_rect)
+        right_row.blit(self.empty_tile, (0, 0))
+
+        top_column_rect = pygame.Rect(
+            plot_pos.x, 0, self.tile_size, plot_pos.y + self.tile_size
+        )
+        top_column = pygame.Surface(top_column_rect.size)
+        top_column.blit(self.board, (0, 0), top_column_rect)
+        top_column.blit(self.empty_tile, (0, plot_pos.y))
+
+        bottom_column_rect = pygame.Rect(
+            plot_pos.x,
+            plot_pos.y,
+            self.tile_size,
+            self.plot_h - plot_pos.y + self.tile_size,
+        )
+        bottom_column = pygame.Surface(bottom_column_rect.size)
+        bottom_column.blit(self.board, (0, 0), bottom_column_rect)
+        bottom_column.blit(self.empty_tile, (0, 0))
+
+        for angle in range(start_angle, end_angle, angle_inc):
+
+            rotated_image = pygame.transform.rotate(image, angle)
+            rotated_image_rect = rotated_image.get_rect()
+
+            rotate_adjust_x = (rotated_image_rect.right - image_rect.right) / 2
+            rotate_adjust_y = (rotated_image_rect.bottom - image_rect.bottom) / 2
+
+            self.board.blit(
+                left_row, (left_row_rect.left - rotate_adjust_x, left_row_rect.top)
+            )
+            self.board.blit(
+                right_row, (right_row_rect.left + rotate_adjust_x, right_row_rect.top)
+            )
+            self.board.blit(
+                top_column,
+                (top_column_rect.left, top_column_rect.top - rotate_adjust_y),
+            )
+            self.board.blit(
+                bottom_column,
+                (bottom_column_rect.left, bottom_column_rect.top + rotate_adjust_y),
+            )
+            self.board.blit(
+                rotated_image,
+                (plot_pos.x - rotate_adjust_x, plot_pos.y - rotate_adjust_y),
+            )
+
+            pygame.display.flip()
+            pygame.time.delay(5)
+
+    ## OLD CODE
+
+    def get_extra_tiles(
+        self,
+        placements,
+        orientations,
+        tiles,
+        row_selection=None,
+        column_selection=None,
+    ):
+        """
+        Plot tile in position with orientation
+
+        Parameters:
+            placements : numpy.array(width, height)
+                Tile number at each position of the board
+            orientations : numpy.array(width, height)
+                Orientation of tile at each position on the board.
+                0 = no rotation, 1 = 90 degrees rotation anticlockwise
+                2 = 180 degrees rotation, 3 = 90 degrees rotation clockwise
+            tiles : TileSet.tiles
+                Tiles in use
+            row_selection : int
+                If not None then indicates y coordinate of row to be returned
+                (e.g. -1 for row above (board) view, self.view_h for row below board)
+            column_selection : int
+                If not None then indicates x coordinate of column to be returned
+                (e.g. -1 for column to left of (board) view, self.view_w for column to right of board)
+
+        Returns
+            extra_tiles : pygame.Surface
+                Image of row or column with the required tile images
+        """
+        row_length = 1
+        column_length = 1
+        if row_selection is not None:
+            row_length = self.view_w
+            column_selection = 0
+        elif column_selection is not None:
+            column_length = self.view_h
+            row_selection = 0
+
+        extra_tiles = pygame.Surface(
+            (row_length * self.tile_size, column_length * self.tile_size),
+            pygame.SRCALPHA,
+        )
+
+        for x in range(row_length):
+            for y in range(column_length):
+                board_x = x + self.shift_pos.x + column_selection
+                board_y = y + self.shift_pos.y + row_selection
+                number = placements[board_y, board_x]
+                image = tiles[number].image
+                orientation = orientations[board_y, board_x]
+                rotated_image = pygame.transform.rotate(image, orientation * 90)
+                extra_tiles.blit(
+                    rotated_image, (x * self.tile_size, y * self.tile_size)
+                )
+
+        return extra_tiles
+
+    def show_player(self, player):
+        """
+        Plot player in position
+
+        Parameters:
+            player: Player
+                player instance
+        """
+        plot_pos = self.get_plot_pos(player.pos, shift_pos=self.shift_pos)
+
+        x = plot_pos.x + player.offset.x
+        y = plot_pos.y + player.offset.y
+
+        background_rect = pygame.Rect(x, y, player.size, player.size)
+        player.background.blit(self.board, (0, 0), background_rect)
+
+        self.board.blit(player.image, (x, y))
+        pygame.display.flip()
+
+    def move_player_free_old(self, player, direction):
+        """
+        Move player in direction specified, as free move
+
+        Parameters:
+            player: Player
+                player instance
+            direction : int
+                direction in dimich presence of door to be checked.
+                0 = up, 1 = left, 2 = down, 3 = right
+        """
+        plot_pos = self.get_plot_position(player.pos, shift_pos=self.shift_pos)
+
+        player_x = plot_pos.x + player.offset.x
+        player_y = plot_pos.y + player.offset.y
+
+        background_w = self.tile_size
+        background_h = self.tile_size
+        background_x = plot_pos.x
+        background_y = plot_pos.y
+
+        if direction == Position.DOWN or direction == Position.UP:
+            background_h *= 2
+        elif direction == Position.RIGHT or direction == Position.LEFT:
+            background_w *= 2
+
+        if direction == Position.UP:
+            background_y -= self.tile_size
+            player.offset.y += self.tile_size
+        elif direction == Position.LEFT:
+            background_x -= self.tile_size
+            player.offset.x += self.tile_size
+
+        background_tiles = pygame.Surface((background_w, background_h), pygame.SRCALPHA)
+        background_rect = pygame.Rect(
+            background_x, background_y, background_w, background_h
+        )
+        background_tiles.blit(self.board, (0, 0), background_rect)
+        background_tiles.blit(player.background, (player.offset.x, player.offset.y))
+
+        for move in range(0, self.tile_size + 1):
+            self.board.blit(background_tiles, (background_x, background_y))
+            if direction == Position.DOWN:
+                self.board.blit(player.image, (player_x, player_y + move))
+            elif direction == Position.UP:
+                self.board.blit(player.image, (player_x, player_y - move))
+            elif direction == Position.RIGHT:
+                self.board.blit(player.image, (player_x + move, player_y))
+            elif direction == Position.LEFT:
+                self.board.blit(player.image, (player_x - move, player_y))
+            pygame.display.flip()
+
+    def move_player_centred_old(
+        self,
+        player,
+        dir,
+        placements,
+        tiles,
+    ):
+        """
+        Move player in direction specified, but maintain in centre of board.
+        i.e. the board appears to move rather than then player.
+
+        Parameters:
+            player: Player
+                player instance
+            dir : int
+                direction in dimich presence of door to be checked.
+                0 = UP, 1 = LEFT, 2 = DOWN, 3 = RIGHT
+            placements : numpy.array(h, w, n)
+                holds all information on the state of the each square of the board
+            tiles : TileSet.tiles
+                Tiles in use
+        """
+        plot_pos = self.get_plot_position(player.pos, shift_pos=self.shift_pos)
+
+        player_x = plot_pos.x + player.offset.x
+        player_y = plot_pos.y + player.offset.y
+
+        background_w = self.plot_w
+        background_h = self.plot_h
+        plot_offset_x = 0
+        plot_offset_y = 0
+        row_selection = None
+        column_selection = None
+
+        if direction == Position.RIGHT or direction == Position.LEFT:
+            background_w += self.tile_size
+        elif direction == Position.DOWN or direction == Position.UP:
+            background_h += self.tile_size
+
+        if direction == Position.UP:
+            plot_offset_y = self.tile_size
+            row_selection = -1
+        elif direction == Position.LEFT:
+            plot_offset_x = self.tile_size
+            column_selection = -1
+        elif direction == Position.DOWN:
+            row_selection = self.view_h
+        elif direction == Position.RIGHT:
+            column_selection = self.view_w
+
+        background_tiles = pygame.Surface((background_w, background_h), pygame.SRCALPHA)
+        self.board.blit(player.background, (player_x, player_y))
+        background_tiles.blit(self.board, (plot_offset_x, plot_offset_y))
+
+        extra_tiles = self.get_extra_tiles(
+            placements,
+            orientations,
+            tiles,
+            row_selection=row_selection,
+            column_selection=column_selection,
+        )
+        if direction == Position.UP or direction == Position.LEFT:
+            background_tiles.blit(extra_tiles, (0, 0))
+        elif direction == Position.DOWN:
+            background_tiles.blit(extra_tiles, (0, self.view_h * self.tile_size))
+        elif direction == Position.RIGHT:
+            background_tiles.blit(extra_tiles, (self.view_w * self.tile_size, 0))
+
+        for move in range(0, self.tile_size + 1):
+            if direction == Position.DOWN:
+                self.board.blit(background_tiles, (0, -move))
+            elif direction == Position.UP:
+                self.board.blit(background_tiles, (0, move - plot_offset_y))
+            elif direction == Position.RIGHT:
+                self.board.blit(background_tiles, (-move, 0))
+            elif direction == Position.LEFT:
+                self.board.blit(background_tiles, (move - plot_offset_x, 0))
+            self.board.blit(player.image, (player_x, player_y))
+            pygame.display.flip()
+
+    def move_player_centred_alsoold(
+        self,
+        player,
+        dir,
+        placements,
+        tiles,
+        move_player=Player.STAY_AS_TILES_MOVE,
+    ):
+        """
+        Move player in direction specified, but maintain in centre of board.
+        i.e. the board appears to move rather than then player.
+
+        Parameters:
+            player: Player
+                player instance
+            dir : int
+                direction in dimich presence of door to be checked.
+                0 = UP, 1 = LEFT, 2 = DOWN, 3 = RIGHT
+            placements : numpy.array(h, w, n)
+                holds all information on the state of the each square of the board
+            tiles : TileSet.tiles
+                Tiles in use
+
+        Keywords
+            move_player : int
+                indicates if and how player position is handled in plotting:
+                0 = DO_NOT_MOVE - no re-plotting of player
+                1 = MOVE_WITH_TILES - player is plotted on patch and moved with it
+                2 = STAY_AS_TILES_MOVE - player stays still as tiles move beneath
+        """
+        if dir == Position.RIGHT:
+            patch_placements = np.empty(
+                [self.view_h, self.board_w + 1, self.n], dtype=int
+            )
+            patch_placements[:, 1:, :] = placements[
+                self.shift_pos.y : self.shift_pos.y + self.view_h, ...
+            ]
+            row_or_col = self.shift_pos.y
+        elif dir == Position.LEFT:
+            patch_placements = np.empty(
+                [self.view_h, self.board_w + 1, self.n], dtype=int
+            )
+            patch_placements[:, : self.board_w, :] = placements[
+                self.shift_pos.y : self.shift_pos.y + self.view_h, ...
+            ]
+            row_or_col = self.shift_pos.y
+        elif dir == Position.DOWN:
+            patch_placements = np.empty(
+                [self.board_h + 1, self.view_w, self.n], dtype=int
+            )
+            patch_placements[1:, ...] = placements[
+                :, self.shift_pos.x : self.shift_pos.x + self.view_w, :
+            ]
+            row_or_col = self.shift_pos.x
+        elif dir == Position.UP:
+            patch_placements = np.empty(
+                [self.board_h + 1, self.view_w, self.n], dtype=int
+            )
+            patch_placements[: self.board_h, ...] = placements[
+                :, self.shift_pos.x : self.shift_pos.x + self.view_w, :
+            ]
+            row_or_col = self.shift_pos.x
+        self.slide_tiles(
+            patch_placements,
+            dir,
+            row_or_col,
+            tiles,
+            player,
+            move_player=move_player,
+        )
+
+    def move_player(self, player, dir, placements, tiles):
+        """
+        Move player in direction specified, deciding dimether to keep centred of freely move
+
+        Parameters:
+            player: Player
+                player instance
+            dir : int
+                Direction in dimich presence of door to be checked.
+                0 = up, 1 = left, 2 = down, 3 = right
+            placements : numpy.array(h, w, n)
+                holds all information on the state of the each square of the board
+            tiles : TileSet.tiles
+                Tiles in use
+        """
+        if (
+            (dir == Position.LEFT or dir == Position.RIGHT)
+            and self.centred_move_rect.collidepoint(player.pos.x, self.board_mid_pos.y)
+            and self.centred_move_rect.collidepoint(
+                player.pos.get_next(dir).x, self.board_mid_pos.y
+            )
+        ) or (
+            (dir == Position.UP or dir == Position.DOWN)
+            and self.centred_move_rect.collidepoint(self.board_mid_pos.x, player.pos.y)
+            and self.centred_move_rect.collidepoint(
+                self.board_mid_pos.x, player.pos.get_next(dir).y
+            )
+        ):
+            print(f"Action: Move (centred)    dir: {dir}")
+            self.move_player_centred(player, dir, placements, tiles)
+            self.shift_pos.move(dir)
+        else:
+            print(f"Action: Move (free)    dir: {dir}")
+            self.move_player_free(player, dir)
+
+    def bounce_player(self, player, direction, tile, orientation, next=None):
+        """
+        Move player in direction specified, deciding dimether to keep centred of freely move
+
+        Parameters:
+            player: Player
+                player instance
+            direction : int
+                direction in dimich presence of door to be checked.
+                0 = up, 1 = left, 2 = down, 3 = right
+            tile : Tile
+               current tile occupied by player
+
+        Keywords:
+            next : logical
+                if true check for door coming from next tile
+        """
+        plot_pos = self.get_plot_position(player.pos, shift_pos=self.shift_pos)
+
+        x = plot_pos.x + player.offset.x
+        y = plot_pos.y + player.offset.y
+
+        background_tile = pygame.transform.rotate(tile.image, orientation * 90)
+
+        if direction == Position.UP:
+            distance = player.offset.y
+        elif direction == Position.DOWN:
+            distance = self.tile_size - player.size - player.offset.y
+        elif direction == Position.LEFT:
+            distance = player.offset.x
+        elif direction == Position.RIGHT:
+            distance = self.tile_size - player.size - player.offset.x
+
+        if not next:
+            distance -= tile.wall_width
+
+        for move in range(0, distance):
+            self.board.blit(background_tile, plot_pos.coords())
+            if direction == Position.DOWN:
+                self.board.blit(player.image, (x, y + move))
+            elif direction == Position.UP:
+                self.board.blit(player.image, (x, y - move))
+            elif direction == Position.RIGHT:
+                self.board.blit(player.image, (x + move, y))
+            elif direction == Position.LEFT:
+                self.board.blit(player.image, (x - move, y))
+            pygame.display.flip()
+
+        for move in range(distance, 0, -1):
+            self.board.blit(background_tile, plot_pos.coords())
+            if direction == Position.DOWN:
+                self.board.blit(player.image, (x, y + move))
+            elif direction == Position.UP:
+                self.board.blit(player.image, (x, y - move))
+            elif direction == Position.RIGHT:
+                self.board.blit(player.image, (x + move, y))
+            elif direction == Position.LEFT:
+                self.board.blit(player.image, (x - move, y))
+            pygame.display.flip()
 
 
 # ===============================
@@ -879,6 +1171,42 @@ if __name__ == "__main__":
     pygame.time.delay(1000)
     # Up
     row = 2
+    dir = Position.UP
+    print("\nSlide row")
+    print(f"row: {row}  dir: {dir}")
+    patch_placements = board.slide_col(row, dir, tile_bag)
+    print(board)
+    plot.slide_tiles(
+        patch_placements,
+        dir,
+        row,
+        tile_set.tiles,
+        player,
+        move_player=Player.MOVE_WITH_TILES,
+    )
+    player.pos.move(dir)
+
+    # Try move off player line
+    pygame.time.delay(1000)
+    # Up
+    row = 1
+    dir = Position.UP
+    print("\nSlide row")
+    print(f"row: {row}  dir: {dir}")
+    patch_placements = board.slide_col(row, dir, tile_bag)
+    print(board)
+    plot.slide_tiles(
+        patch_placements,
+        dir,
+        row,
+        tile_set.tiles,
+        player,
+        move_player=Player.MOVE_WITH_TILES,
+    )
+    player.pos.move(dir)
+    pygame.time.delay(1000)
+    # Up
+    row = 3
     dir = Position.UP
     print("\nSlide row")
     print(f"row: {row}  dir: {dir}")
