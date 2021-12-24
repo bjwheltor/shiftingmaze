@@ -185,11 +185,11 @@ class TileBag:
         random.shuffle(self.tile_numbers)
 
     def draw_tile(self):
-        """Draw a single tile from the bag
+        """
+        Draw a single tile from the bag
 
         Parameters
-            number : int
-                Number of tiles to be drawn. Default = 1
+            none
 
         Returns
             tile_number : int
@@ -198,7 +198,8 @@ class TileBag:
         return self.tile_numbers.pop()
 
     def draw_tiles(self, number=1):
-        """Draw a number tiles from the bag
+        """
+        Draw a number tiles from the bag
 
         Parameters
             number : int
@@ -212,6 +213,17 @@ class TileBag:
         for n in range(number):
             tile_list.append(self.draw_tile())
         return tile_list
+
+    def return_tile(self, tile_number):
+        """
+        Return a single tile to the bag and shuffle
+
+        Parameters
+            tile_number : int
+                Number of tile drawn
+        """
+        self.tile_numbers.append(tile_number)
+        self.mix()
 
     def __repr__(self):
         """Display tile bag"""

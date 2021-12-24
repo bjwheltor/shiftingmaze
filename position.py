@@ -17,6 +17,7 @@ class Position:
             y-coordinate
     """
 
+    DIRECTIONS = [0, 1, 2, 3]
     UP = 0
     LEFT = 1
     DOWN = 2
@@ -128,19 +129,28 @@ class Dimensions:
         """
         self.w = w
         self.h = h
+        self.size = self.w * self.h
 
-    def coords(self):
+    def coords(self, rev=None):
         """
         Return position as a tuple
 
         Parameters
             none
 
+        Keywords
+            rev: bool
+                true is dimension order to be reversed, i.e. (h, w) rather then (w, h)
+
         Returns
-            wh : tuple
+            coords : tuple
                 dimensions as a tuple
         """
-        return (self.w, self.h)
+        if rev:
+            coord = (self.h, self.xw)
+        else:
+            coords = (self.w, self.h)
+        return coords
 
     def __repr__(self):
         """Display dimemsions"""
