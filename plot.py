@@ -10,6 +10,7 @@ import sys
 from numpy.core.fromnumeric import nonzero
 import pygame
 import numpy as np
+from pygame.display import update
 
 from tiles import *
 from board import *
@@ -78,6 +79,10 @@ class Plot:
         empty_tile : pygame.Surface
             tile sized surface with the default board colour
     """
+
+    FULLVIEW = 0
+    VIEWROW = 1
+    VIEWCOL = 2
 
     def __init__(self, view_dim, placements, tiles, shift_pos=None):
         """
@@ -439,7 +444,7 @@ class Plot:
         row_or_col,
         tiles,
         player=None,
-        move_player=Player.DO_NOT_MOVE,
+        player_move_type=Player.DO_NOT_MOVE,
     ):
         """
         Slide a section of the board in specificed direction
@@ -450,7 +455,7 @@ class Plot:
                 The coordinates are full board and describe the patch over the full board,
                 not just the view of the board.
             dir : int
-                direction in dimich presence of door to be checked.
+                direction in which to slide tiles
                 0 = UP, 1 = LEFT, 2 = DOWN, 3 = RIGHT
             row_or_col : int
                 (full) board x or y (tile) coordinate
@@ -460,19 +465,28 @@ class Plot:
         Keywords
             player : Player
                 player information, provided if required
-            move_player : int
+            player_move_type : int
                 indicates if and how player position is handled in plotting:
                 0 = DO_NOT_MOVE - no re-plotting of player
                 1 = MOVE_WITH_TILES - player is plotted on patch and moved with it
                 2 = STAY_AS_TILES_MOVE - player stays still as tiles move beneath
         """
+        """
         patch_h = patch_placements.shape[0]
         patch_w = patch_placements.shape[1]
         patch_n = patch_placements.shape[2]
 
-        if (
-            move_player == Player.MOVE_WITH_TILES
-            or move_player == Player.STAY_AS_TILES_MOVE
+        if player_move_type == Player.STAY_WITH_LINE_OF_TILES:
+            player_plot_tile = self.get_plot_pos(player.pos, shift_pos=self.shift_pos)
+            if dir == Position.RIGHT or dir == Position.LEFT:
+                fixed_line_view = pygame.Surface((self.plot_w, self.tile_size), pygame.SRCALPHA)
+                fixed_line_view.blit(self.board, (0.0), (0, player_plot_tile.y, self.plot_w, self.tile_size))
+            elif dir == Position.UP or dir == Position.DOWN:
+                fixed_line_view = pygame.Surface((self.tile_size, self.plot_h), pygame.SRCALPHA)
+                fixed_line_view.blit(self.board, (0.0), (player_plot_tile.x, 0, self.tile_size, self.plot_h)
+        elif (
+            player_move_type == Player.MOVE_WITH_TILES
+            or player_move_type == Player.STAY_AS_TILES_MOVE
         ):
             player_plot_pos = self.get_plot_pos(
                 player.pos, shift_pos=self.shift_pos, offset=player.offset
@@ -529,7 +543,7 @@ class Plot:
             elif dir == Position.UP:
                 delta_plot_y = -move
             self.board.blit(patch, (plot_x + delta_plot_x, plot_y + delta_plot_y))
-            if move_player == Player.MOVE_WITH_TILES:
+            if player_move_type == Player.MOVE_WITH_TILES:
                 self.board.blit(
                     player.image,
                     (
@@ -537,42 +551,12 @@ class Plot:
                         player_plot_pos.y + delta_plot_y,
                     ),
                 )
-            elif move_player == Player.STAY_AS_TILES_MOVE:
+            elif player_move_type == Player.STAY_AS_TILES_MOVE:
                 self.board.blit(player.image, player_plot_pos.coords())
 
             pygame.display.flip()
             pygame.time.delay(5)
-
-    def get_patch(self, placements, tiles):
         """
-        Plot tile in position with orientation on surface
-
-        Parameters:
-            placements : numpy.array(h, w, n)
-                holds all information on the state of the each square for patch
-            tiles : TileSet.tiles
-                Tiles in use
-
-        Returns
-            patch : pygame.Surface
-                image of the patch tiles
-        """
-        h = placements.shape[0]
-        w = placements.shape[1]
-
-        patch = pygame.Surface(
-            (w * self.tile_size, h * self.tile_size), pygame.SRCALPHA
-        )
-
-        for y in range(h):
-            for x in range(w):
-                plot_pos = self.get_plot_pos(Position(x, y))
-                tile_image = tiles[placements[y, x, Board.TILE]].image
-                rotated_tile_image = pygame.transform.rotate(
-                    tile_image, placements[y, x, Board.ROT] * 90
-                )
-                patch.blit(rotated_tile_image, plot_pos.coords())
-        return patch
 
     def rotate_tile(self, board_pos, rotation):
         """
@@ -666,16 +650,6 @@ class Plot:
             pygame.display.flip()
             pygame.time.delay(5)
 
-    ## OLD CODE
-
-    def get_extra_tiles(
-        self,
-        placements,
-        orientations,
-        tiles,
-        row_selection=None,
-        column_selection=None,
-    ):
         """
         Plot tile in position with orientation
 
@@ -746,65 +720,43 @@ class Plot:
         self.board.blit(player.image, (x, y))
         pygame.display.flip()
 
-    def move_player_free_old(self, player, direction):
-        """
-        Move player in direction specified, as free move
+    """
+    def slide_row_free()
 
-        Parameters:
-            player: Player
-                player instance
-            direction : int
-                direction in dimich presence of door to be checked.
-                0 = up, 1 = left, 2 = down, 3 = right
-        """
-        plot_pos = self.get_plot_position(player.pos, shift_pos=self.shift_pos)
+                    if dir == Position.RIGHT or dir == Position.LEFT:
+                    row = random.choice(
+                        range(shift_pos.y, shift_pos.y + plot.view_h)
+                    )
+                    print("\Slide row")
+                    print(f"row: {col_or_row}  dir: {dir}")
+                    patch_placements = board.slide_row(col_or_row, dir, tile_bag)
+                    if player.pos.y == col_or_row:
+                        move_player = Player.MOVE_WITH_TILES
+                    else:
+                        move_player = Player.DO_NOT_MOVE
+                elif dir == Position.UP or dir == Position.DOWN:
+                    col_or_row = random.choice(
+                        range(shift_pos.x, shift_pos.x + plot.view_w)
+                    )
+                    print("Slide column")
+                    print(f"col: {col_or_row}  dir: {dir}")
+                    patch_placements = board.slide_col(col_or_row, dir, tile_bag)
+                    if player.pos.x == col_or_row:
+                        move_player = Player.MOVE_WITH_TILES
+                    else:
+                        move_player = Player.DO_NOT_MOVE
+                print(board)
+                plot.slide_tiles(
+                    patch_placements,
+                    dir,
+                    col_or_row,
+                    tile_set.tiles,
+                    player,
+                    move_player,
+                )
+    """
 
-        player_x = plot_pos.x + player.offset.x
-        player_y = plot_pos.y + player.offset.y
-
-        background_w = self.tile_size
-        background_h = self.tile_size
-        background_x = plot_pos.x
-        background_y = plot_pos.y
-
-        if direction == Position.DOWN or direction == Position.UP:
-            background_h *= 2
-        elif direction == Position.RIGHT or direction == Position.LEFT:
-            background_w *= 2
-
-        if direction == Position.UP:
-            background_y -= self.tile_size
-            player.offset.y += self.tile_size
-        elif direction == Position.LEFT:
-            background_x -= self.tile_size
-            player.offset.x += self.tile_size
-
-        background_tiles = pygame.Surface((background_w, background_h), pygame.SRCALPHA)
-        background_rect = pygame.Rect(
-            background_x, background_y, background_w, background_h
-        )
-        background_tiles.blit(self.board, (0, 0), background_rect)
-        background_tiles.blit(player.background, (player.offset.x, player.offset.y))
-
-        for move in range(0, self.tile_size + 1):
-            self.board.blit(background_tiles, (background_x, background_y))
-            if direction == Position.DOWN:
-                self.board.blit(player.image, (player_x, player_y + move))
-            elif direction == Position.UP:
-                self.board.blit(player.image, (player_x, player_y - move))
-            elif direction == Position.RIGHT:
-                self.board.blit(player.image, (player_x + move, player_y))
-            elif direction == Position.LEFT:
-                self.board.blit(player.image, (player_x - move, player_y))
-            pygame.display.flip()
-
-    def move_player_centred_old(
-        self,
-        player,
-        dir,
-        placements,
-        tiles,
-    ):
+    def slide_row_centred(self, player, player_dir, placements, tiles):
         """
         Move player in direction specified, but maintain in centre of board.
         i.e. the board appears to move rather than then player.
@@ -812,102 +764,16 @@ class Plot:
         Parameters:
             player: Player
                 player instance
-            dir : int
-                direction in dimich presence of door to be checked.
+            player_dir : int
+                direction in which player is moving
                 0 = UP, 1 = LEFT, 2 = DOWN, 3 = RIGHT
             placements : numpy.array(h, w, n)
                 holds all information on the state of the each square of the board
             tiles : TileSet.tiles
                 Tiles in use
         """
-        plot_pos = self.get_plot_position(player.pos, shift_pos=self.shift_pos)
-
-        player_x = plot_pos.x + player.offset.x
-        player_y = plot_pos.y + player.offset.y
-
-        background_w = self.plot_w
-        background_h = self.plot_h
-        plot_offset_x = 0
-        plot_offset_y = 0
-        row_selection = None
-        column_selection = None
-
-        if direction == Position.RIGHT or direction == Position.LEFT:
-            background_w += self.tile_size
-        elif direction == Position.DOWN or direction == Position.UP:
-            background_h += self.tile_size
-
-        if direction == Position.UP:
-            plot_offset_y = self.tile_size
-            row_selection = -1
-        elif direction == Position.LEFT:
-            plot_offset_x = self.tile_size
-            column_selection = -1
-        elif direction == Position.DOWN:
-            row_selection = self.view_h
-        elif direction == Position.RIGHT:
-            column_selection = self.view_w
-
-        background_tiles = pygame.Surface((background_w, background_h), pygame.SRCALPHA)
-        self.board.blit(player.background, (player_x, player_y))
-        background_tiles.blit(self.board, (plot_offset_x, plot_offset_y))
-
-        extra_tiles = self.get_extra_tiles(
-            placements,
-            orientations,
-            tiles,
-            row_selection=row_selection,
-            column_selection=column_selection,
-        )
-        if direction == Position.UP or direction == Position.LEFT:
-            background_tiles.blit(extra_tiles, (0, 0))
-        elif direction == Position.DOWN:
-            background_tiles.blit(extra_tiles, (0, self.view_h * self.tile_size))
-        elif direction == Position.RIGHT:
-            background_tiles.blit(extra_tiles, (self.view_w * self.tile_size, 0))
-
-        for move in range(0, self.tile_size + 1):
-            if direction == Position.DOWN:
-                self.board.blit(background_tiles, (0, -move))
-            elif direction == Position.UP:
-                self.board.blit(background_tiles, (0, move - plot_offset_y))
-            elif direction == Position.RIGHT:
-                self.board.blit(background_tiles, (-move, 0))
-            elif direction == Position.LEFT:
-                self.board.blit(background_tiles, (move - plot_offset_x, 0))
-            self.board.blit(player.image, (player_x, player_y))
-            pygame.display.flip()
-
-    def move_player_centred_alsoold(
-        self,
-        player,
-        dir,
-        placements,
-        tiles,
-        move_player=Player.STAY_AS_TILES_MOVE,
-    ):
         """
-        Move player in direction specified, but maintain in centre of board.
-        i.e. the board appears to move rather than then player.
-
-        Parameters:
-            player: Player
-                player instance
-            dir : int
-                direction in dimich presence of door to be checked.
-                0 = UP, 1 = LEFT, 2 = DOWN, 3 = RIGHT
-            placements : numpy.array(h, w, n)
-                holds all information on the state of the each square of the board
-            tiles : TileSet.tiles
-                Tiles in use
-
-        Keywords
-            move_player : int
-                indicates if and how player position is handled in plotting:
-                0 = DO_NOT_MOVE - no re-plotting of player
-                1 = MOVE_WITH_TILES - player is plotted on patch and moved with it
-                2 = STAY_AS_TILES_MOVE - player stays still as tiles move beneath
-        """
+        dir = (player_dir + 2) % 4
         if dir == Position.RIGHT:
             patch_placements = np.empty(
                 [self.view_h, self.board_w + 1, self.n], dtype=int
@@ -940,109 +806,99 @@ class Plot:
                 :, self.shift_pos.x : self.shift_pos.x + self.view_w, :
             ]
             row_or_col = self.shift_pos.x
+
         self.slide_tiles(
             patch_placements,
             dir,
             row_or_col,
             tiles,
             player,
-            move_player=move_player,
+            move_player=Player.STAY_AS_TILES_MOVE,
         )
-
-    def move_player(self, player, dir, placements, tiles):
         """
-        Move player in direction specified, deciding dimether to keep centred of freely move
+
+    def get_board_rect(
+        self, placements, patch_type=None, board_line=None, plus1_dir=None
+    ):
+        """
+        Plot tile in position with orientation on surface
 
         Parameters:
-            player: Player
-                player instance
-            dir : int
-                Direction in dimich presence of door to be checked.
-                0 = up, 1 = left, 2 = down, 3 = right
             placements : numpy.array(h, w, n)
-                holds all information on the state of the each square of the board
-            tiles : TileSet.tiles
-                Tiles in use
-        """
-        if (
-            (dir == Position.LEFT or dir == Position.RIGHT)
-            and self.centred_move_rect.collidepoint(player.pos.x, self.board_mid_pos.y)
-            and self.centred_move_rect.collidepoint(
-                player.pos.get_next(dir).x, self.board_mid_pos.y
-            )
-        ) or (
-            (dir == Position.UP or dir == Position.DOWN)
-            and self.centred_move_rect.collidepoint(self.board_mid_pos.x, player.pos.y)
-            and self.centred_move_rect.collidepoint(
-                self.board_mid_pos.x, player.pos.get_next(dir).y
-            )
-        ):
-            print(f"Action: Move (centred)    dir: {dir}")
-            self.move_player_centred(player, dir, placements, tiles)
-            self.shift_pos.move(dir)
-        else:
-            print(f"Action: Move (free)    dir: {dir}")
-            self.move_player_free(player, dir)
-
-    def bounce_player(self, player, direction, tile, orientation, next=None):
-        """
-        Move player in direction specified, deciding dimether to keep centred of freely move
-
-        Parameters:
-            player: Player
-                player instance
-            direction : int
-                direction in dimich presence of door to be checked.
-                0 = up, 1 = left, 2 = down, 3 = right
-            tile : Tile
-               current tile occupied by player
+                holds all information on the state of the each square for patch
 
         Keywords:
-            next : logical
-                if true check for door coming from next tile
+
+            plus1_dir : int
+                direction in which extend patch by one line
+                0 = UP, 1 = LEFT, 2 = DOWN, 3 = RIGHT
+
+        Returns
+            board_rect : pygame.Rect
+                rectangle describing 'patch' of tiles in board coordinates
         """
-        plot_pos = self.get_plot_position(player.pos, shift_pos=self.shift_pos)
+        if patch_type is None:
+            patch_type = Plot.FULLVIEW
 
-        x = plot_pos.x + player.offset.x
-        y = plot_pos.y + player.offset.y
+        if patch_type == Plot.FULLVIEW:
+            x = self.shift_pos.x
+            y = self.shift_pos.y
+            w = self.view_w
+            h = self.view_w
+        elif patch_type == Plot.VIEWROW:
+            x = self.shift_pos.x
+            y = self.board_line
+            w = self.view_w
+            h = 1
+        elif patch_type == Plot.VIEWCOL:
+            x = self.board_line
+            y = self.shift_pos.y
+            w = 1
+            h = self.view_h
 
-        background_tile = pygame.transform.rotate(tile.image, orientation * 90)
+        if plus1_dir == Position.UP:
+            y -= 1
+            h += 1
+        elif plus1_dir == Position.DOWN:
+            h += 1
+        if plus1_dir == Position.LEFT:
+            x -= 1
+            w += 1
+        elif plus1_dir == Position.DOWN:
+            w += 1
 
-        if direction == Position.UP:
-            distance = player.offset.y
-        elif direction == Position.DOWN:
-            distance = self.tile_size - player.size - player.offset.y
-        elif direction == Position.LEFT:
-            distance = player.offset.x
-        elif direction == Position.RIGHT:
-            distance = self.tile_size - player.size - player.offset.x
+        return pygame.Rect(x, y, w, h)
 
-        if not next:
-            distance -= tile.wall_width
+    def get_patch(self, placements, tiles):
+        """
+        Plot tile in position with orientation on surface
 
-        for move in range(0, distance):
-            self.board.blit(background_tile, plot_pos.coords())
-            if direction == Position.DOWN:
-                self.board.blit(player.image, (x, y + move))
-            elif direction == Position.UP:
-                self.board.blit(player.image, (x, y - move))
-            elif direction == Position.RIGHT:
-                self.board.blit(player.image, (x + move, y))
-            elif direction == Position.LEFT:
-                self.board.blit(player.image, (x - move, y))
-            pygame.display.flip()
+        Parameters:
+            placements : numpy.array(h, w, n)
+                holds all information on the state of the each square for patch
+            tiles : TileSet.tiles
+                Tiles in use
 
-        for move in range(distance, 0, -1):
-            self.board.blit(background_tile, plot_pos.coords())
-            if direction == Position.DOWN:
-                self.board.blit(player.image, (x, y + move))
-            elif direction == Position.UP:
-                self.board.blit(player.image, (x, y - move))
-            elif direction == Position.RIGHT:
-                self.board.blit(player.image, (x + move, y))
-            elif direction == Position.LEFT:
-                self.board.blit(player.image, (x - move, y))
-            pygame.display.flip()
+        Returns
+            patch : pygame.Surface
+                image of the patch tiles
+        """
+        h = placements.shape[0]
+        w = placements.shape[1]
+
+        patch = pygame.Surface(
+            (w * self.tile_size, h * self.tile_size), pygame.SRCALPHA
+        )
+
+        for y in range(h):
+            for x in range(w):
+                plot_pos = self.get_plot_pos(Position(x, y))
+                tile_image = tiles[placements[y, x, Board.TILE]].image
+                rotated_tile_image = pygame.transform.rotate(
+                    tile_image, placements[y, x, Board.ROT] * 90
+                )
+                patch.blit(rotated_tile_image, plot_pos.coords())
+        return patch
 
 
 # ===============================
@@ -1050,7 +906,7 @@ class Plot:
 # ===============================
 if __name__ == "__main__":
     # extra imports for testing and initialise
-    from text import *
+    # none
 
     pygame.init()
 
@@ -1062,16 +918,26 @@ if __name__ == "__main__":
     SLIDE_ROW_KEYS = (pygame.K_q, pygame.K_w)
     SLIDE_COLUMN_KEYS = (pygame.K_p, pygame.K_l)
 
-    # Create a tile set and fixed tile list
-    tileset_name = "test"
-    doors_for_tiles = {
-        0: [1, 1, 1, 1],
-        1: [0, 1, 1, 1],
-        2: [0, 0, 1, 1],
-        3: [0, 1, 0, 1],
-        4: [0, 0, 0, 1],
-    }
-    tile_counts = {0: 40, 1: 140, 2: 80, 3: 80, 4: 20}
+    # Create a tile set and fill tile bag
+    test_tileset = False
+
+    if test_tileset:
+        tileset_name = "test"
+        doors_for_tiles = {
+            0: [1, 1, 1, 1],
+        }
+        tile_counts = {0: 300}
+    else:
+        tileset_name = "standard"
+        doors_for_tiles = {
+            0: [1, 1, 1, 1],
+            1: [0, 1, 1, 1],
+            2: [0, 0, 1, 1],
+            3: [0, 1, 0, 1],
+            4: [0, 0, 0, 1],
+        }
+        tile_counts = {0: 40, 1: 140, 2: 80, 3: 80, 4: 20}
+
     tile_set = TileSet(doors_for_tiles, tile_counts, name=tileset_name)
     tile_bag = TileBag(tile_set)
     tile_size = tile_set.tiles[0].size
@@ -1108,8 +974,6 @@ if __name__ == "__main__":
     player = Player(player_name, player_number, player_colour, player_pos, start_tile)
     plot.show_player(player)
 
-    pygame.time.delay(1000)
-
     #
     # Start Testing
     # print tile set and board set-up for reference
@@ -1117,6 +981,29 @@ if __name__ == "__main__":
     print(tile_set)
     print(board)
 
+    # Test getting patches
+    patch_type = Plot.FULLVIEW
+    plus1_dir = Position.UP
+    board_rect = plot.get_board_rect(
+        board.placements, patch_type=patch_type, plus1_dir=plus1_dir
+    )
+    print(f"Full view + 1 (up) board rect: {board_rect}")
+
+    patch_placements = board.get_patch(board_rect, tile_bag)
+    print(f"\npatch_placements:\n {patch_placements}")
+
+    patch = plot.get_patch(patch_placements, tile_set.tiles)
+    print(f"patch: {patch}")
+    print(f"w: {patch.get_width()}  h: {patch.get_height()}")
+
+    pygame.time.delay(2000)
+
+    plot.board.blit(patch, (0, 0))
+    pygame.display.flip()
+
+    pygame.time.delay(5000)
+    """
+    
     # Test for sliding rows and columns
     # Right
     row = 2
@@ -1231,5 +1118,6 @@ if __name__ == "__main__":
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
+    """
     pygame.quit()
     sys.exit()

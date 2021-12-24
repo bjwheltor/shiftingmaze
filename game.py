@@ -171,28 +171,31 @@ while running:
             print(f"Player pos: {player.pos}    Plot shift pos: {plot.shift_pos}")
             print(f"Current tile: {tile.number} {doors}   rotation: {rot}\n")
 
-
-# Old Gaming loop code
-
-running = True
-
-while running:
-
-    pygame.display.update()
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
         elif event.type == RANDOM:
-            text.player_state(player, plot, board, tile_set)
+            print(f"Random Event")
             random_event = random.choice([0])
             if random_event == 0:
                 dir = random.choice(Position.DIRECTIONS)
                 if dir == Position.RIGHT or dir == Position.LEFT:
-                    col_or_row = random.choice(
-                        range(shift_pos.y, shift_pos.y + plot.view_h)
-                    )
-                    print("\nSlide row")
+                    row = random.choice(range(board.w))
+                    # row not in view
+                    if row < shift_pos.y or row > shift_pos.y + plot.view_h:
+                        board.slide_row_free(col_or_row, dir, tile_bag)
+                    # row on screen but player not on row
+                    elif player.pos.y != row:
+                        move_player = Player.DO_NOT_MOVE
+                        plot.slide_row_free()
+                    # player on row, but free move
+                    elif not plot.is_centred_move(player.pos, dir):
+                        move_player = Player.MOVE_WITH_TILES
+                        plot.slide_row_free()
+                    # player on row, centred move
+                    else:
+                        plot.slide_row_centred()
+
+                if dir == Position.RIGHT or dir == Position.LEFT:
+                    row = random.choice(range(shift_pos.y, shift_pos.y + plot.view_h))
+                    print("\Slide row")
                     print(f"row: {col_or_row}  dir: {dir}")
                     patch_placements = board.slide_row(col_or_row, dir, tile_bag)
                     if player.pos.y == col_or_row:
@@ -203,7 +206,7 @@ while running:
                     col_or_row = random.choice(
                         range(shift_pos.x, shift_pos.x + plot.view_w)
                     )
-                    print("\nSlide column")
+                    print("Slide column")
                     print(f"col: {col_or_row}  dir: {dir}")
                     patch_placements = board.slide_col(col_or_row, dir, tile_bag)
                     if player.pos.x == col_or_row:
@@ -225,63 +228,9 @@ while running:
                     player.pos.move(dir)
                     dir_corr = (dir + 2) % 4
                     plot.move_player_centred(
-                        player, dir_corr, board.placements, tile_set.tiles, move_player
+                        player, dir_corr, board.placements, tile_set.tiles
                     )
                     plot.shift_pos.move(dir)
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                running = False
-            elif event.key in MOVE_KEYS:
-                if event.key == pygame.K_UP:
-                    direction = Position.UP
-                elif event.key == pygame.K_LEFT:
-                    direction = Position.LEFT
-                elif event.key == pygame.K_DOWN:
-                    direction = Position.DOWN
-                elif event.key == pygame.K_RIGHT:
-                    direction = Position.RIGHT
-
-                next_position = player.pos.get_next(direction)
-
-                placement = board.placements[player.pos.y, player.pos.x]
-                tile = tile_set.tiles[placement]
-                # no door in current room in direction of intended movement
-                if not board.check_for_door(player.pos, direction, tile_set.tiles):
-                    plot.bounce_player(player, direction, tile, orientation)
-                # trying to move off edge of board
-                elif (
-                    next_position.x < 0
-                    or next_position.y < 0
-                    or next_position.x >= board.w
-                    or next_position.y >= board.h
-                ):
-                    plot.bounce_player(player, direction, tile, orientation, next=True)
-                # no door in next roon in direction of intended movement
-                elif not board.check_for_door(
-                    player.pos, direction, tile_set.tiles, next=True
-                ):
-                    plot.bounce_player(player, direction, tile, orientation, next=True)
-                # movement is possible
-                else:
-                    plot.move_player(
-                        player,
-                        direction,
-                        board.placements,
-                        tile_set.tiles,
-                    )
-                    player.pos.move(direction)
-
-                text.player_state(player, plot, board, tile_set)
-
-            elif event.key in ROTATE_KEYS:
-                if event.key == pygame.K_z:
-                    rotation = 1
-                elif event.key == pygame.K_x:
-                    rotation = -1
-                plot.rotate_tile(player.pos, rotation)
-                board.rotate_tile(player.pos, rotation)
-
-                text.player_state(player, plot, board, tile_set)
 
 pygame.quit()
 sys.exit()

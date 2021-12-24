@@ -65,6 +65,7 @@ class Board:
         self.h = self.dim.h
         self.size = self.w * self.h
         self.n = 2
+        self.rect = pygame.Rect(0, 0, self.w, self.h)
 
         self.placements = np.empty([self.h, self.w, self.n], dtype=int)
 
@@ -223,6 +224,51 @@ class Board:
             string += f"{tiles_row} {rots_row}\n"
         return string
 
+    def get_patch(self, patch_rect, tile_bag):
+        """
+        Get a patch (area of tiles), drawing new tiles from tile bag is required
+
+        Parameters:
+            patch_rect : pygame.Rect
+                Defines the patch of tiles required
+            tile_bag : TileBag
+                bag of tiles from which random ones can be drawn
+
+        Returns
+            patch_placements : numpy.array(h, w, n)
+                holds all information on the state of the each square on the board.in the 'patch'
+        """
+        patch_placements = np.empty([patch_rect.h, patch_rect.w, self.n], dtype=int)
+
+        for y in range(patch_rect.top, patch_rect.bottom):
+            patch_y = y - patch_rect.top
+            print(f"y: {y}  patch_y: {patch_y}")
+            for x in range(patch_rect.left, patch_rect.right):
+                patch_x = x - patch_rect.left
+                print(f"  x: {x}  patch_x:  {patch_x}")
+                if self.rect.collidepoint(x, y):
+                    patch_placements[patch_y, patch_x, :] = self.placements[y, x, :]
+                    print(
+                        f"    Inside: tile = {patch_placements[patch_y, patch_x, Board.TILE]}    rot = {patch_placements[patch_y, patch_x, Board.ROT]}"
+                    )
+                    print(
+                        f"            tile = {self.placements[y, x, Board.TILE]}    rot = {self.placements[y, x, Board.ROT]}"
+                    )
+                else:
+                    patch_placements[
+                        patch_y, :patch_x, Board.TILE
+                    ] = tile_bag.draw_tile()
+                    patch_placements[patch_y, patch_x, Board.ROT] = random.choice(
+                        Position.DIRECTIONS
+                    )
+                    print(
+                        f"    Outside: tile = {patch_placements[patch_y, patch_x, Board.TILE]}    rot = {patch_placements[patch_y, patch_x, Board.ROT]}"
+                    )
+                    print(
+                        f"             tile = {self.placements[y, x, Board.TILE]}    rot = {self.placements[y, x, Board.ROT]}"
+                    )
+        return patch_placements
+
 
 #
 # Some tests in isolation
@@ -313,8 +359,10 @@ if __name__ == "__main__":
     print(f"door is {door}")
 
     print()
-    print(board.placements.shape)
-    print(board.placements.ndim)
-    print(board.placements.shape[0])
-    print(board.placements.shape[1])
-    print(board.placements.shape[2])
+
+    # Check for patch
+    patch_rect = pygame.Rect(0, 0, 2, 2)
+    patch_placements = board.get_patch(patch_rect, tile_bag)
+    print()
+    print(board)
+    print(f"Patch placements:\n {patch_placements}")
