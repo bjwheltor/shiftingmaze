@@ -2,4 +2,4 @@
 __pycache__/
 *.pyc
 # directory where documentation is build
-doc/build/
+doc/build/html
