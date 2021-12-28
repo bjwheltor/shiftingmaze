@@ -54,3 +54,14 @@ specified direction, but if ``next = True``, it checks from the next tile
 in the specificed direction looking back towards the given position.
 This is because to move to an adjacent tile you need doors to exist on 
 both the current tile and the one you are moving to.
+
+Special
+-------
+
+There is a further method:
+
+ * ``get_patch``- returns a patch (area of tiles),
+   given a ``Rect`` for the area,
+   drawing new tiles from tile bag is required.
+
+.. note:: It is not clear whether this method is still required.
