@@ -6,6 +6,7 @@ Shifting Maze Documentation
    :caption: Contents:
 
    intro
+   prereq
    classes
    code
 
