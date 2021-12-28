@@ -29,13 +29,14 @@ YELLOW = (200, 200, 0)
 RED = (200, 100, 100)
 GREEN = (100, 200, 100)
 
-# Set up event information
+# Input keys
 MOVE_KEYS = (pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_RIGHT)
 ROTATE_KEYS = (pygame.K_z, pygame.K_x)
 SLIDE_ROW_KEYS = (pygame.K_q, pygame.K_w)
 SLIDE_COLUMN_KEYS = (pygame.K_p, pygame.K_l)
-RANDOM = pygame.USEREVENT + 0
 
+# Set up random events
+RANDOM = pygame.USEREVENT + 0
 pygame.time.set_timer(RANDOM, 3000)
 
 # Create a tile set and fill tile bag

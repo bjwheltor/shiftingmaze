@@ -146,7 +146,7 @@ class Board:
 
     def slide_row(self, row, dir, tile_bag):
         """
-        Slide column nup or down 1 tile
+        Slide row 1 tile to the left or right, filling in from the bag
 
         Parameters:
             row : int
@@ -178,7 +178,7 @@ class Board:
 
     def slide_col(self, col, dir, tile_bag):
         """
-        Slide column nup or down 1 tile
+        Slide column up or down 1 tile, filling in from the bag
 
         Parameters:
             col : int

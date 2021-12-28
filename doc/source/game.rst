@@ -239,7 +239,7 @@ and the third choice determining which row (in this case).
     slide a row or column.
 
 Exit
-----
+^^^^
 
 Once the game loop is exited by setting ``running = False``,
 a clean exit is handled with::

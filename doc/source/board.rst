@@ -65,3 +65,4 @@ There is a further method:
    drawing new tiles from tile bag is required.
 
 .. note:: It is not clear whether this method is still required.
+  
