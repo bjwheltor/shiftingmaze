@@ -2,12 +2,13 @@ Shifting Maze Documentation
 ===========================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
    intro
    prereq
-   classes
+   game
+   board
    code
 
 Indices and tables

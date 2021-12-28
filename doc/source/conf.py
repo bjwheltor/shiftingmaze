@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath("../../code"))
 
 # -- Project information -----------------------------------------------------
 
-project = "Shiftin Maze"
+project = "Shifting Maze"
 copyright = "2021, Bruce Wright"
 author = "Bruce Wright"
 
