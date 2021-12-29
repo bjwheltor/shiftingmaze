@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game &mdash; Shifting Maze 0.1 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Board" href="board.html" />
+    <link rel="prev" title="Prerequisites" href="prereq.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Shifting Maze
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="approach.html">Approach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prereq.html">Prerequisites</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Game</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#set-up">Set-up</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#imports">Imports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initialisation">Initialisation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#constants">Constants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#random-events">Random events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tile-set">Tile set</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#board">Board</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#display">Display</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#player">Player</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#text">Text</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#loop">Loop</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#event-handling">Event handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#exit">Exit</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="board.html">Board</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code.html">Code</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Shifting Maze</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Game</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/game.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="game">
+<h1>Game<a class="headerlink" href="#game" title="Permalink to this headline">¶</a></h1>
+<p>The main module is game.py, which handles all the main set up
+and holds the game loop.</p>
+<section id="set-up">
+<h2>Set-up<a class="headerlink" href="#set-up" title="Permalink to this headline">¶</a></h2>
+<section id="imports">
+<h3>Imports<a class="headerlink" href="#imports" title="Permalink to this headline">¶</a></h3>
+<p>External imports:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">pygame</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+<p>Internal imports:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">position</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">tiles</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">player</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">board</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">plot</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">text</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+</section>
+<section id="initialisation">
+<h3>Initialisation<a class="headerlink" href="#initialisation" title="Permalink to this headline">¶</a></h3>
+<p>Pygame is initialised with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pygame</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="constants">
+<h3>Constants<a class="headerlink" href="#constants" title="Permalink to this headline">¶</a></h3>
+<p>A number of top level constants are defined.</p>
+<p>Colours:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">WHITE</span> <span class="o">=</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+<span class="n">GREY</span> <span class="o">=</span> <span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+<span class="n">DARK_GREY</span> <span class="o">=</span> <span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+<span class="n">LIGHT_GREY</span> <span class="o">=</span> <span class="p">(</span><span class="mi">192</span><span class="p">,</span> <span class="mi">192</span><span class="p">,</span> <span class="mi">192</span><span class="p">)</span>
+<span class="n">BLACK</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">BLUE</span> <span class="o">=</span> <span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+<span class="n">YELLOW</span> <span class="o">=</span> <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">RED</span> <span class="o">=</span> <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">GREEN</span> <span class="o">=</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Input keys:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MOVE_KEYS</span> <span class="o">=</span> <span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">K_UP</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_LEFT</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_DOWN</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_RIGHT</span><span class="p">)</span>
+<span class="n">ROTATE_KEYS</span> <span class="o">=</span> <span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">K_z</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_x</span><span class="p">)</span>
+<span class="n">SLIDE_ROW_KEYS</span> <span class="o">=</span> <span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">K_q</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_w</span><span class="p">)</span>
+<span class="n">SLIDE_COLUMN_KEYS</span> <span class="o">=</span> <span class="p">(</span><span class="n">pygame</span><span class="o">.</span><span class="n">K_p</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_l</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="random-events">
+<h3>Random events<a class="headerlink" href="#random-events" title="Permalink to this headline">¶</a></h3>
+<p>A pygame random event identifier is declared
+and set to trigger every 3 seconds in the game loop:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">RANDOM</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">USEREVENT</span> <span class="o">+</span> <span class="mi">0</span>
+<span class="n">pygame</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">set_timer</span><span class="p">(</span><span class="n">RANDOM</span><span class="p">,</span> <span class="mi">3000</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="tile-set">
+<h3>Tile set<a class="headerlink" href="#tile-set" title="Permalink to this headline">¶</a></h3>
+<p>The code allows the creation of a simple tile set for debugging the game
+or the standard (full) tile sset for actually playing the game:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">test_tileset</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="k">if</span> <span class="n">test_tileset</span><span class="p">:</span>
+    <span class="n">tileset_name</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
+    <span class="n">doors_for_tiles</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">}</span>
+    <span class="n">tile_counts</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">300</span><span class="p">}</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">tileset_name</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span>
+    <span class="n">doors_for_tiles</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">}</span>
+    <span class="n">tile_counts</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="mi">140</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="mi">20</span><span class="p">}</span>
+
+<span class="n">tile_set</span> <span class="o">=</span> <span class="n">TileSet</span><span class="p">(</span><span class="n">doors_for_tiles</span><span class="p">,</span> <span class="n">tile_counts</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">tileset_name</span><span class="p">)</span>
+<span class="n">tile_bag</span> <span class="o">=</span> <span class="n">TileBag</span><span class="p">(</span><span class="n">tile_set</span><span class="p">)</span>
+<span class="n">tile_size</span> <span class="o">=</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+</pre></div>
+</div>
+<p>The details are explained under the Tiles section.</p>
+</section>
+<section id="board">
+<h3>Board<a class="headerlink" href="#board" title="Permalink to this headline">¶</a></h3>
+<p>The full dimensions of the board are set using the Dimensions class,
+and used to create a board from Tiles in the TileBag:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">board_dim</span> <span class="o">=</span> <span class="n">Dimensions</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="n">board_dim</span><span class="p">,</span> <span class="n">tile_bag</span><span class="o">=</span><span class="n">tile_bag</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The dimensions of the board most be an odd number
+to allow for the centring of the player on the display.</p>
+</div>
+</section>
+<section id="display">
+<h3>Display<a class="headerlink" href="#display" title="Permalink to this headline">¶</a></h3>
+<p>The dimensions of the viewable section of the board are set
+using the Dimensions class,
+as well as the offset between the full and viewable board
+and the display is created, using Plot:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">view_dim</span> <span class="o">=</span> <span class="n">Dimensions</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">shift_pos</span> <span class="o">=</span> <span class="n">Position</span><span class="p">((</span><span class="n">board</span><span class="o">.</span><span class="n">w</span> <span class="o">-</span> <span class="n">view_dim</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">h</span> <span class="o">-</span> <span class="n">view_dim</span><span class="o">.</span><span class="n">h</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">plot</span> <span class="o">=</span> <span class="n">Plot</span><span class="p">(</span><span class="n">view_dim</span><span class="p">,</span> <span class="n">board</span><span class="o">.</span><span class="n">placements</span><span class="p">,</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">,</span> <span class="n">shift_pos</span><span class="o">=</span><span class="n">shift_pos</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="player">
+<h3>Player<a class="headerlink" href="#player" title="Permalink to this headline">¶</a></h3>
+<p>The player position is set to be the centre of the board,
+with other player attributes being set
+before the player is created:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">player_pos</span> <span class="o">=</span> <span class="n">Position</span><span class="p">(</span><span class="n">shift_pos</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">view_dim</span><span class="o">.</span><span class="n">w</span> <span class="o">//</span> <span class="mi">2</span><span class="p">),</span> <span class="n">shift_pos</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="p">(</span><span class="n">view_dim</span><span class="o">.</span><span class="n">h</span> <span class="o">//</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">player_name</span> <span class="o">=</span> <span class="s2">&quot;Bruce&quot;</span>
+<span class="n">player_number</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">player_colour</span> <span class="o">=</span> <span class="n">GREEN</span>
+<span class="n">start_tile</span> <span class="o">=</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">player</span> <span class="o">=</span> <span class="n">Player</span><span class="p">(</span><span class="n">player_name</span><span class="p">,</span> <span class="n">player_number</span><span class="p">,</span> <span class="n">player_colour</span><span class="p">,</span> <span class="n">player_pos</span><span class="p">,</span> <span class="n">start_tile</span><span class="p">)</span>
+<span class="n">plot</span><span class="o">.</span><span class="n">show_player</span><span class="p">(</span><span class="n">player</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="text">
+<h3>Text<a class="headerlink" href="#text" title="Permalink to this headline">¶</a></h3>
+<p>Set-up a text output object
+(mainly for ease of providing diagnostic output to the screen)
+and print some initial information:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="n">Text</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tile_set</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Game Start&quot;</span><span class="p">)</span>
+<span class="n">text</span><span class="o">.</span><span class="n">player_state</span><span class="p">(</span><span class="n">player</span><span class="p">,</span> <span class="n">plot</span><span class="p">,</span> <span class="n">board</span><span class="p">,</span> <span class="n">tile_set</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The use of diagnostic text output has not between
+implemented consistently yet.</p>
+</div>
+</section>
+</section>
+<section id="loop">
+<h2>Loop<a class="headerlink" href="#loop" title="Permalink to this headline">¶</a></h2>
+<p>The game loop in just a simple while loop, with a logical, starting:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="k">while</span> <span class="n">running</span><span class="p">:</span>
+
+    <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The final statement here updates the whole display window,
+which might not actually be necessary at this point,
+given the Plot set-up also this, and the changes in the game
+loop tend to also have updates.</p>
+<section id="event-handling">
+<h3>Event handling<a class="headerlink" href="#event-handling" title="Permalink to this headline">¶</a></h3>
+<p>All the events are returned in <code class="docutils literal notranslate"><span class="pre">event</span></code> and handled in a loop:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
+</pre></div>
+</div>
+<p>The game can be exited by quitting (selecting “x” on the window)
+or by selecting the escape key:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">QUIT</span><span class="p">:</span>
+    <span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYDOWN</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_ESCAPE</span><span class="p">:</span>
+        <span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<p>Four further keys allow a direction of movement to be selected,
+with the current tile occupied by the player
+and it’s orientation being stored:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="n">MOVE_KEYS</span><span class="p">:</span>
+
+    <span class="n">tile</span> <span class="o">=</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">[</span>
+        <span class="n">board</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">player</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">player</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">Board</span><span class="o">.</span><span class="n">TILE</span><span class="p">]</span>
+    <span class="p">]</span>
+    <span class="n">rot</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">player</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">player</span><span class="o">.</span><span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">Board</span><span class="o">.</span><span class="n">ROT</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_UP</span><span class="p">:</span>
+        <span class="nb">dir</span> <span class="o">=</span> <span class="n">Position</span><span class="o">.</span><span class="n">UP</span>
+    <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_LEFT</span><span class="p">:</span>
+        <span class="nb">dir</span> <span class="o">=</span> <span class="n">Position</span><span class="o">.</span><span class="n">LEFT</span>
+    <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_DOWN</span><span class="p">:</span>
+        <span class="nb">dir</span> <span class="o">=</span> <span class="n">Position</span><span class="o">.</span><span class="n">DOWN</span>
+    <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_RIGHT</span><span class="p">:</span>
+        <span class="nb">dir</span> <span class="o">=</span> <span class="n">Position</span><span class="o">.</span><span class="n">RIGHT</span>
+</pre></div>
+</div>
+<p>These selections then lead to a number of outcomes, not discussed here.</p>
+<p>Two more key allow rotatation of the current tile occupied by the player
+to be selected, either anticlockwise or clockwise:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="n">ROTATE_KEYS</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_z</span><span class="p">:</span>
+        <span class="n">rotation</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_x</span><span class="p">:</span>
+        <span class="n">rotation</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">plot</span><span class="o">.</span><span class="n">rotate_tile</span><span class="p">(</span><span class="n">player</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">rotation</span><span class="p">)</span>
+        <span class="n">board</span><span class="o">.</span><span class="n">rotate_tile</span><span class="p">(</span><span class="n">player</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">rotation</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Again, these selections then lead to a number of outcomes, not discussed here.</p>
+<p>The last type of event is random (i.e. not initiated by the player),
+which may lead to further random choices:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">RANDOM</span><span class="p">:</span>
+    <span class="n">random_event</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">random_event</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">dir</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">Position</span><span class="o">.</span><span class="n">DIRECTIONS</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">dir</span> <span class="o">==</span> <span class="n">Position</span><span class="o">.</span><span class="n">RIGHT</span> <span class="ow">or</span> <span class="nb">dir</span> <span class="o">==</span> <span class="n">Position</span><span class="o">.</span><span class="n">LEFT</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">w</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>In this example, the choice is to slide a row or column,
+with the second cloice determining the direction
+and the third choice determining which row (in this case).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>At present the only random event implemented is to
+slide a row or column.</p>
+</div>
+</section>
+<section id="exit">
+<h3>Exit<a class="headerlink" href="#exit" title="Permalink to this headline">¶</a></h3>
+<p>Once the game loop is exited by setting <code class="docutils literal notranslate"><span class="pre">running</span> <span class="pre">=</span> <span class="pre">False</span></code>,
+a clean exit is handled with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+
+<span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="prereq.html" class="btn btn-neutral float-left" title="Prerequisites" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="board.html" class="btn btn-neutral float-right" title="Board" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Bruce Wright.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
