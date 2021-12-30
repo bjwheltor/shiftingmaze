@@ -16,6 +16,7 @@ from board import *
 from plot import *
 from text import *
 
+# initiate pygame
 pygame.init()
 
 # Define colours
@@ -34,6 +35,7 @@ MOVE_KEYS = (pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_RIGHT)
 ROTATE_KEYS = (pygame.K_z, pygame.K_x)
 SLIDE_ROW_KEYS = (pygame.K_q, pygame.K_w)
 SLIDE_COLUMN_KEYS = (pygame.K_p, pygame.K_l)
+
 
 # Set up random events
 RANDOM = pygame.USEREVENT + 0
@@ -67,6 +69,19 @@ tile_size = tile_set.tiles[0].size
 # Create board and fill with tiles from tile bag
 board_dim = Dimensions(7, 7)
 board = Board(board_dim, tile_bag=tile_bag)
+
+# Set screen display dimensions
+
+view_dim = Dimensions(5, 5)
+
+SCREEN_X_ORIGIN = 0
+SCREEN_Y_ORIGIN = 0
+SCREEN_WIDTH = self.w
+SCREEN_HEIGHT = self.h
+
+os.environ["SDL_VIDEO_WINDOW_POS"] = str(SCREEN_X_ORIGIN) + "," + str(SCREEN_Y_ORIGIN)
+screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
+
 
 # Set (board) view dimensions in tiles using Position - must be an odd numbers
 # Set shift to centre view in the middle of the full boaes

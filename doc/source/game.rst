@@ -102,8 +102,7 @@ Board
 The full dimensions of the board are set using the Dimensions class,
 and used to create a board from Tiles in the TileBag::
 
-    board_dim = Dimensions(7, 7)
-    board = Board(board_dim, tile_bag=tile_bag)
+    board = Board(Dimensions(7, 7), tile_bag=tile_bag)
 
 .. note:: The dimensions of the board most be an odd number
     to allow for the centring of the player on the display.
@@ -111,6 +110,19 @@ and used to create a board from Tiles in the TileBag::
 
 Display
 ^^^^^^^
+
+The screen display is created with::
+
+    SCREEN_X_ORIGIN = 0
+    SCREEN_Y_ORIGIN = 0
+    SCREEN_WIDTH = self.w
+    SCREEN_HEIGHT = self.h
+
+    os.environ["SDL_VIDEO_WINDOW_POS"] = (
+        str(SCREEN_X_ORIGIN) + "," + str(SCREEN_Y_ORIGIN)
+    )
+    screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
+
 
 The dimensions of the viewable section of the board are set 
 using the Dimensions class, 
