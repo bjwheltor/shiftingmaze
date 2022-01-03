@@ -9,12 +9,20 @@ History
 14-Sep-2021 - Separation of concerns - updated to focus board on key functionality,
               including placements and orientations into a single array to simplify
               passing of information and allow for future extension
+31-Dec-2021 - Replaced separate slide_row and slide_col with slide_line and
+              updated tests
+01-Jan-2021 - Updated for use of directions module 
+              and moved TILE and ROT out of Board class
 """
+import pygame
 import random
 import numpy as np
 
-from tiles import *
 from position import *
+from direction import *
+
+TILE = 0
+ROT = 1
 
 
 class Board:
@@ -23,9 +31,9 @@ class Board:
 
     Attributes:
         w : int
-            x-dimension of board in tiles in x direction (left and right): width
+            x-dimension of board in tiles in x direction (west and east): width
         h : int
-            y-dimension of board in tiles y direction (up and down): height
+            y-dimension of board in tiles y direction (north and south): height
         n : int
             number of board quare attributes
         size : int
@@ -41,9 +49,6 @@ class Board:
                 2 = 180 degrees rotation, 3 = 90 degrees rotation clockwise
     """
 
-    TILE = 0
-    ROT = 1
-
     def __init__(self, width, height, tile_bag=None, tile_list=None):
         """
         Create board of specified size and fill with tiles drawn randomly from the tile bag
@@ -51,14 +56,14 @@ class Board:
 
         Parameters:
         width : int
-            x-dimension of board in tiles in x direction (left and right): width
+            x-dimension of board in tiles in x direction (west and east): width
         height : int
-            y-dimension of board in tiles y direction (up and down): height
+            y-dimension of board in tiles y direction (north and south): height
 
         Keywords:
             tile_bag : TileBag
                 represents the bag of tiles from dimich random ones can be drawn.
-                Default is None, dimich sets empty placement and orientation arrays
+                Default is None, which sets empty placement and orientation arrays
         """
         self.w = width
         self.h = height
@@ -70,7 +75,7 @@ class Board:
 
         if tile_bag:
             tiles = np.array(tile_bag.draw_tiles(self.size), dtype=int)
-            rots = np.array(random.choices(Position.DIRECTIONS, k=self.size), dtype=int)
+            rots = np.array(random.choices(DIRECTIONS, k=self.size), dtype=int)
             tiles.shape = (self.h, self.w)
             rots.shape = (self.h, self.w)
         elif tile_list:
@@ -78,8 +83,8 @@ class Board:
             tiles.shape = (self.h, self.w)
             rots = np.zeros((self.h, self.w), dtype=int)
 
-        self.placements[:, :, Board.TILE] = tiles
-        self.placements[:, :, Board.ROT] = rots
+        self.placements[:, :, TILE] = tiles
+        self.placements[:, :, ROT] = rots
 
     def place_tile(self, pos, tile, rot=0):
         """
@@ -94,8 +99,8 @@ class Board:
             rot : int
                 rotation of tile to be placed
         """
-        self.placements[pos.y, pos.x, Board.TILE] = tile
-        self.placements[pos.y, pos.x, Board.ROT] = rot
+        self.placements[pos.y, pos.x, TILE] = tile
+        self.placements[pos.y, pos.x, ROT] = rot
 
     def rotate_tile(self, pos, rotate):
         """
@@ -107,8 +112,66 @@ class Board:
             rotate : int
                 rotate tile: +1 = 90 degrees anticlockwise. -1 = 90 degrees clockwise
         """
-        rot = self.placements[pos.y, pos.x, Board.ROT]
-        self.placements[pos.y, pos.x, Board.ROT] = (rot + rotate) % 4
+        rot = self.placements[pos.y, pos.x, ROT]
+        self.placements[pos.y, pos.x, ROT] = (rot + rotate) % 4
+
+    def slide_line(self, dir, x_or_y, tile_bag):
+        """
+        Slide a row or column
+
+        Parameters:
+            dir : int
+                direction in which to slide tiles
+                0 = NORTH, 1 = WEST, 2 = SOUTH, 3 = EAST
+            x_or_y : int
+                x or y position on board, depending on direction.
+                For dir = NORTH or SOUTH, this is x, indicating the column.
+                For dir = EAST or WEST, this is y, indicating the row.
+            tilebag: TileBag
+                Bag of tiles from which new one can be drawn
+        Returns
+            patch_rect: pygame.Rect
+                Rectangle of tiles to slide, including new tile
+            patch_placements : numpy.array(y, x, n)
+                holds all information on the state of the each square
+                on the board.in the 'patch'
+                (this will be either a row or column and one longer
+                than the board, e.g. for a raw (1, w+1, n)
+        """
+        if dir == WEST:
+            patch_rect = pygame.Rect(0, x_or_y, self.w + 1, 1)
+            patch_placements = np.empty([1, self.w + 1, self.n], dtype=int)
+            patch_placements[0, : self.w, :] = self.placements[x_or_y, ...]
+            patch_placements[0, self.w, TILE] = tile_bag.draw_tile()
+            patch_placements[0, self.w, ROT] = random.choice(DIRECTIONS)
+            self.placements[x_or_y, ...] = patch_placements[0, 1:, :]
+            tile_bag.return_tile(patch_placements[0, 0, TILE])
+        elif dir == EAST:
+            patch_rect = pygame.Rect(-1, x_or_y, self.w + 1, 1)
+            patch_placements = np.empty([1, self.w + 1, self.n], dtype=int)
+            patch_placements[0, 1:, :] = self.placements[x_or_y, ...]
+            patch_placements[0, 0, TILE] = tile_bag.draw_tile()
+            patch_placements[0, 0, ROT] = random.choice(DIRECTIONS)
+            self.placements[x_or_y, ...] = patch_placements[0, : self.w, :]
+            tile_bag.return_tile(patch_placements[0, self.w, TILE])
+        if dir == NORTH:
+            patch_rect = pygame.Rect(x_or_y, 0, 1, self.h + 1)
+            patch_placements = np.empty([self.h + 1, 1, self.n], dtype=int)
+            patch_placements[: self.h, 0, :] = self.placements[:, x_or_y, :]
+            patch_placements[self.h, 0, TILE] = tile_bag.draw_tile()
+            patch_placements[self.h, 0, ROT] = random.choice(DIRECTIONS)
+            self.placements[:, x_or_y, :] = patch_placements[1:, 0, :]
+            tile_bag.return_tile(patch_placements[0, 0, TILE])
+        elif dir == SOUTH:
+            patch_rect = pygame.Rect(x_or_y, -1, 1, self.h + 1)
+            patch_placements = np.empty([self.h + 1, 1, self.n], dtype=int)
+            patch_placements[1:, 0, :] = self.placements[:, x_or_y, :]
+            patch_placements[0, 0, TILE] = tile_bag.draw_tile()
+            patch_placements[0, 0, ROT] = random.choice(DIRECTIONS)
+            self.placements[:, x_or_y, :] = patch_placements[: self.h, 0, :]
+            tile_bag.return_tile(patch_placements[self.h, 0, TILE])
+
+        return patch_rect, patch_placements
 
     def check_for_door(self, pos, dir, tiles, next=False):
         """
@@ -119,7 +182,7 @@ class Board:
                 x, y coordinates of tile placement. (0, 0) = (left, top)
             dir : int
                 Direction in which presence of door to be checked.
-                0 = up, 1 = left, 2 = down, 3 = right
+                0 = NORTH, 1 = WEST, 2 = SOUTH, 3 = EAST
             tiles : TileSet.tiles
                 Tiles in use
 
@@ -137,75 +200,11 @@ class Board:
         else:
             pos_to_check = pos
             dir_to_check = dir
-        tile = self.placements[pos_to_check.y, pos_to_check.x, Board.TILE]
-        rot = self.placements[pos_to_check.y, pos_to_check.x, Board.ROT]
+        tile = self.placements[pos_to_check.y, pos_to_check.x, TILE]
+        rot = self.placements[pos_to_check.y, pos_to_check.x, ROT]
         doors = tiles[tile].doors
         door_index = (dir_to_check - rot) % 4
         return doors[door_index]
-
-    def slide_row(self, row, dir, tile_bag):
-        """
-        Slide row 1 tile to the left or right, filling in from the bag
-
-        Parameters:
-            row : int
-                (full) board y (tile) coordinate of row
-            dir : int
-                Direction in column to be slid
-                0 = up, 2 = down
-            tile_bag : TileBag
-                bag of tiles from which random ones can be drawn
-
-        Returns
-            patch_placements : numpy.array(h, w, n)
-                holds all information on the state of the each square on the board.in the 'patch'
-        """
-        patch_placements = np.empty([1, self.w + 1, self.n], dtype=int)
-        if dir == Position.LEFT:
-            patch_placements[0, : self.w, :] = self.placements[row, ...]
-            patch_placements[0, self.w, Board.TILE] = tile_bag.draw_tile()
-            patch_placements[0, self.w, Board.ROT] = random.choice(Position.DIRECTIONS)
-            self.placements[row, ...] = patch_placements[0, 1:, :]
-            tile_bag.return_tile(patch_placements[0, 0, Board.TILE])
-        elif dir == Position.RIGHT:
-            patch_placements[0, 1:, :] = self.placements[row, ...]
-            patch_placements[0, 0, Board.TILE] = tile_bag.draw_tile()
-            patch_placements[0, 0, Board.ROT] = random.choice(Position.DIRECTIONS)
-            self.placements[row, ...] = patch_placements[0, : self.w, :]
-            tile_bag.return_tile(patch_placements[0, self.w, Board.TILE])
-        return patch_placements
-
-    def slide_col(self, col, dir, tile_bag):
-        """
-        Slide column up or down 1 tile, filling in from the bag
-
-        Parameters:
-            col : int
-                (full) board x (tile) coordinate of column
-            dir : int
-                Direction in column to be slid
-                0 = up, 2 = down
-            tile_bag : TileBag
-                bag of tiles from which random ones can be drawn
-
-        Returns
-            patch_placements : numpy.array(h, w, n)
-                holds all information on the state of the each square on the board.in the 'patch'
-        """
-        patch_placements = np.empty([self.h + 1, 1, self.n], dtype=int)
-        if dir == Position.UP:
-            patch_placements[: self.h, 0, :] = self.placements[:, col, :]
-            patch_placements[self.h, 0, Board.TILE] = tile_bag.draw_tile()
-            patch_placements[self.h, 0, Board.ROT] = random.choice(Position.DIRECTIONS)
-            self.placements[:, col, :] = patch_placements[1:, 0, :]
-            tile_bag.return_tile(patch_placements[0, 0, Board.TILE])
-        elif dir == Position.DOWN:
-            patch_placements[1:, 0, :] = self.placements[:, col, :]
-            patch_placements[0, 0, Board.TILE] = tile_bag.draw_tile()
-            patch_placements[0, 0, Board.ROT] = random.choice(Position.DIRECTIONS)
-            self.placements[:, col, :] = patch_placements[: self.h, 0, :]
-            tile_bag.return_tile(patch_placements[self.h, 0, Board.TILE])
-        return patch_placements
 
     def __str__(self):
         """Print board details"""
@@ -218,24 +217,31 @@ class Board:
             tiles_row = ""
             rots_row = ""
             for x in range(self.w):
-                tiles_row += str(self.placements[y, x, Board.TILE])
-                rots_row += str(self.placements[y, x, Board.ROT])
+                tiles_row += str(self.placements[y, x, TILE])
+                rots_row += str(self.placements[y, x, ROT])
             string += f"{tiles_row} {rots_row}\n"
         return string
 
 
-#
+# ===============================
 # Some tests in isolation
-#
+# ===============================
 if __name__ == "__main__":
-    # extra imports for testing and initialise
-    from player import *
-    from text import *
+    print("SET UP FOR TESTING")
+    print("Imports for testing and initialise")
+    import os
+    import pygame
+    import numpy as np
 
-    print("START TESTING")
+    from tile import *
+    from tileset import *
+    from tilebag import *
 
-    # Create a tile set and fixed tile list
-    tileset_name = "test"
+    print("Initiate pygame")
+    pygame.init()
+
+    print("Create a tile set and fill tile bag")
+    tileset_name = "standard"
     doors_for_tiles = {
         0: [1, 1, 1, 1],
         1: [0, 1, 1, 1],
@@ -244,58 +250,71 @@ if __name__ == "__main__":
         4: [0, 0, 0, 1],
     }
     tile_counts = {0: 40, 1: 140, 2: 80, 3: 80, 4: 20}
+
     tile_set = TileSet(doors_for_tiles, tile_counts, name=tileset_name)
     tile_bag = TileBag(tile_set)
-    tile_size = tile_set.tiles[0].size
-    tile_list = (
-        [1, 1, 1, 4, 4]
-        + [1, 0, 0, 0, 4]
-        + [2, 0, 0, 0, 4]
-        + [2, 0, 0, 0, 3]
-        + [2, 2, 3, 3, 3]
-    )
 
-    # Set (full) board dimensions in tiles using Position - must be an odd numbers
-    # Create board and fill with tiles from tile bag
-    print("Create Board")
-    board_dim = Dimensions(5, 5)
-    board = Board(board_dim, tile_list=tile_list)
+    print("Set up dimensions of board and view")
+    board_width = 7
+    board_height = board_width
+    view_width = 5
+    view_height = view_width
+    view_left = (board_width - view_width) // 2
+    view_top = (board_height - view_height) // 2
+    view_rect = pygame.Rect(view_left, view_top, view_width, view_height)
+
+    print("\nSTART TESTING")
+    print("Test 1: Set-up Board")
+    board = Board(board_width, board_height, tile_bag=tile_bag)
     print(board)
 
-    # Place tile
+    print("Test 2: Place tile")
     pos = Position(1, 1)
     tile = 4
     rot = 3
-    print("Place Tile")
     print(f"pos: {pos}  tile: {tile}  rot: {rot}")
     board.place_tile(pos, tile, rot=rot)
     print(board)
 
-    # Test rotate tile
+    print("Test 3: Rotate tile")
     rotate = -1
-    print("Rotate Tile")
     print(f"pos: {pos}  rot: {rot}")
     board.rotate_tile(pos, rotate=rotate)
     print(board)
 
-    # Check for slide row
-    row = 1
-    dir = Position.RIGHT
-    print("\nSlide row")
-    print(f"row: {row}  dir: {dir}")
-    patch = board.slide_row(row, dir, tile_bag)
+    print("Test 4: Slide row")
+    dir = EAST
+    x_or_y = 1
+    print(f"x_or_y: {x_or_y}  dir: {dir}")
+    placement_rect, placement_patch = board.slide_line(dir, x_or_y, tile_bag)
     print(board)
-    print(f"\npatch: {patch}")
+    print(f"placement_rect: {placement_rect}")
+    print(f"placement_patch:\n{placement_patch}")
 
-    # Check for slide column
-    col = 1
-    dir = Position.UP
-    print("\nSlide column")
-    print(f"col: {col}  dir: {dir}")
-    patch = board.slide_col(col, dir, tile_bag)
+    dir = WEST
+    print(f"x_or_y: {x_or_y}  dir: {dir}")
+    placement_rect, placement_patch = board.slide_line(dir, x_or_y, tile_bag)
     print(board)
-    print(f"\npatch: {patch}")
+    print(f"placement_rect: {placement_rect}")
+    print(f"placement_patch:\n{placement_patch}")
 
+    print("Test 5: Slide column")
+    x_or_y = 1
+    dir = NORTH
+    print(f"x_or_y: {x_or_y}  dir: {dir}")
+    placement_rect, placement_patch = board.slide_line(dir, x_or_y, tile_bag)
+    print(board)
+    print(f"placement_rect: {placement_rect}")
+    print(f"placement_patch:\n{placement_patch}")
+
+    dir = SOUTH
+    print(f"x_or_y: {x_or_y}  dir: {dir}")
+    placement_rect, placement_patch = board.slide_line(dir, x_or_y, tile_bag)
+    print(board)
+    print(f"placement_rect: {placement_rect}")
+    print(f"placement_patch:\n{placement_patch}")
+
+    """
     # Check for door
     print(tile_set)
     dir = Position.UP
@@ -320,3 +339,4 @@ if __name__ == "__main__":
     print()
     print(board)
     print(f"Patch placements:\n {patch_placements}")
+    """

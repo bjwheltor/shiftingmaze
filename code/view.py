@@ -19,7 +19,7 @@ class View:
             Number of pixels in y-direction (up and down)
     """
 
-    def __init__(self, rect, placements, tiles):
+    def __init__(self, rect, placements, tileset):
         """
         Set-up view of board displaying tiles
 
@@ -36,7 +36,7 @@ class View:
         """
         self.rect = rect
         self.board_colour = (0, 0, 0)  # BLACK
-        self.tile_size = tiles[0].size
+        self.tile_size = tile_set.tiles[0].size
 
         # create empty tile space
         self.empty_tile = pygame.Surface(
@@ -47,12 +47,9 @@ class View:
         # display tiles
         for y in range(rect.top, rect.bottom):
             for x in range(rect.left, rect.right):
-                tile_image = tiles[placements[y, x, Board.TILE]].image
-                rotated_tile_image = pygame.transform.rotate(
-                    tile_image, placements[y, x, Board.ROT] * 90
-                )
+                tile = tileset.get_image(placements[y, x, TILE], ROT)
                 px, py = self.get_pxy(x, y)
-                screen.blit(rotated_tile_image, (px, py))
+                screen.blit(tile, (px, py))
 
         pygame.display.flip()
 
@@ -71,10 +68,29 @@ class View:
             py : int
                 pixel y position in view
         """
-        py = (y - self.rect.top) * self.tile_size
         px = (x - self.rect.left) * self.tile_size
-
+        py = (y - self.rect.top) * self.tile_size
         return px, py
+
+    def get_xy(self, px, py):
+        """
+        Get  board x, y position from pixel x, y position in view
+
+        Parameters:
+            px : int
+                pixel x position in view
+            py : int
+                pixel y position in view
+
+        Returns
+            x : int
+                x position on board
+            y : int
+                y position on board
+        """
+        x = int(px / self.tile_size + self.rect.left)
+        y = int(py / self.tile_size + self.rect.top)
+        return x, y
 
     def get_image(self, rect, add_tile=None, add_pxy=None):
         """
@@ -100,22 +116,20 @@ class View:
 
         return image
 
-    def rotate_tile(self, x, y, rot):
+    def rotate_tile(self, pos, rot):
         """
         Plot tile in position with orientation
 
         Parameters:
-            x : int
-                x position on board
-            y : int
-                x position on board
+            pos : Position
+                x, y coordinates of tile placement. (0, 0) = (left, top)
             rot : int
                 rotation to be applied to tile. Either +1 or -1.
                 +1 = 90 degrees anticlockwise. -1 = 90 degrees clockwise
         """
         print(f"Action: Rotate tile   rotation: {rot}")
 
-        px, py = self.get_pxy(x, y)
+        px, py = self.get_pxy(pos.x, pos.y)
 
         # extract tile from the board
         rect = pygame.Rect(px, py, self.tile_size, self.tile_size)
@@ -238,18 +252,104 @@ class View:
             pygame.display.flip()
             pygame.time.delay(10)
 
+    def slide_line(self, dir, patch_rect, patch_placements, tileset):
+        """
+        Plot tile in position with orientation
+
+        Parameters:
+            x : int
+                x position on board
+            y : int
+                x position on board
+            dir : int
+                direction in which to slide tiles
+                0 = UP, 1 = LEFT, 2 = DOWN, 3 = RIGHT
+        """
+        print(f"Action: Slide tiles   direction: {dir}")
+
+        px, py = self.get_pxy(patch_rect.left, patch_rect.top)
+
+        # if slide to West
+        if dir == WEST:
+            px = 0
+            dpx = (self.rect.width + 1) * self.tile_size
+            dpy = self.tile_size
+            x, _ = self.get_xy(dpx - self.tile_size, py)
+            y = 0
+            add_pxy = (self.rect.width * self.tile_size, 0)
+
+            rect = pygame.Rect(px, py, dpx, dpy)
+            tile = patch_placements[y, x, TILE]
+            rot = patch_placements[y, x, ROT]
+            add_tile = tileset.get_image(tile, rot)
+            patch = self.get_image(rect, add_tile, add_pxy)
+
+        # if slide to East
+        elif dir == EAST:
+            px = -self.tile_size
+            dpx = (self.rect.width + 1) * self.tile_size
+            dpy = self.tile_size
+            x, _ = self.get_xy(px + self.tile_size, py)
+            y = 0
+            add_pxy = (0, 0)
+
+            tile = patch_placements[y, x, TILE]
+            rot = patch_placements[y, x, ROT]
+            add_tile = tileset.get_image(tile, rot)
+            rect = pygame.Rect(px, py, dpx, dpy)
+            patch = self.get_image(rect, add_tile, add_pxy)
+
+        # if slide to up
+        elif dir == 0:
+            rect = pygame.Rect(
+                px,
+                0,
+                self.tile_size,
+                (self.rect.height + 1) * self.tile_size,
+            )
+            patch = self.get_image(
+                rect,
+                add_tile=self.empty_tile,
+                add_pxy=(0, self.rect.height * self.tile_size),
+            )
+        # if slide to down
+        elif dir == 2:
+            rect = pygame.Rect(
+                px,
+                -self.tile_size,
+                self.tile_size,
+                (self.rect.height + 1) * self.tile_size,
+            )
+            patch = self.get_image(rect, add_tile=self.empty_tile, add_pxy=(0, 0))
+
+        # Slide the patch, overplotting the player if required
+        for move in range(self.tile_size + 1):
+            if dir == 1:
+                screen.blit(patch, (-move, py))
+            elif dir == 3:
+                screen.blit(patch, (move - self.tile_size, py))
+            elif dir == 0:
+                screen.blit(patch, (px, -move))
+            elif dir == 2:
+                screen.blit(patch, (px, move - self.tile_size))
+
+            pygame.display.flip()
+            pygame.time.delay(10)
+
 
 # ===============================
 # Some tests in isolation
 # ===============================
 if __name__ == "__main__":
-    # extra imports for testing and initialise
-
+    print("SET UP FOR TESTING")
+    # imports for testing and initialise
     import os
     import pygame
     import numpy as np
 
-    from tiles import *
+    from tile import *
+    from tileset import *
+    from tilebag import *
     from board import *
 
     # Initiate pygame
@@ -270,9 +370,9 @@ if __name__ == "__main__":
     tile_bag = TileBag(tile_set)
 
     # Set up dimensions of board and view
-    board_width = 7
+    board_width = 5
     board_height = board_width
-    view_width = 5
+    view_width = 3
     view_height = view_width
     view_left = (board_width - view_width) // 2
     view_top = (board_height - view_height) // 2
@@ -292,31 +392,37 @@ if __name__ == "__main__":
     screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
     pygame.display.set_caption("Shifting Maze")
 
-    # TEST1: Set-up view on board
-    view = View(view_rect, board.placements, tile_set.tiles)
+    print("START TESTING")
+    print("Test 1: Set-up view in screen")
+    view = View(view_rect, board.placements, tile_set)
     pygame.time.delay(1000)
 
-    # TEST 2: Rotate tile
-    x = 3
-    y = 3
+    print("Test 2: Rotation of tiles")
+    pos = Position(3, 3)
     rot = 1
-    view.rotate_tile(x, y, rot)
+    view.rotate_tile(pos, rot)
     pygame.time.delay(1000)
 
     rot = -1
-    view.rotate_tile(x, y, rot)
+    view.rotate_tile(pos, rot)
     pygame.time.delay(1000)
 
-    # TEST 3: Slide tiles
-    x = 2
-    y = 3
-    dir = 1
-    view.slide_tiles(x, y, dir)
+    print("Test 3: Slide lines of tiles")
+    dir = EAST
+    x_or_y = 3
+    print(board)
+    patch_rect, patch_placements = board.slide_line(dir, x_or_y, tile_bag)
+    view.slide_line(dir, patch_rect, patch_placements, tile_set)
+    print(board)
     pygame.time.delay(1000)
 
-    dir = 3
-    view.slide_tiles(x, y, dir)
-    pygame.time.delay(1000)
+    dir = WEST
+    x_or_y = 3
+    print(board)
+    patch_rect, patch_placements = board.slide_line(dir, x_or_y, tile_bag)
+    view.slide_line(dir, patch_rect, patch_placements, tile_set)
+    print(board)
+    pygame.time.delay(100000)
 
     dir = 0
     view.slide_tiles(x, y, dir)

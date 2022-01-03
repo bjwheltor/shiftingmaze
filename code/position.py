@@ -2,8 +2,11 @@
 Position
 
 History
- 24-Jul-2021 - Initial version separated from board.py
+24-Jul-2021 - Initial version separated from board.py
+02-Jan-2022 - Moved direction constants to separate module
+              and removed Dimensions class
 """
+from direction import *
 
 
 class Position:
@@ -16,12 +19,6 @@ class Position:
         y : int
             y-coordinate
     """
-
-    DIRECTIONS = [0, 1, 2, 3]
-    UP = 0
-    LEFT = 1
-    DOWN = 2
-    RIGHT = 3
 
     def __init__(self, x, y):
         """
@@ -55,14 +52,14 @@ class Position:
             coords = (self.x, self.y)
         return coords
 
-    def get_next(self, direction):
+    def get_next(self, dir):
         """
         Get the position of the next point in a particular direction
 
         Parameters
-            direction : int
-                Direction in which presence of door to be checked.
-                0 = up, 1 = left, 2 = down, 3 = right
+            dir : int
+                Direction in which position to be returned
+                0 = NORTH, 1 = WEST, 2 = SOUTH, 3 = EAST
 
         Returns
             next_position : Position
@@ -70,13 +67,13 @@ class Position:
         """
         x = self.x
         y = self.y
-        if direction == self.UP:
+        if direction == NORTH:
             y -= 1
-        elif direction == self.LEFT:
+        elif direction == WEST:
             x -= 1
-        elif direction == self.DOWN:
+        elif direction == SOUTH:
             y += 1
-        elif direction == self.RIGHT:
+        elif direction == EAST:
             x += 1
         return Position(x, y)
 
@@ -85,18 +82,18 @@ class Position:
         Updates the position to the next point in a particular direction
 
         Parameters
-            direction : int
-                Direction in which presence of door to be checked.
-                0 = up, 1 = left, 2 = down, 3 = right
+            dir : int
+                Direction in which position to be returned
+                0 = NORTH, 1 = WEST, 2 = SOUTH, 3 = EAST
 
         """
-        if direction == self.UP:
+        if direction == NORTH:
             self.y -= 1
-        elif direction == self.LEFT:
+        elif direction == WEST:
             self.x -= 1
-        elif direction == self.DOWN:
+        elif direction == SOUTH:
             self.y += 1
-        elif direction == self.RIGHT:
+        elif direction == EAST:
             self.x += 1
 
     def __repr__(self):
@@ -106,56 +103,3 @@ class Position:
     def __str__(self):
         """Print coordinates"""
         return f"x = {self.x}, y = {self.y}"
-
-
-class Dimensions:
-    """
-    Represents the dimensions as a set of coordinates
-
-    Attributes
-        w : int
-            width (x-coordinate)
-        h : int
-            height (y-coordinate)
-    """
-
-    def __init__(self, w, h):
-        """
-        Parameters
-            w : int
-                width (x-coordinate)
-            h : int
-                height (y-coordinate)
-        """
-        self.w = w
-        self.h = h
-        self.size = self.w * self.h
-
-    def coords(self, rev=None):
-        """
-        Return position as a tuple
-
-        Parameters
-            none
-
-        Keywords
-            rev: bool
-                true is dimension order to be reversed, i.e. (h, w) rather then (w, h)
-
-        Returns
-            coords : tuple
-                dimensions as a tuple
-        """
-        if rev:
-            coord = (self.h, self.xw)
-        else:
-            coords = (self.w, self.h)
-        return coords
-
-    def __repr__(self):
-        """Display dimemsions"""
-        return f"Dimensions( w = {self.w}, h = {self.h} )"
-
-    def __str__(self):
-        """Print dimemsions"""
-        return f"w = {self.w}, h = {self.h}"

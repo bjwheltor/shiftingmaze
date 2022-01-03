@@ -5,12 +5,16 @@ History
 24-Jul-2021 - Initial version
 21-Aug-2021 - Simplified control
 """
+import os
 import sys
 import pygame
 import numpy as np
 
 from position import *
-from tiles import *
+from direction import *
+from tile import *
+from tileset import *
+from tilebag import *
 from player import *
 from board import *
 from plot import *
@@ -65,30 +69,37 @@ tile_set = TileSet(doors_for_tiles, tile_counts, name=tileset_name)
 tile_bag = TileBag(tile_set)
 tile_size = tile_set.tiles[0].size
 
-# Set (full) board dimensions in tiles using Position - must be an odd numbers
+# Set up dimensions of board and view
+board_width = 7
+board_height = 7
+view_width = 5
+view_height = 5
+view_left = (board_width - view_width) // 2
+view_top = (board_height - view_height) // 2
+view_rect = pygame.Rect(view_left, view_top, view_width, view_height)
+
 # Create board and fill with tiles from tile bag
-board_dim = Dimensions(7, 7)
-board = Board(board_dim, tile_bag=tile_bag)
+board = Board(board_width, board_height, tile_bag=tile_bag)
 
-# Set screen display dimensions
-
-view_dim = Dimensions(5, 5)
-
+# Set up screen display
 SCREEN_X_ORIGIN = 0
 SCREEN_Y_ORIGIN = 0
-SCREEN_WIDTH = self.w
-SCREEN_HEIGHT = self.h
-
+SCREEN_WIDTH = view_width * tile_size
+SCREEN_HEIGHT = view_height * tile_size
 os.environ["SDL_VIDEO_WINDOW_POS"] = str(SCREEN_X_ORIGIN) + "," + str(SCREEN_Y_ORIGIN)
 screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
+pygame.display.set_caption("Shifting Maze")
+
+# Set-up view on board
+view = View(view_rect, board.placements, tile_set.tiles)
 
 
 # Set (board) view dimensions in tiles using Position - must be an odd numbers
 # Set shift to centre view in the middle of the full boaes
 # Create display
-view_dim = Dimensions(5, 5)
-shift_pos = Position((board.w - view_dim.w) // 2, (board.h - view_dim.h) // 2)
-plot = Plot(view_dim, board.placements, tile_set.tiles, shift_pos=shift_pos)
+# view_dim = Dimensions(5, 5)
+# shift_pos = Position((board.w - view_dim.w) // 2, (board.h - view_dim.h) // 2)
+# plot = Plot(view_dim, board.placements, tile_set.tiles, shift_pos=shift_pos)
 
 # Set player position to be in centre of the board
 # Create player and plot on board
