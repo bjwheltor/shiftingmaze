@@ -76,7 +76,6 @@
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
- | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#P"><strong>P</strong></a>
@@ -102,8 +101,6 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="code/board.html#board.Board">Board (class in board)</a>
 </li>
-      <li><a href="code/plot.html#plot.Plot.bounce_player_free">bounce_player_free() (plot.Plot method)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -114,37 +111,32 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="code/position.html#position.Dimensions.coords">coords() (position.Dimensions method)</a>
-
-      <ul>
-        <li><a href="code/position.html#position.Position.coords">(position.Position method)</a>
+      <li><a href="code/position.html#position.Position.coords">coords() (position.Position method)</a>
 </li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="code/board.html#board.Board.dim">dim (board.Board attribute)</a>
+      <li>
+    direction
+
+      <ul>
+        <li><a href="code/direction.html#module-direction">module</a>
 </li>
-      <li><a href="code/position.html#position.Dimensions">Dimensions (class in position)</a>
-</li>
-      <li><a href="code/position.html#position.Position.DIRECTIONS">DIRECTIONS (position.Position attribute)</a>
-</li>
+      </ul></li>
       <li><a href="code/player.html#player.Player.DO_NOT_MOVE">DO_NOT_MOVE (player.Player attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="code/tiles.html#tiles.Tile.door_width">door_width (tiles.Tile attribute)</a>
+      <li><a href="code/tile.html#tile.Tile.door_width">door_width (tile.Tile attribute)</a>
 </li>
-      <li><a href="code/tiles.html#tiles.Tile.doors">doors (tiles.Tile attribute)</a>
+      <li><a href="code/tile.html#tile.Tile.doors">doors (tile.Tile attribute)</a>
 </li>
-      <li><a href="code/position.html#position.Position.DOWN">DOWN (position.Position attribute)</a>
+      <li><a href="code/tilebag.html#tilebag.TileBag.draw_tile">draw_tile() (tilebag.TileBag method)</a>
 </li>
-      <li><a href="code/tiles.html#tiles.TileBag.draw_tile">draw_tile() (tiles.TileBag method)</a>
-</li>
-      <li><a href="code/tiles.html#tiles.TileBag.draw_tiles">draw_tiles() (tiles.TileBag method)</a>
+      <li><a href="code/tilebag.html#tilebag.TileBag.draw_tiles">draw_tiles() (tilebag.TileBag method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -155,16 +147,14 @@
       <li><a href="code/player.html#player.Player.floor_colour">floor_colour (player.Player attribute)</a>
 
       <ul>
-        <li><a href="code/tiles.html#tiles.Tile.floor_colour">(tiles.Tile attribute)</a>
+        <li><a href="code/tile.html#tile.Tile.floor_colour">(tile.Tile attribute)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="code/tiles.html#tiles.Tile.frame">frame (tiles.Tile attribute)</a>
+      <li><a href="code/tile.html#tile.Tile.frame">frame (tile.Tile attribute)</a>
 </li>
-      <li><a href="code/tiles.html#tiles.Tile.frame_colour">frame_colour (tiles.Tile attribute)</a>
-</li>
-      <li><a href="code/plot.html#plot.Plot.FULLVIEW">FULLVIEW (plot.Plot attribute)</a>
+      <li><a href="code/tile.html#tile.Tile.frame_colour">frame_colour (tile.Tile attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -172,19 +162,19 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="code/plot.html#plot.Plot.get_board_rect">get_board_rect() (plot.Plot method)</a>
-</li>
-      <li><a href="code/position.html#position.Position.get_next">get_next() (position.Position method)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="code/board.html#board.Board.get_patch">get_patch() (board.Board method)</a>
+      <li><a href="code/tileset.html#tileset.TileSet.get_image">get_image() (tileset.TileSet method)</a>
 
       <ul>
-        <li><a href="code/plot.html#plot.Plot.get_patch">(plot.Plot method)</a>
+        <li><a href="code/view.html#view.View.get_image">(view.View method)</a>
 </li>
       </ul></li>
-      <li><a href="code/plot.html#plot.Plot.get_plot_pos">get_plot_pos() (plot.Plot method)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="code/position.html#position.Position.get_next">get_next() (position.Position method)</a>
+</li>
+      <li><a href="code/view.html#view.View.get_pxy">get_pxy() (view.View method)</a>
+</li>
+      <li><a href="code/view.html#view.View.get_xy">get_xy() (view.View method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -193,7 +183,11 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="code/board.html#board.Board.h">h (board.Board attribute)</a>
+
+      <ul>
+        <li><a href="code/view.html#view.View.h">(view.View attribute)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -203,30 +197,16 @@
       <li><a href="code/player.html#player.Player.image">image (player.Player attribute)</a>
 
       <ul>
-        <li><a href="code/tiles.html#tiles.Tile.image">(tiles.Tile attribute)</a>
+        <li><a href="code/tile.html#tile.Tile.image">(tile.Tile attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="code/plot.html#plot.Plot.is_centred_move">is_centred_move() (plot.Plot method)</a>
-</li>
-      <li><a href="code/plot.html#plot.Plot.is_moving_off_board">is_moving_off_board() (plot.Plot method)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="L">L</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="code/position.html#position.Position.LEFT">LEFT (position.Position attribute)</a>
-</li>
   </ul></td>
 </tr></table>
 
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="code/tiles.html#tiles.TileBag.mix">mix() (tiles.TileBag method)</a>
+      <li><a href="code/tilebag.html#tilebag.TileBag.mix">mix() (tilebag.TileBag method)</a>
 </li>
       <li>
     module
@@ -234,24 +214,28 @@
       <ul>
         <li><a href="code/board.html#module-board">board</a>
 </li>
-        <li><a href="code/player.html#module-player">player</a>
+        <li><a href="code/direction.html#module-direction">direction</a>
 </li>
-        <li><a href="code/plot.html#module-plot">plot</a>
+        <li><a href="code/player.html#module-player">player</a>
 </li>
         <li><a href="code/position.html#module-position">position</a>
 </li>
         <li><a href="code/text.html#module-text">text</a>
 </li>
-        <li><a href="code/tiles.html#module-tiles">tiles</a>
+        <li><a href="code/tile.html#module-tile">tile</a>
+</li>
+        <li><a href="code/tilebag.html#module-tilebag">tilebag</a>
+</li>
+        <li><a href="code/tileset.html#module-tileset">tileset</a>
+</li>
+        <li><a href="code/utilities.html#module-utilities">utilities</a>
+</li>
+        <li><a href="code/view.html#module-view">view</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="code/position.html#position.Position.move">move() (position.Position method)</a>
-</li>
-      <li><a href="code/plot.html#plot.Plot.move_player_centred">move_player_centred() (plot.Plot method)</a>
-</li>
-      <li><a href="code/plot.html#plot.Plot.move_player_free">move_player_free() (plot.Plot method)</a>
 </li>
       <li><a href="code/player.html#player.Player.MOVE_WITH_TILES">MOVE_WITH_TILES (player.Player attribute)</a>
 </li>
@@ -270,7 +254,7 @@
       <li><a href="code/player.html#player.Player.number">number (player.Player attribute)</a>
 
       <ul>
-        <li><a href="code/tiles.html#tiles.Tile.number">(tiles.Tile attribute)</a>
+        <li><a href="code/tile.html#tile.Tile.number">(tile.Tile attribute)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -292,20 +276,11 @@
       </ul></li>
       <li><a href="code/player.html#player.Player">Player (class in player)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="code/player.html#player.Player.player_offset">player_offset (player.Player attribute)</a>
 </li>
       <li><a href="code/text.html#text.Text.player_state">player_state() (text.Text method)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li>
-    plot
-
-      <ul>
-        <li><a href="code/plot.html#module-plot">module</a>
-</li>
-      </ul></li>
-      <li><a href="code/plot.html#plot.Plot">Plot (class in plot)</a>
 </li>
       <li><a href="code/player.html#player.Player.pos">pos (player.Player attribute)</a>
 </li>
@@ -327,21 +302,21 @@
       <li><a href="code/player.html#player.Player.rect">rect (player.Player attribute)</a>
 
       <ul>
-        <li><a href="code/tiles.html#tiles.Tile.rect">(tiles.Tile attribute)</a>
+        <li><a href="code/tile.html#tile.Tile.rect">(tile.Tile attribute)</a>
+</li>
+        <li><a href="code/view.html#view.View.rect">(view.View attribute)</a>
 </li>
       </ul></li>
-      <li><a href="code/tiles.html#tiles.TileBag.return_tile">return_tile() (tiles.TileBag method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="code/position.html#position.Position.RIGHT">RIGHT (position.Position attribute)</a>
+      <li><a href="code/tilebag.html#tilebag.TileBag.return_tile">return_tile() (tilebag.TileBag method)</a>
 </li>
-      <li><a href="code/board.html#board.Board.ROT">ROT (board.Board attribute)</a>
+      <li><a href="code/tilebag.html#tilebag.TileBag.return_tiles">return_tiles() (tilebag.TileBag method)</a>
 </li>
       <li><a href="code/board.html#board.Board.rotate_tile">rotate_tile() (board.Board method)</a>
 
       <ul>
-        <li><a href="code/plot.html#plot.Plot.rotate_tile">(plot.Plot method)</a>
+        <li><a href="code/view.html#view.View.rotate_tile">(view.View method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -350,25 +325,21 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="code/plot.html#plot.Plot.show_player">show_player() (plot.Plot method)</a>
-</li>
-      <li><a href="code/plot.html#plot.Plot.sign">sign() (plot.Plot method)</a>
-</li>
       <li><a href="code/board.html#board.Board.size">size (board.Board attribute)</a>
 
       <ul>
-        <li><a href="code/tiles.html#tiles.Tile.size">(tiles.Tile attribute)</a>
+        <li><a href="code/tile.html#tile.Tile.size">(tile.Tile attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="code/board.html#board.Board.slide_line">slide_line() (board.Board method)</a>
+
+      <ul>
+        <li><a href="code/view.html#view.View.slide_line">(view.View method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="code/board.html#board.Board.slide_col">slide_col() (board.Board method)</a>
-</li>
-      <li><a href="code/board.html#board.Board.slide_row">slide_row() (board.Board method)</a>
-</li>
-      <li><a href="code/plot.html#plot.Plot.slide_row_centred">slide_row_centred() (plot.Plot method)</a>
-</li>
-      <li><a href="code/plot.html#plot.Plot.slide_tiles">slide_tiles() (plot.Plot method)</a>
+      <li><a href="code/view.html#view.View.slide_tiles">slide_tiles() (view.View method)</a>
 </li>
       <li><a href="code/player.html#player.Player.STAY_AS_TILES_MOVE">STAY_AS_TILES_MOVE (player.Player attribute)</a>
 </li>
@@ -387,22 +358,34 @@
       </ul></li>
       <li><a href="code/text.html#text.Text">Text (class in text)</a>
 </li>
-      <li><a href="code/board.html#board.Board.TILE">TILE (board.Board attribute)</a>
+      <li>
+    tile
+
+      <ul>
+        <li><a href="code/tile.html#module-tile">module</a>
+</li>
+      </ul></li>
+      <li><a href="code/tile.html#tile.Tile">Tile (class in tile)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="code/tiles.html#tiles.Tile">Tile (class in tiles)</a>
-</li>
-      <li><a href="code/tiles.html#tiles.TileBag">TileBag (class in tiles)</a>
-</li>
       <li>
-    tiles
+    tilebag
 
       <ul>
-        <li><a href="code/tiles.html#module-tiles">module</a>
+        <li><a href="code/tilebag.html#module-tilebag">module</a>
 </li>
       </ul></li>
-      <li><a href="code/tiles.html#tiles.TileSet">TileSet (class in tiles)</a>
+      <li><a href="code/tilebag.html#tilebag.TileBag">TileBag (class in tilebag)</a>
+</li>
+      <li>
+    tileset
+
+      <ul>
+        <li><a href="code/tileset.html#module-tileset">module</a>
+</li>
+      </ul></li>
+      <li><a href="code/tileset.html#tileset.TileSet">TileSet (class in tileset)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -410,19 +393,29 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="code/position.html#position.Position.UP">UP (position.Position attribute)</a>
+      <li>
+    utilities
+
+      <ul>
+        <li><a href="code/utilities.html#module-utilities">module</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="code/plot.html#plot.Plot.VIEWCOL">VIEWCOL (plot.Plot attribute)</a>
+      <li>
+    view
+
+      <ul>
+        <li><a href="code/view.html#module-view">module</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="code/plot.html#plot.Plot.VIEWROW">VIEWROW (plot.Plot attribute)</a>
+      <li><a href="code/view.html#view.View">View (class in view)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -431,12 +424,18 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="code/board.html#board.Board.w">w (board.Board attribute)</a>
+
+      <ul>
+        <li><a href="code/view.html#view.View.w">(view.View attribute)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="code/tiles.html#tiles.Tile.wall_colour">wall_colour (tiles.Tile attribute)</a>
+      <li><a href="code/utilities.html#utilities.wait_for_exit">wait_for_exit() (in module utilities)</a>
 </li>
-      <li><a href="code/tiles.html#tiles.Tile.wall_width">wall_width (tiles.Tile attribute)</a>
+      <li><a href="code/tile.html#tile.Tile.wall_colour">wall_colour (tile.Tile attribute)</a>
+</li>
+      <li><a href="code/tile.html#tile.Tile.wall_width">wall_width (tile.Tile attribute)</a>
 </li>
   </ul></td>
 </tr></table>

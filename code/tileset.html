@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>plot module &mdash; Shifting Maze 0.1 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>tileset module &mdash; Shifting Maze 0.1 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -57,9 +57,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>plot module</li>
+      <li>tileset module</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/code/plot.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/code/tileset.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -67,8 +67,38 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="plot-module">
-<h1>plot module<a class="headerlink" href="#plot-module" title="Permalink to this headline">¶</a></h1>
+  <section id="module-tileset">
+<span id="tileset-module"></span><h1>tileset module<a class="headerlink" href="#module-tileset" title="Permalink to this headline">¶</a></h1>
+<p>History
+17-Jul-2021: Initial version-controlled code for tile generation and management.</p>
+<blockquote>
+<div><p>Note: walls now changes to access with opposite truth values.</p>
+</div></blockquote>
+<p>30-Dec-2021: Split TileSet off into separate module
+08-Jan-2022: Added tests and better exit condition using utilities</p>
+<dl class="py class">
+<dt id="tileset.TileSet">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tileset.</span></code><code class="sig-name descname"><span class="pre">TileSet</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doors_for_tiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'standard'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tileset.TileSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents a set of tiles for use in the Shifting Maze game.</p>
+<dl class="simple">
+<dt>Attributes</dt><dd><dl class="simple">
+<dt>name<span class="classifier">string</span></dt><dd><p>Name of tile set. Default: “standard”.</p>
+</dd>
+<dt>tiles<span class="classifier">dict</span></dt><dd><p>Dictionary of tiles indexed by the tile number.</p>
+</dd>
+<dt>tile_counts<span class="classifier">int</span></dt><dd><p>Number of each tile in set.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="tileset.TileSet.get_image">
+<code class="sig-name descname"><span class="pre">get_image</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tileset.TileSet.get_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
 

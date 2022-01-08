@@ -92,31 +92,28 @@
 <dt>14-Sep-2021 - Separation of concerns - updated to focus board on key functionality,</dt><dd><p>including placements and orientations into a single array to simplify
 passing of information and allow for future extension</p>
 </dd>
+<dt>31-Dec-2021 - Replaced separate slide_row and slide_col with slide_line and</dt><dd><p>updated tests</p>
+</dd>
+<dt>01-Jan-2021 - Updated for use of directions module</dt><dd><p>and moved TILE and ROT out of Board class</p>
+</dd>
 </dl>
 <dl class="py class">
 <dt id="board.Board">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">board.</span></code><code class="sig-name descname"><span class="pre">Board</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_bag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#board.Board" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">board.</span></code><code class="sig-name descname"><span class="pre">Board</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_bag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#board.Board" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Represents the state of the board for Shifting Maze game.</p>
-<dl class="py attribute">
-<dt id="board.Board.dim">
-<code class="sig-name descname"><span class="pre">dim</span></code><a class="headerlink" href="#board.Board.dim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dimension
-(x, y) dimensions of board in tiles: (width (w), height (h))</p>
-</dd></dl>
-
 <dl class="py attribute">
 <dt id="board.Board.w">
 <code class="sig-name descname"><span class="pre">w</span></code><a class="headerlink" href="#board.Board.w" title="Permalink to this definition">¶</a></dt>
 <dd><p>int
-x-dimension of board in tiles in x direction (left and right): width</p>
+x-dimension of board in tiles in x direction (west and east): width</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt id="board.Board.h">
 <code class="sig-name descname"><span class="pre">h</span></code><a class="headerlink" href="#board.Board.h" title="Permalink to this definition">¶</a></dt>
 <dd><p>int
-y-dimension of board in tiles y direction (up and down): height</p>
+y-dimension of board in tiles y direction (north and south): height</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -149,16 +146,6 @@ ROT = 1 is the rotation or orientation of each tile,
 </div></blockquote>
 </dd></dl>
 
-<dl class="py attribute">
-<dt id="board.Board.ROT">
-<code class="sig-name descname"><span class="pre">ROT</span></code><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#board.Board.ROT" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="board.Board.TILE">
-<code class="sig-name descname"><span class="pre">TILE</span></code><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#board.Board.TILE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
 <dt id="board.Board.check_for_door">
 <code class="sig-name descname"><span class="pre">check_for_door</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#board.Board.check_for_door" title="Permalink to this definition">¶</a></dt>
@@ -170,7 +157,7 @@ ROT = 1 is the rotation or orientation of each tile,
 x, y coordinates of tile placement. (0, 0) = (left, top)</p></li>
 <li><p><strong>dir</strong> – int
 Direction in which presence of door to be checked.
-0 = up, 1 = left, 2 = down, 3 = right</p></li>
+0 = NORTH, 1 = WEST, 2 = SOUTH, 3 = EAST</p></li>
 <li><p><strong>tiles</strong> – TileSet.tiles
 Tiles in use</p></li>
 </ul>
@@ -184,29 +171,6 @@ Tiles in use</p></li>
 </dd>
 <dt>Returns</dt><dd><dl class="simple">
 <dt>door<span class="classifier">logical</span></dt><dd><p>True if door is present, False if not</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="board.Board.get_patch">
-<code class="sig-name descname"><span class="pre">get_patch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patch_rect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_bag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#board.Board.get_patch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a patch (area of tiles), drawing new tiles from tile bag is required</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>patch_rect</strong> – pygame.Rect
-Defines the patch of tiles required</p></li>
-<li><p><strong>tile_bag</strong> – TileBag
-bag of tiles from which random ones can be drawn</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="simple">
-<dt>Returns</dt><dd><dl class="simple">
-<dt>patch_placements<span class="classifier">numpy.array(h, w, n)</span></dt><dd><p>holds all information on the state of the each square on the board.in the ‘patch’</p>
 </dd>
 </dl>
 </dd>
@@ -249,51 +213,32 @@ rotate tile: +1 = 90 degrees anticlockwise. -1 = 90 degrees clockwise</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="board.Board.slide_col">
-<code class="sig-name descname"><span class="pre">slide_col</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_bag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#board.Board.slide_col" title="Permalink to this definition">¶</a></dt>
-<dd><p>Slide column up or down 1 tile, filling in from the bag</p>
+<dt id="board.Board.slide_line">
+<code class="sig-name descname"><span class="pre">slide_line</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_or_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_bag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#board.Board.slide_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Slide a row or column</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>col</strong> – int
-(full) board x (tile) coordinate of column</p></li>
 <li><p><strong>dir</strong> – int
-Direction in column to be slid
-0 = up, 2 = down</p></li>
-<li><p><strong>tile_bag</strong> – TileBag
-bag of tiles from which random ones can be drawn</p></li>
+direction in which to slide tiles
+0 = NORTH, 1 = WEST, 2 = SOUTH, 3 = EAST</p></li>
+<li><p><strong>x_or_y</strong> – int
+x or y position on board, depending on direction.
+For dir = NORTH or SOUTH, this is x, indicating the column.
+For dir = EAST or WEST, this is y, indicating the row.</p></li>
+<li><p><strong>tilebag</strong> – TileBag
+Bag of tiles from which new one can be drawn</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="simple">
 <dt>Returns</dt><dd><dl class="simple">
-<dt>patch_placements<span class="classifier">numpy.array(h, w, n)</span></dt><dd><p>holds all information on the state of the each square on the board.in the ‘patch’</p>
+<dt>patch_rect: pygame.Rect</dt><dd><p>Rectangle of tiles to slide, including new tile</p>
 </dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="board.Board.slide_row">
-<code class="sig-name descname"><span class="pre">slide_row</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_bag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#board.Board.slide_row" title="Permalink to this definition">¶</a></dt>
-<dd><p>Slide row 1 tile to the left or right, filling in from the bag</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>row</strong> – int
-(full) board y (tile) coordinate of row</p></li>
-<li><p><strong>dir</strong> – int
-Direction in column to be slid
-0 = up, 2 = down</p></li>
-<li><p><strong>tile_bag</strong> – TileBag
-bag of tiles from which random ones can be drawn</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="simple">
-<dt>Returns</dt><dd><dl class="simple">
-<dt>patch_placements<span class="classifier">numpy.array(h, w, n)</span></dt><dd><p>holds all information on the state of the each square on the board.in the ‘patch’</p>
+<dt>patch_placements<span class="classifier">numpy.array(y, x, n)</span></dt><dd><p>holds all information on the state of the each square
+on the board.in the ‘patch’
+(this will be either a row or column and one longer
+than the board, e.g. for a raw (1, w+1, n)</p>
 </dd>
 </dl>
 </dd>

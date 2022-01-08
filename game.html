@@ -185,8 +185,7 @@ or the standard (full) tile sset for actually playing the game:</p>
 <h3>Board<a class="headerlink" href="#board" title="Permalink to this headline">¶</a></h3>
 <p>The full dimensions of the board are set using the Dimensions class,
 and used to create a board from Tiles in the TileBag:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">board_dim</span> <span class="o">=</span> <span class="n">Dimensions</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
-<span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="n">board_dim</span><span class="p">,</span> <span class="n">tile_bag</span><span class="o">=</span><span class="n">tile_bag</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="n">Dimensions</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">tile_bag</span><span class="o">=</span><span class="n">tile_bag</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -197,6 +196,18 @@ to allow for the centring of the player on the display.</p>
 </section>
 <section id="display">
 <h3>Display<a class="headerlink" href="#display" title="Permalink to this headline">¶</a></h3>
+<p>The screen display is created with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SCREEN_X_ORIGIN</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">SCREEN_Y_ORIGIN</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">SCREEN_WIDTH</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span>
+<span class="n">SCREEN_HEIGHT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SDL_VIDEO_WINDOW_POS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="nb">str</span><span class="p">(</span><span class="n">SCREEN_X_ORIGIN</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">SCREEN_Y_ORIGIN</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">screen</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_mode</span><span class="p">([</span><span class="n">SCREEN_WIDTH</span><span class="p">,</span> <span class="n">SCREEN_HEIGHT</span><span class="p">])</span>
+</pre></div>
+</div>
 <p>The dimensions of the viewable section of the board are set
 using the Dimensions class,
 as well as the offset between the full and viewable board

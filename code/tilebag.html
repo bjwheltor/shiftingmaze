@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tilebag module &mdash; Shifting Maze 0.1 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Shifting Maze
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../approach.html">Approach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prereq.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../game.html">Game</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../board.html">Board</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code.html">Code</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Shifting Maze</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>tilebag module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/code/tilebag.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-tilebag">
+<span id="tilebag-module"></span><h1>tilebag module<a class="headerlink" href="#module-tilebag" title="Permalink to this headline">¶</a></h1>
+<p>History
+17-Jul-2021: Initial version-controlled code for tile generation and management.</p>
+<blockquote>
+<div><p>Note: walls now changes to access with opposite truth values.</p>
+</div></blockquote>
+<p>30-Dec-2021: Split TileBag off into separate module
+08-Jan-2022: Added return_tiles method and tests</p>
+<dl class="py class">
+<dt id="tilebag.TileBag">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tilebag.</span></code><code class="sig-name descname"><span class="pre">TileBag</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tile_set</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilebag.TileBag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents the bag of tiles from which random ones can be drawn for the Shifting Maze game.</p>
+<dl class="simple">
+<dt>Attributes</dt><dd><dl class="simple">
+<dt>tile_numbers<span class="classifier">list</span></dt><dd><p>List of the tiles in the bag in a random order</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="tilebag.TileBag.draw_tile">
+<code class="sig-name descname"><span class="pre">draw_tile</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilebag.TileBag.draw_tile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw a single tile from the bag</p>
+<dl class="simple">
+<dt>Parameters</dt><dd><p>none</p>
+</dd>
+<dt>Returns</dt><dd><dl class="simple">
+<dt>tile_number<span class="classifier">int</span></dt><dd><p>Number of tile drawn</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tilebag.TileBag.draw_tiles">
+<code class="sig-name descname"><span class="pre">draw_tiles</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilebag.TileBag.draw_tiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw a number tiles from the bag</p>
+<dl class="simple">
+<dt>Parameters</dt><dd><dl class="simple">
+<dt>number<span class="classifier">int</span></dt><dd><p>Number of tiles to be drawn. Default = 1</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns</dt><dd><dl class="simple">
+<dt>tile_list<span class="classifier">list</span></dt><dd><p>List of the tiles</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tilebag.TileBag.mix">
+<code class="sig-name descname"><span class="pre">mix</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilebag.TileBag.mix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mix the content of the bag</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tilebag.TileBag.return_tile">
+<code class="sig-name descname"><span class="pre">return_tile</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tile_number</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilebag.TileBag.return_tile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a single tile to the bag and shuffle</p>
+<dl class="simple">
+<dt>Parameters</dt><dd><dl class="simple">
+<dt>tile_number<span class="classifier">int</span></dt><dd><p>Number of tile drawn</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tilebag.TileBag.return_tiles">
+<code class="sig-name descname"><span class="pre">return_tiles</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tile_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilebag.TileBag.return_tiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a tiles to the bag and shuffle</p>
+<dl class="simple">
+<dt>Parameters</dt><dd><dl class="simple">
+<dt>tile_list<span class="classifier">list</span></dt><dd><p>List of the tiles</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Bruce Wright.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
