@@ -16,8 +16,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="text module" href="text.html" />
-    <link rel="prev" title="plot module" href="plot.html" /> 
+    <link rel="next" title="direction module" href="direction.html" />
+    <link rel="prev" title="view module" href="view.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,11 +44,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../board.html">Board</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../code.html">Code</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="board.html">board module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tiles.html">tiles module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tile.html">tiles module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tileset.html">tileset module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tilebag.html">tilebag module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="player.html">player module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot.html">plot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="view.html">view module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">position module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="direction.html">direction module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="text.html">text module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.html">utilities module</a></li>
 </ul>
 </li>
 </ul>
@@ -80,13 +84,13 @@
              
   <section id="module-position">
 <span id="position-module"></span><h1>position module<a class="headerlink" href="#module-position" title="Permalink to this headline">¶</a></h1>
-<p>Position</p>
-<p>History
-24-Jul-2021 - Initial version separated from board.py
-02-Jan-2022 - Moved direction constants to separate module</p>
-<blockquote>
-<div><p>and removed Dimensions class</p>
-</div></blockquote>
+<p>Represents a position as a set of coordinates</p>
+<p>History</p>
+<p>24-Jul-2021: Initial version separated from board.py</p>
+<dl class="simple">
+<dt>02-Jan-2022: Moved direction constants to separate module</dt><dd><p>and removed Dimensions class</p>
+</dd>
+</dl>
 <dl class="py class">
 <dt id="position.Position">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">position.</span></code><code class="sig-name descname"><span class="pre">Position</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#position.Position" title="Permalink to this definition">¶</a></dt>
@@ -162,8 +166,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="plot.html" class="btn btn-neutral float-left" title="plot module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="text.html" class="btn btn-neutral float-right" title="text module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="view.html" class="btn btn-neutral float-left" title="view module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="direction.html" class="btn btn-neutral float-right" title="direction module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

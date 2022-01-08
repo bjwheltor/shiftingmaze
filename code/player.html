@@ -16,8 +16,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="plot module" href="plot.html" />
-    <link rel="prev" title="tiles module" href="tiles.html" /> 
+    <link rel="next" title="view module" href="view.html" />
+    <link rel="prev" title="tilebag module" href="tilebag.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,11 +44,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../board.html">Board</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../code.html">Code</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="board.html">board module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tiles.html">tiles module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tile.html">tiles module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tileset.html">tileset module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tilebag.html">tilebag module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">player module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot.html">plot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="view.html">view module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="position.html">position module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="direction.html">direction module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="text.html">text module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.html">utilities module</a></li>
 </ul>
 </li>
 </ul>
@@ -80,12 +84,10 @@
              
   <section id="module-player">
 <span id="player-module"></span><h1>player module<a class="headerlink" href="#module-player" title="Permalink to this headline">¶</a></h1>
-<p>Player
-History</p>
-<blockquote>
-<div><p>17-Jul-2021 - Initial version
-21-Aug-2021 - Simplified variables and naming - more use of Position, noted as pos variables</p>
-</div></blockquote>
+<p>Represents a player, with visual characteristics, in for Shifting Maze game</p>
+<p>History</p>
+<p>17-Jul-2021: Initial version</p>
+<p>21-Aug-2021: Simplified variables and naming - more use of Position, noted as pos variables</p>
 <dl class="py class">
 <dt id="player.Player">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">player.</span></code><code class="sig-name descname"><span class="pre">Player</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colour</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#player.Player" title="Permalink to this definition">¶</a></dt>
@@ -163,8 +165,8 @@ x,y coordinates of player offset from top left of tile in plot space. Default: P
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="tiles.html" class="btn btn-neutral float-left" title="tiles module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="plot.html" class="btn btn-neutral float-right" title="plot module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tilebag.html" class="btn btn-neutral float-left" title="tilebag module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="view.html" class="btn btn-neutral float-right" title="view module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -16,7 +16,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="tiles module" href="tiles.html" />
+    <link rel="next" title="tiles module" href="tile.html" />
     <link rel="prev" title="Code" href="../code.html" /> 
 </head>
 
@@ -44,11 +44,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../board.html">Board</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../code.html">Code</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">board module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tiles.html">tiles module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tile.html">tiles module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tileset.html">tileset module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tilebag.html">tilebag module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="player.html">player module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot.html">plot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="view.html">view module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="position.html">position module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="direction.html">direction module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="text.html">text module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.html">utilities module</a></li>
 </ul>
 </li>
 </ul>
@@ -80,28 +84,26 @@
              
   <section id="module-board">
 <span id="board-module"></span><h1>board module<a class="headerlink" href="#module-board" title="Permalink to this headline">¶</a></h1>
-<p>Board</p>
-<p>History
-17-Jul-2021 - Initial version
-24-Jul-2021 - Position class moved into a separate file
-21-Aug-2021 - Simplified variables and naming - more use of Position and Dimensions,</p>
-<blockquote>
-<div><p>noted as pos and dim variables</p>
-</div></blockquote>
+<p>Represents the state of the board for Shifting Maze game</p>
+<p>History</p>
+<p>17-Jul-2021: Initial version</p>
+<p>24-Jul-2021: Position class moved into a separate file</p>
 <dl class="simple">
-<dt>14-Sep-2021 - Separation of concerns - updated to focus board on key functionality,</dt><dd><p>including placements and orientations into a single array to simplify
+<dt>21-Aug-2021: Simplified variables and naming - more use of Position and Dimensions,</dt><dd><p>noted as pos and dim variables</p>
+</dd>
+<dt>14-Sep-2021: Separation of concerns - updated to focus board on key functionality,</dt><dd><p>including placements and orientations into a single array to simplify
 passing of information and allow for future extension</p>
 </dd>
-<dt>31-Dec-2021 - Replaced separate slide_row and slide_col with slide_line and</dt><dd><p>updated tests</p>
+<dt>31-Dec-2021: Replaced separate slide_row and slide_col with slide_line and</dt><dd><p>updated tests</p>
 </dd>
-<dt>01-Jan-2021 - Updated for use of directions module</dt><dd><p>and moved TILE and ROT out of Board class</p>
+<dt>01-Jan-2021: Updated for use of directions module</dt><dd><p>and moved TILE and ROT out of Board class</p>
 </dd>
 </dl>
 <dl class="py class">
 <dt id="board.Board">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">board.</span></code><code class="sig-name descname"><span class="pre">Board</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_bag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#board.Board" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Represents the state of the board for Shifting Maze game.</p>
+<p>Represents the state of the board</p>
 <dl class="py attribute">
 <dt id="board.Board.w">
 <code class="sig-name descname"><span class="pre">w</span></code><a class="headerlink" href="#board.Board.w" title="Permalink to this definition">¶</a></dt>
@@ -137,13 +139,11 @@ total number of tiles on board (w * h)</p>
 holds all information on the state of the each square on the board.
 h is the y dimension
 w is the x dimension
-n is the board square attribute:</p>
-<blockquote>
-<div><p>TILE = 0 is the tile number
+n is the board square attribute:
+TILE = 0 is the tile number
 ROT = 1 is the rotation or orientation of each tile,
 0 = no rotation, 1 = 90 degrees rotation anticlockwise
 2 = 180 degrees rotation, 3 = 90 degrees rotation clockwise</p>
-</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
@@ -254,7 +254,7 @@ than the board, e.g. for a raw (1, w+1, n)</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../code.html" class="btn btn-neutral float-left" title="Code" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="tiles.html" class="btn btn-neutral float-right" title="tiles module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tile.html" class="btn btn-neutral float-right" title="tiles module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

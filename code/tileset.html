@@ -15,7 +15,9 @@
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="tilebag module" href="tilebag.html" />
+    <link rel="prev" title="tiles module" href="tile.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -34,13 +36,25 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../approach.html">Approach</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../prereq.html">Prerequisites</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../game.html">Game</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../board.html">Board</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../code.html">Code</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../code.html">Code</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="board.html">board module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tile.html">tiles module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">tileset module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tilebag.html">tilebag module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="player.html">player module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="view.html">view module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="position.html">position module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="direction.html">direction module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="text.html">text module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.html">utilities module</a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -57,6 +71,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../code.html">Code</a> &raquo;</li>
       <li>tileset module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/code/tileset.rst.txt" rel="nofollow"> View page source</a>
@@ -69,18 +84,19 @@
              
   <section id="module-tileset">
 <span id="tileset-module"></span><h1>tileset module<a class="headerlink" href="#module-tileset" title="Permalink to this headline">¶</a></h1>
-<p>History
-17-Jul-2021: Initial version-controlled code for tile generation and management.</p>
-<blockquote>
-<div><p>Note: walls now changes to access with opposite truth values.</p>
-</div></blockquote>
-<p>30-Dec-2021: Split TileSet off into separate module
-08-Jan-2022: Added tests and better exit condition using utilities</p>
+<p>Represents a full set of tiles for use in the Shifting Maze game</p>
+<p>History</p>
+<dl class="simple">
+<dt>17-Jul-2021: Initial version-controlled code for tile generation and management.</dt><dd><p>Note: walls now changes to access with opposite truth values.</p>
+</dd>
+</dl>
+<p>30-Dec-2021: Split TileSet off into separate module</p>
+<p>08-Jan-2022: Added tests and better exit condition using utilities</p>
 <dl class="py class">
 <dt id="tileset.TileSet">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tileset.</span></code><code class="sig-name descname"><span class="pre">TileSet</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doors_for_tiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'standard'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tileset.TileSet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Represents a set of tiles for use in the Shifting Maze game.</p>
+<p>Represents a full set of tiles</p>
 <dl class="simple">
 <dt>Attributes</dt><dd><dl class="simple">
 <dt>name<span class="classifier">string</span></dt><dd><p>Name of tile set. Default: “standard”.</p>
@@ -104,7 +120,10 @@
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tile.html" class="btn btn-neutral float-left" title="tiles module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tilebag.html" class="btn btn-neutral float-right" title="tilebag module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 
