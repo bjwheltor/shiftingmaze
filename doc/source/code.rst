@@ -5,8 +5,12 @@ Code
    :maxdepth: 2
 
    code/board
-   code/tiles
+   code/tile
+   code/tileset
+   code/tilebag
    code/player
-   code/plot
+   code/view
    code/position
+   code/direction
    code/text
+   code/utilities

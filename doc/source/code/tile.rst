@@ -1,7 +1,7 @@
 tiles module
 ============
 
-.. automodule:: tiles
+.. automodule:: tile
    :members:
    :undoc-members:
    :show-inheritance:

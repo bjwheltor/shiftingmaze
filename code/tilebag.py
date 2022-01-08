@@ -1,6 +1,5 @@
 """
 History
-
 17-Jul-2021: Initial version-controlled code for tile generation and management. 
     Note: walls now changes to access with opposite truth values.
 30-Dec-2021: Split TileBag off into separate module
@@ -8,6 +7,7 @@ History
 """
 import random
 import pygame
+
 
 class TileBag:
     """
