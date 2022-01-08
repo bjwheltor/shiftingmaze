@@ -1,15 +1,13 @@
 """
-TileBag
-
 History
 
-17-Jul-2021 - Initial version-controlled code for tile generation and management. 
+17-Jul-2021: Initial version-controlled code for tile generation and management. 
     Note: walls now changes to access with opposite truth values.
-30-Dec-2021 - Split TileBag off into separate module
+30-Dec-2021: Split TileBag off into separate module
+08-Jan-2022: Added return_tiles method and tests
 """
 import random
 import pygame
-
 
 class TileBag:
     """
@@ -76,6 +74,17 @@ class TileBag:
         self.tile_numbers.append(tile_number)
         self.mix()
 
+    def return_tiles(self, tile_list):
+        """
+        Return a tiles to the bag and shuffle
+
+        Parameters
+            tile_list : list
+                List of the tiles
+        """
+        self.tile_numbers += tile_list
+        self.mix()
+
     def __repr__(self):
         """Display tile bag"""
         tile_list = ""
@@ -88,41 +97,28 @@ class TileBag:
         tile_list = ""
         for tile_number in self.tile_numbers:
             tile_list += str(tile_number) + " "
-        return tile_list
+        return f"Tile bag: {tile_list}"
 
 
-#
+# ===============================
 # Some tests in isolation
-#
+# ===============================
 if __name__ == "__main__":
-    # extra imports for testing
+    print("SET UP FOR TESTING")
+    # imports for testing and initialise
     import os
     import sys
+    import pygame
 
-    # screen set-up to test
-    WHITE = (255, 255, 255)
-    GREY = (128, 128, 128)
-    DARK_GREY = (64, 64, 64)
-    LIGHT_GREY = (192, 192, 192)
-    BLACK = (0, 0, 0)
-    BLUE = (150, 150, 255)
-    YELLOW = (200, 200, 0)
-    RED = (200, 100, 100)
-    GREEN = (100, 200, 100)
+    from direction import *
+    from tile import *
+    from tileset import *
 
-    SCREEN_X_ORIGIN = 0
-    SCREEN_Y_ORIGIN = 0
-    SCREEN_WIDTH = 1020
-    SCREEN_HEIGHT = 1020
+    # Initiate pygame
+    pygame.init()
 
-    os.environ["SDL_VIDEO_WINDOW_POS"] = (
-        str(SCREEN_X_ORIGIN) + "," + str(SCREEN_Y_ORIGIN)
-    )
-    screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
-    screen.fill(WHITE)
-    pygame.display.flip()
-
-    # Create a tileset
+    # Create a tile set and fill tile bag
+    tileset_name = "standard"
     doors_for_tiles = {
         0: [1, 1, 1, 1],
         1: [0, 1, 1, 1],
@@ -130,40 +126,28 @@ if __name__ == "__main__":
         3: [0, 1, 0, 1],
         4: [0, 0, 0, 1],
     }
-    tile_counts = {0: 20, 1: 70, 2: 40, 3: 40, 4: 10}
-    tile_set = TileSet(doors_for_tiles, tile_counts, name="standard")
+    tile_counts = {0: 2, 1: 2, 2: 2, 3: 2, 4: 2}
+
+    tile_set = TileSet(doors_for_tiles, tile_counts, name=tileset_name)
+
     tile_bag = TileBag(tile_set)
 
-    # display tiles
-    x = 0
-    y = 0
-    count = 0
-    for tile_number in tile_bag.tile_numbers:
-        if count < 100:
-            screen.blit(tile_set.tiles[tile_number].image, (x * 102, y * 102))
-        x = x + 1
-        if x == 10:
-            y = y + 1
-            x = 0
-    pygame.display.flip()
-
-    print(tile_bag.tile_numbers)
-    print()
-    print(tile_bag.draw_tiles(3))
-    print()
-    print(tile_bag.tile_numbers)
-    print()
-    print(tile_bag.draw_tiles())
-    print()
-    print(tile_bag.tile_numbers)
-    print()
-    print(tile_bag.draw_tile())
-    print()
-    print(tile_bag.tile_numbers)
-
-    # wait for an exit
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+    print("START TESTING")
+    print("Test 1: Print tile bag")
+    print(tile_bag)
+    print("Test 2: Draw a tile")
+    tile = tile_bag.draw_tile()
+    print(f"Tile drawn: {tile}")
+    print(tile_bag)
+    print("Test 3: Draw 3 tiles")
+    tiles = tile_bag.draw_tiles(3)
+    print(f"Tiles drawn: {tiles}")
+    print(tile_bag)
+    print("Test 4: Return tile")
+    print(f"Tile to be returned: {tile}")
+    tile_bag.return_tile(tile)
+    print(tile_bag)
+    print("Test 5: Return 3 tiles")
+    print(f"Tiles to be returned: {tiles}")
+    tile_bag.return_tiles(tiles)
+    print(tile_bag)

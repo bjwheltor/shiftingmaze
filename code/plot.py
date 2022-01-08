@@ -622,7 +622,7 @@ class Plot:
 
         for angle in range(start_angle, end_angle, angle_inc):
 
-            rotated_image = pygame.transform.rotate(image, angle)
+            rotated_image = pygame.transform.rotate(image, -angle)
             rotated_image_rect = rotated_image.get_rect()
 
             rotate_adjust_x = (rotated_image_rect.right - image_rect.right) / 2

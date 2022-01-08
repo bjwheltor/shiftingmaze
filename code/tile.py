@@ -1,11 +1,8 @@
 """
-Tile
-
 History
-
-17-Jul-2021 - Initial version-controlled code for tile generation and management. 
+17-Jul-2021: Initial version-controlled code for tile generation and management. 
     Note: walls now changes to access with opposite truth values.
-30-Dec-2021 - Split Tile off into separate fle
+30-Dec-2021: Split Tile off into separate fle
 """
 import pygame
 

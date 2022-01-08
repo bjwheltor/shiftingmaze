@@ -1,12 +1,11 @@
 """
-TileSet
-
 History
-
-17-Jul-2021 - Initial version-controlled code for tile generation and management. 
+17-Jul-2021: Initial version-controlled code for tile generation and management. 
     Note: walls now changes to access with opposite truth values.
-30-Dec-2021 - Split TileSet off into separate module
+30-Dec-2021: Split TileSet off into separate module
+08-Jan-2022: Added tests and better exit condition using utilities
 """
+import utilities
 from tile import *
 
 
@@ -46,7 +45,7 @@ class TileSet:
         if rot is None:
             rot = 0
         image = self.tiles[number].image
-        rotated_image = pygame.transform.rotate(image, rot)
+        rotated_image = pygame.transform.rotate(image, -rot)
         return rotated_image
 
     def __str__(self):
@@ -102,7 +101,9 @@ if __name__ == "__main__":
     pygame.display.set_caption("Shifting Maze Tile Set")
 
     print("START TESTING")
-    print("Test 1: Display tile set with no rotation")
+    print("Test 1: Print tile set")
+    print(tile_set)
+    print("Test 2: Display tile set with no rotation")
     tile_size = tile_set.tiles[0].size
     for tile_number in range(tile_set.different_tiles):
         tile = tile_set.tiles[tile_number].image
@@ -110,7 +111,7 @@ if __name__ == "__main__":
         screen.blit(tile, (px, 0))
         pygame.display.flip()
 
-    print("Test 2: Display tile set with all rotations (starting with 0)")
+    print("Test 3: Display tile set with all rotations (starting with 0)")
     for y in range(4):
         py = (y + 1) * tile_size
         rotation = DIRECTIONS[y]
@@ -120,9 +121,5 @@ if __name__ == "__main__":
             screen.blit(tile, (px, py))
             pygame.display.flip()
 
-    pygame.time.delay(20000)
-    pygame.quit()
-    sys.exit()
-
-
-# print("        And then with all different rotations (start with 0)")
+    # wait for an exit
+    utilities.wait_for_exit()
