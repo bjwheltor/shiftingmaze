@@ -1,8 +1,9 @@
 """
-Utilitu functions
+Utility functions
 
 History
-08-Jan-2022 - Initial module
+
+08-Jan-2022: Initial module
 """
 import sys
 import pygame

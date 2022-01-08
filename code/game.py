@@ -1,9 +1,11 @@
 """
-Main game control code
+Main game control code for the shifting Maze game
 
 History
-24-Jul-2021 - Initial version
-21-Aug-2021 - Simplified control
+
+24-Jul-2021: Initial version
+
+21-Aug-2021: Simplified control
 """
 import os
 import sys

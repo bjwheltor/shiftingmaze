@@ -1,9 +1,11 @@
 """
-Plot
+Deprecated class
 
 History
-17-Jul-2021 - Initial version
-16-Sep-2021 - Separation of concerns - updated to focus plot on key functionality
+
+17-Jul-2021: Initial version
+
+16-Sep-2021: Separation of concerns - updated to focus plot on key functionality
 """
 import os
 import sys

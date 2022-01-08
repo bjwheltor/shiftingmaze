@@ -1,14 +1,16 @@
 """
-View
+Represents the view of the section of the board
+that is currently displayed in Shifting Maze game
 
 History
-29-Dec-2021 - Initial version - rationalisation of plot to separate concerns
+
+29-Dec-2021: Initial version - rationalisation of plot to separate concerns
 """
 
 
 class View:
     """
-    Represents the view of the section of the board that displayed
+    Represents the view of the section of the board currently displayed
 
     Attributes:
         rect : pygame.Rect

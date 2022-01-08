@@ -1,15 +1,16 @@
 """
-Provide text output as game info and for debugging
+Provide text output as game info and for debugging for Shifting Maze game
 
 History
-30-Aug-2021 - Initial version
+
+30-Aug-2021: Initial version
 """
 from board import *
 
 
 class Text:
     """
-    Provide text output as game info and for debugging for Shifting Maze game.
+    Provide text output as game info and for debugging
 
     Attributes:
     """

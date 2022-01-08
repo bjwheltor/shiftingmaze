@@ -1,10 +1,9 @@
 """
-Direction
-Just sets some constants for directions at present,
-but aim to add a direction type in future.
+Sets some constants for directions
 
 History
- 31-Dec-2021 - Initial version
+
+31-Dec-2021: Initial version
 """
 
 DIRECTIONS = [0, 90, 180, 270]

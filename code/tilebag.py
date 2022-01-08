@@ -1,8 +1,14 @@
 """
+Represents the bag of tiles from which random ones can be drawn from
+and returned to in the Shifting Maze game
+
 History
+
 17-Jul-2021: Initial version-controlled code for tile generation and management. 
     Note: walls now changes to access with opposite truth values.
+
 30-Dec-2021: Split TileBag off into separate module
+
 08-Jan-2022: Added return_tiles method and tests
 """
 import random
@@ -11,7 +17,8 @@ import pygame
 
 class TileBag:
     """
-    Represents the bag of tiles from which random ones can be drawn for the Shifting Maze game.
+    Represents the bag of tiles from which random ones can be drawn
+    and returned to
 
     Attributes
         tile_numbers : list

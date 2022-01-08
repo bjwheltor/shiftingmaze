@@ -1,8 +1,13 @@
 """
+Represents a full set of tiles for use in the Shifting Maze game
+
 History
+
 17-Jul-2021: Initial version-controlled code for tile generation and management. 
     Note: walls now changes to access with opposite truth values.
+
 30-Dec-2021: Split TileSet off into separate module
+
 08-Jan-2022: Added tests and better exit condition using utilities
 """
 import utilities
@@ -11,7 +16,7 @@ from tile import *
 
 class TileSet:
     """
-    Represents a set of tiles for use in the Shifting Maze game.
+    Represents a full set of tiles
 
     Attributes
         name : string

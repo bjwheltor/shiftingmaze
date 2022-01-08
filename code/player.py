@@ -1,9 +1,11 @@
 """
-Player
+Represents a player, with visual characteristics, in for Shifting Maze game
+
 History
 
- 17-Jul-2021 - Initial version
- 21-Aug-2021 - Simplified variables and naming - more use of Position, noted as pos variables
+17-Jul-2021: Initial version
+
+21-Aug-2021: Simplified variables and naming - more use of Position, noted as pos variables
 """
 import pygame
 from board import *

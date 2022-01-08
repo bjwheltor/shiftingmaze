@@ -1,10 +1,12 @@
 """
-Position
+Represents a position as a set of coordinates
 
 History
-24-Jul-2021 - Initial version separated from board.py
-02-Jan-2022 - Moved direction constants to separate module
-              and removed Dimensions class
+
+24-Jul-2021: Initial version separated from board.py
+
+02-Jan-2022: Moved direction constants to separate module
+    and removed Dimensions class
 """
 from direction import *
 

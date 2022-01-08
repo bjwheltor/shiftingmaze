@@ -1,7 +1,11 @@
 """
+Represents a tile in the Shifting Maze game, including image of tile
+
 History
+
 17-Jul-2021: Initial version-controlled code for tile generation and management. 
     Note: walls now changes to access with opposite truth values.
+    
 30-Dec-2021: Split Tile off into separate fle
 """
 import pygame
@@ -9,7 +13,7 @@ import pygame
 
 class Tile:
     """
-    Represents a tile in the Shifting Maze game, including image of tile.
+    Represents a tile including image of tile
 
     Attributes:
         number : int

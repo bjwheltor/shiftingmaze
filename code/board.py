@@ -1,18 +1,24 @@
 """
-Board
+Represents the state of the board for Shifting Maze game
 
 History
-17-Jul-2021 - Initial version
-24-Jul-2021 - Position class moved into a separate file
-21-Aug-2021 - Simplified variables and naming - more use of Position and Dimensions, 
-              noted as pos and dim variables
-14-Sep-2021 - Separation of concerns - updated to focus board on key functionality,
-              including placements and orientations into a single array to simplify
-              passing of information and allow for future extension
-31-Dec-2021 - Replaced separate slide_row and slide_col with slide_line and
-              updated tests
-01-Jan-2021 - Updated for use of directions module 
-              and moved TILE and ROT out of Board class
+
+17-Jul-2021: Initial version
+
+24-Jul-2021: Position class moved into a separate file
+
+21-Aug-2021: Simplified variables and naming - more use of Position and Dimensions, 
+    noted as pos and dim variables
+
+14-Sep-2021: Separation of concerns - updated to focus board on key functionality,
+    including placements and orientations into a single array to simplify
+    passing of information and allow for future extension
+
+31-Dec-2021: Replaced separate slide_row and slide_col with slide_line and
+    updated tests
+
+01-Jan-2021: Updated for use of directions module 
+    and moved TILE and ROT out of Board class
 """
 import pygame
 import random
@@ -27,7 +33,7 @@ ROT = 1
 
 class Board:
     """
-    Represents the state of the board for Shifting Maze game.
+    Represents the state of the board
 
     Attributes:
         w : int
@@ -43,10 +49,10 @@ class Board:
             h is the y dimension
             w is the x dimension
             n is the board square attribute:
-                TILE = 0 is the tile number
-                ROT = 1 is the rotation or orientation of each tile,
-                0 = no rotation, 1 = 90 degrees rotation anticlockwise
-                2 = 180 degrees rotation, 3 = 90 degrees rotation clockwise
+            TILE = 0 is the tile number
+            ROT = 1 is the rotation or orientation of each tile,
+            0 = no rotation, 1 = 90 degrees rotation anticlockwise
+            2 = 180 degrees rotation, 3 = 90 degrees rotation clockwise
     """
 
     def __init__(self, width, height, tile_bag=None, tile_list=None):
