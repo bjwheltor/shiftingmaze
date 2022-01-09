@@ -1,12 +1,5 @@
 """
 Represents a position as a set of coordinates
-
-History
-
-24-Jul-2021: Initial version separated from board.py
-
-02-Jan-2022: Moved direction constants to separate module
-    and removed Dimensions class
 """
 from direction import *
 
@@ -60,8 +53,7 @@ class Position:
 
         Parameters
             dir : int
-                Direction in which position to be returned
-                0 = NORTH, 1 = WEST, 2 = SOUTH, 3 = EAST
+                direction in which position to be returned (degrees clockwise)
 
         Returns
             next_position : Position
@@ -69,33 +61,31 @@ class Position:
         """
         x = self.x
         y = self.y
-        if direction == NORTH:
+        if dir == NORTH:
             y -= 1
-        elif direction == WEST:
+        elif dir == WEST:
             x -= 1
-        elif direction == SOUTH:
+        elif dir == SOUTH:
             y += 1
-        elif direction == EAST:
+        elif dir == EAST:
             x += 1
         return Position(x, y)
 
-    def move(self, direction):
+    def move(self, dir):
         """
         Updates the position to the next point in a particular direction
 
         Parameters
             dir : int
-                Direction in which position to be returned
-                0 = NORTH, 1 = WEST, 2 = SOUTH, 3 = EAST
-
+                direction in which position to be returned (degrees clockwise)
         """
-        if direction == NORTH:
+        if dir == NORTH:
             self.y -= 1
-        elif direction == WEST:
+        elif dir == WEST:
             self.x -= 1
-        elif direction == SOUTH:
+        elif dir == SOUTH:
             self.y += 1
-        elif direction == EAST:
+        elif dir == EAST:
             self.x += 1
 
     def __repr__(self):

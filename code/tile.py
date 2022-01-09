@@ -20,7 +20,7 @@ class Tile:
             Unique number assigned to tile
         doors : list
             List of values representing no door or blank wall (0) or a door (1).
-            These proceed anti-clockwise from up the screen. Default: [1,1,1,1]
+            These proceed clockwise from up the screen. Default: [1,1,1,1]
         size : integer
             Length of one edge of a square tile, including frame. Default: 102
         frame : int
@@ -95,13 +95,13 @@ class Tile:
             pygame.draw.rect(self.image, self.floor_colour, self.top_door_rect)
 
         if doors[1]:
-            self.left_door_rect = (
-                self.frame,
+            self.right_door_rect = (
+                self.size - self.wall_width - self.frame,
                 int((self.size - self.door_width) / 2),
                 self.wall_width,
                 self.door_width,
             )
-            pygame.draw.rect(self.image, self.floor_colour, self.left_door_rect)
+            pygame.draw.rect(self.image, self.floor_colour, self.right_door_rect)
 
         if doors[2]:
             self.bottom_door_rect = (
@@ -113,10 +113,10 @@ class Tile:
             pygame.draw.rect(self.image, self.floor_colour, self.bottom_door_rect)
 
         if doors[3]:
-            self.right_door_rect = (
-                self.size - self.wall_width - self.frame,
+            self.left_door_rect = (
+                self.frame,
                 int((self.size - self.door_width) / 2),
                 self.wall_width,
                 self.door_width,
             )
-            pygame.draw.rect(self.image, self.floor_colour, self.right_door_rect)
+            pygame.draw.rect(self.image, self.floor_colour, self.left_door_rect)
