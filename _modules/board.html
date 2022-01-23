@@ -271,8 +271,7 @@
         <span class="n">rot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">pos_to_check</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pos_to_check</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">ROT</span><span class="p">]</span>
         <span class="n">doors</span> <span class="o">=</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">[</span><span class="n">tile</span><span class="p">]</span><span class="o">.</span><span class="n">doors</span>
         <span class="n">door_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(((</span><span class="n">dir_to_check</span> <span class="o">-</span> <span class="n">rot</span><span class="p">)</span> <span class="o">%</span> <span class="n">FULLCIRCLE</span><span class="p">)</span> <span class="o">/</span> <span class="n">PLUS90</span><span class="p">)</span>
-        <span class="n">door</span> <span class="o">=</span> <span class="n">doors</span><span class="p">[</span><span class="n">door_index</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">door</span></div>
+        <span class="k">return</span> <span class="n">doors</span><span class="p">[</span><span class="n">door_index</span><span class="p">]</span></div>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Print board details&quot;&quot;&quot;</span>
