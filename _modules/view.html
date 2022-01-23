@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>view &mdash; Shifting Maze 0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Shifting Maze
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../approach.html">Approach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prereq.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../game.html">Game</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../board.html">Board</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code.html">Code</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Shifting Maze</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      <li>view</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for view</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Represents the view of the section of the board</span>
+<span class="sd">that is currently displayed in Shifting Maze game</span>
+
+<span class="sd">History</span>
+
+<span class="sd">29-Dec-2021: Initial version - rationalisation of plot to separate concerns</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="View"><a class="viewcode-back" href="../code/view.html#view.View">[docs]</a><span class="k">class</span> <span class="nc">View</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents the view of the section of the board currently displayed</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        rect : pygame.Rect</span>
+<span class="sd">            Rectangle describing view on board</span>
+<span class="sd">        w : int</span>
+<span class="sd">            Number of pixels in x-direction (left and right)</span>
+<span class="sd">        h : int</span>
+<span class="sd">            Number of pixels in y-direction (up and down)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">,</span> <span class="n">placements</span><span class="p">,</span> <span class="n">tileset</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set-up view of board displaying tiles</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">            rect : pygame.Rect</span>
+<span class="sd">                Rectangle describing view on board</span>
+<span class="sd">            placements : numpy.array(h, w, n)</span>
+<span class="sd">                holds all information on the state of the each square on the board.</span>
+<span class="sd">                h is the y dimension</span>
+<span class="sd">                w is the x dimension</span>
+<span class="sd">                n is the board square attribute</span>
+<span class="sd">            tiles : tiles.TileSet</span>
+<span class="sd">                Details of the set of tiles being used</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rect</span> <span class="o">=</span> <span class="n">rect</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">board_colour</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># BLACK</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">=</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+
+        <span class="c1"># create empty tile space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">empty_tile</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">),</span> <span class="n">pygame</span><span class="o">.</span><span class="n">SRCALPHA</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">empty_tile</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">board_colour</span><span class="p">)</span>
+
+        <span class="c1"># display tiles</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="n">rect</span><span class="o">.</span><span class="n">bottom</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">rect</span><span class="o">.</span><span class="n">right</span><span class="p">):</span>
+                <span class="n">tile</span> <span class="o">=</span> <span class="n">tileset</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">placements</span><span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">TILE</span><span class="p">],</span> <span class="n">ROT</span><span class="p">)</span>
+                <span class="n">px</span><span class="p">,</span> <span class="n">py</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pxy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">tile</span><span class="p">,</span> <span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">))</span>
+
+        <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+
+<div class="viewcode-block" id="View.get_pxy"><a class="viewcode-back" href="../code/view.html#view.View.get_pxy">[docs]</a>    <span class="k">def</span> <span class="nf">get_pxy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get pixel x, y position in view from board x, y position</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            x : int</span>
+<span class="sd">                x position on board</span>
+<span class="sd">            y : int</span>
+<span class="sd">                y position on board</span>
+<span class="sd">        Returns</span>
+<span class="sd">            px : int</span>
+<span class="sd">                pixel x position in view</span>
+<span class="sd">            py : int</span>
+<span class="sd">                pixel y position in view</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">px</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">left</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span>
+        <span class="n">py</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">top</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span>
+        <span class="k">return</span> <span class="n">px</span><span class="p">,</span> <span class="n">py</span></div>
+
+<div class="viewcode-block" id="View.get_xy"><a class="viewcode-back" href="../code/view.html#view.View.get_xy">[docs]</a>    <span class="k">def</span> <span class="nf">get_xy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get  board x, y position from pixel x, y position in view</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            px : int</span>
+<span class="sd">                pixel x position in view</span>
+<span class="sd">            py : int</span>
+<span class="sd">                pixel y position in view</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">            x : int</span>
+<span class="sd">                x position on board</span>
+<span class="sd">            y : int</span>
+<span class="sd">                y position on board</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">px</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">py</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">top</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span></div>
+
+<div class="viewcode-block" id="View.get_image"><a class="viewcode-back" href="../code/view.html#view.View.get_image">[docs]</a>    <span class="k">def</span> <span class="nf">get_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">,</span> <span class="n">add_tile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">add_pxy</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get image from screen (area from view)</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            px : int</span>
+<span class="sd">                pixel x position in view</span>
+<span class="sd">            py : int</span>
+<span class="sd">                pixel y position in view</span>
+<span class="sd">            pw : int</span>
+<span class="sd">                width in pixels</span>
+<span class="sd">            ph : int</span>
+<span class="sd">                height in pixels</span>
+<span class="sd">        Returns</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Surface</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">SRCALPHA</span><span class="p">)</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">screen</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">rect</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">add_tile</span><span class="p">:</span>
+            <span class="n">image</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">add_tile</span><span class="p">,</span> <span class="n">add_pxy</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">image</span></div>
+
+<div class="viewcode-block" id="View.rotate_tile"><a class="viewcode-back" href="../code/view.html#view.View.rotate_tile">[docs]</a>    <span class="k">def</span> <span class="nf">rotate_tile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">rot</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot tile in position with orientation</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            pos : Position</span>
+<span class="sd">                x, y coordinates of tile placement. (0, 0) = (left, top)</span>
+<span class="sd">            rot : int</span>
+<span class="sd">                rotation to be applied to tile. Either +1 or -1.</span>
+<span class="sd">                +1 = 90 degrees anticlockwise. -1 = 90 degrees clockwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Action: Rotate tile   rotation: </span><span class="si">{</span><span class="n">rot</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">px</span><span class="p">,</span> <span class="n">py</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pxy</span><span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="c1"># extract tile from the board</span>
+        <span class="n">rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">)</span>
+        <span class="n">tile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+        <span class="n">tile_rect</span> <span class="o">=</span> <span class="n">tile</span><span class="o">.</span><span class="n">get_rect</span><span class="p">()</span>
+
+        <span class="c1"># extract row to left of tile to be rotated</span>
+        <span class="n">rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">px</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">)</span>
+        <span class="n">left_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">add_tile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_tile</span><span class="p">,</span> <span class="n">add_pxy</span><span class="o">=</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+        <span class="c1"># extract row to right of tile to be rotated</span>
+        <span class="n">rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span>
+            <span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">-</span> <span class="n">px</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span>
+        <span class="p">)</span>
+        <span class="n">right_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">add_tile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_tile</span><span class="p">,</span> <span class="n">add_pxy</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+        <span class="c1"># extract column above tile to be rotated</span>
+        <span class="n">rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span> <span class="n">py</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">)</span>
+        <span class="n">top_column</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">add_tile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_tile</span><span class="p">,</span> <span class="n">add_pxy</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">py</span><span class="p">))</span>
+
+        <span class="c1"># extract column below tile to be rotated</span>
+        <span class="n">rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span>
+            <span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">height</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">-</span> <span class="n">py</span>
+        <span class="p">)</span>
+        <span class="n">bottom_column</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">add_tile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_tile</span><span class="p">,</span> <span class="n">add_pxy</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">angle</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rot</span> <span class="o">*</span> <span class="mi">91</span><span class="p">,</span> <span class="n">rot</span><span class="p">):</span>
+
+            <span class="n">rotated_tile</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">rotate</span><span class="p">(</span><span class="n">tile</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+            <span class="n">rotated_tile_rect</span> <span class="o">=</span> <span class="n">rotated_tile</span><span class="o">.</span><span class="n">get_rect</span><span class="p">()</span>
+
+            <span class="n">rotate_adjust_px</span> <span class="o">=</span> <span class="p">(</span><span class="n">rotated_tile_rect</span><span class="o">.</span><span class="n">right</span> <span class="o">-</span> <span class="n">tile_rect</span><span class="o">.</span><span class="n">right</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+            <span class="n">rotate_adjust_py</span> <span class="o">=</span> <span class="p">(</span><span class="n">rotated_tile_rect</span><span class="o">.</span><span class="n">bottom</span> <span class="o">-</span> <span class="n">tile_rect</span><span class="o">.</span><span class="n">bottom</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+
+            <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">left_row</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="n">rotate_adjust_px</span><span class="p">,</span> <span class="n">py</span><span class="p">))</span>
+            <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">right_row</span><span class="p">,</span> <span class="p">(</span><span class="n">px</span> <span class="o">+</span> <span class="n">rotate_adjust_px</span><span class="p">,</span> <span class="n">py</span><span class="p">))</span>
+            <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">top_column</span><span class="p">,</span> <span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="o">-</span><span class="n">rotate_adjust_py</span><span class="p">))</span>
+            <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">bottom_column</span><span class="p">,</span> <span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span> <span class="o">+</span> <span class="n">rotate_adjust_py</span><span class="p">))</span>
+            <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span>
+                <span class="n">rotated_tile</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">px</span> <span class="o">-</span> <span class="n">rotate_adjust_px</span><span class="p">,</span> <span class="n">py</span> <span class="o">-</span> <span class="n">rotate_adjust_py</span><span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+            <span class="n">pygame</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="View.slide_tiles"><a class="viewcode-back" href="../code/view.html#view.View.slide_tiles">[docs]</a>    <span class="k">def</span> <span class="nf">slide_tiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="nb">dir</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot tile in position with orientation</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            x : int</span>
+<span class="sd">                x position on board</span>
+<span class="sd">            y : int</span>
+<span class="sd">                x position on board</span>
+<span class="sd">            dir : int</span>
+<span class="sd">                direction in which to slide tiles</span>
+<span class="sd">                0 = UP, 1 = LEFT, 2 = DOWN, 3 = RIGHT</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Action: Slide tiles   direction: </span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">px</span><span class="p">,</span> <span class="n">py</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pxy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+        <span class="c1"># if slide to left</span>
+        <span class="k">if</span> <span class="nb">dir</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span>
+                <span class="mi">0</span><span class="p">,</span>
+                <span class="n">py</span><span class="p">,</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">width</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">patch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span>
+                <span class="n">rect</span><span class="p">,</span>
+                <span class="n">add_tile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_tile</span><span class="p">,</span>
+                <span class="n">add_pxy</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="c1"># if slide to right</span>
+        <span class="k">elif</span> <span class="nb">dir</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span>
+                <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span>
+                <span class="n">py</span><span class="p">,</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">width</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">patch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">add_tile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_tile</span><span class="p">,</span> <span class="n">add_pxy</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="c1"># if slide to up</span>
+        <span class="k">elif</span> <span class="nb">dir</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span>
+                <span class="n">px</span><span class="p">,</span>
+                <span class="mi">0</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">height</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">patch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span>
+                <span class="n">rect</span><span class="p">,</span>
+                <span class="n">add_tile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_tile</span><span class="p">,</span>
+                <span class="n">add_pxy</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">height</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="c1"># if slide to down</span>
+        <span class="k">elif</span> <span class="nb">dir</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span>
+                <span class="n">px</span><span class="p">,</span>
+                <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">height</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">patch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">add_tile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_tile</span><span class="p">,</span> <span class="n">add_pxy</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+        <span class="c1"># Slide the patch, overplotting the player if required</span>
+        <span class="k">for</span> <span class="n">move</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">dir</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">patch</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="n">move</span><span class="p">,</span> <span class="n">py</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">dir</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">patch</span><span class="p">,</span> <span class="p">(</span><span class="n">move</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span> <span class="n">py</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">dir</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">patch</span><span class="p">,</span> <span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="o">-</span><span class="n">move</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">dir</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">patch</span><span class="p">,</span> <span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">move</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">))</span>
+
+            <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+            <span class="n">pygame</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="View.slide_line"><a class="viewcode-back" href="../code/view.html#view.View.slide_line">[docs]</a>    <span class="k">def</span> <span class="nf">slide_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">patch_rect</span><span class="p">,</span> <span class="n">patch_placements</span><span class="p">,</span> <span class="n">tileset</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot tile in position with orientation</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            x : int</span>
+<span class="sd">                x position on board</span>
+<span class="sd">            y : int</span>
+<span class="sd">                x position on board</span>
+<span class="sd">            dir : int</span>
+<span class="sd">                direction in which to slide tiles</span>
+<span class="sd">                0 = UP, 1 = LEFT, 2 = DOWN, 3 = RIGHT</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Action: Slide tiles   direction: </span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">px</span><span class="p">,</span> <span class="n">py</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pxy</span><span class="p">(</span><span class="n">patch_rect</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">patch_rect</span><span class="o">.</span><span class="n">top</span><span class="p">)</span>
+
+        <span class="c1"># if slide to West</span>
+        <span class="k">if</span> <span class="nb">dir</span> <span class="o">==</span> <span class="n">WEST</span><span class="p">:</span>
+            <span class="n">px</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">dpx</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">width</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span>
+            <span class="n">dpy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_xy</span><span class="p">(</span><span class="n">dpx</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span> <span class="n">py</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">add_pxy</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">dpx</span><span class="p">,</span> <span class="n">dpy</span><span class="p">)</span>
+            <span class="n">tile</span> <span class="o">=</span> <span class="n">patch_placements</span><span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">TILE</span><span class="p">]</span>
+            <span class="n">rot</span> <span class="o">=</span> <span class="n">patch_placements</span><span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">ROT</span><span class="p">]</span>
+            <span class="n">add_tile</span> <span class="o">=</span> <span class="n">tileset</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">tile</span><span class="p">,</span> <span class="n">rot</span><span class="p">)</span>
+            <span class="n">patch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">add_tile</span><span class="p">,</span> <span class="n">add_pxy</span><span class="p">)</span>
+
+        <span class="c1"># if slide to East</span>
+        <span class="k">elif</span> <span class="nb">dir</span> <span class="o">==</span> <span class="n">EAST</span><span class="p">:</span>
+            <span class="n">px</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span>
+            <span class="n">dpx</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">width</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span>
+            <span class="n">dpy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_xy</span><span class="p">(</span><span class="n">px</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span> <span class="n">py</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">add_pxy</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">tile</span> <span class="o">=</span> <span class="n">patch_placements</span><span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">TILE</span><span class="p">]</span>
+            <span class="n">rot</span> <span class="o">=</span> <span class="n">patch_placements</span><span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">ROT</span><span class="p">]</span>
+            <span class="n">add_tile</span> <span class="o">=</span> <span class="n">tileset</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">tile</span><span class="p">,</span> <span class="n">rot</span><span class="p">)</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">dpx</span><span class="p">,</span> <span class="n">dpy</span><span class="p">)</span>
+            <span class="n">patch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">add_tile</span><span class="p">,</span> <span class="n">add_pxy</span><span class="p">)</span>
+
+        <span class="c1"># if slide to up</span>
+        <span class="k">elif</span> <span class="nb">dir</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span>
+                <span class="n">px</span><span class="p">,</span>
+                <span class="mi">0</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">height</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">patch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span>
+                <span class="n">rect</span><span class="p">,</span>
+                <span class="n">add_tile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_tile</span><span class="p">,</span>
+                <span class="n">add_pxy</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">height</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="c1"># if slide to down</span>
+        <span class="k">elif</span> <span class="nb">dir</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span>
+                <span class="n">px</span><span class="p">,</span>
+                <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">height</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">patch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">add_tile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_tile</span><span class="p">,</span> <span class="n">add_pxy</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+        <span class="c1"># Slide the patch, overplotting the player if required</span>
+        <span class="k">for</span> <span class="n">move</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">dir</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">patch</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="n">move</span><span class="p">,</span> <span class="n">py</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">dir</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">patch</span><span class="p">,</span> <span class="p">(</span><span class="n">move</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">,</span> <span class="n">py</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">dir</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">patch</span><span class="p">,</span> <span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="o">-</span><span class="n">move</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">dir</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">screen</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">patch</span><span class="p">,</span> <span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">move</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">tile_size</span><span class="p">))</span>
+
+            <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+            <span class="n">pygame</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span></div></div>
+
+
+<span class="c1"># ===============================</span>
+<span class="c1"># Some tests in isolation</span>
+<span class="c1"># ===============================</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SET UP FOR TESTING&quot;</span><span class="p">)</span>
+    <span class="c1"># imports for testing and initialise</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="kn">import</span> <span class="nn">pygame</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+    <span class="kn">from</span> <span class="nn">tile</span> <span class="kn">import</span> <span class="o">*</span>
+    <span class="kn">from</span> <span class="nn">tileset</span> <span class="kn">import</span> <span class="o">*</span>
+    <span class="kn">from</span> <span class="nn">tilebag</span> <span class="kn">import</span> <span class="o">*</span>
+    <span class="kn">from</span> <span class="nn">board</span> <span class="kn">import</span> <span class="o">*</span>
+
+    <span class="c1"># Initiate pygame</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+
+    <span class="c1"># Create a tile set and fill tile bag</span>
+    <span class="n">tileset_name</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span>
+    <span class="n">doors_for_tiles</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">}</span>
+    <span class="n">tile_counts</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="mi">140</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="mi">20</span><span class="p">}</span>
+
+    <span class="n">tile_set</span> <span class="o">=</span> <span class="n">TileSet</span><span class="p">(</span><span class="n">doors_for_tiles</span><span class="p">,</span> <span class="n">tile_counts</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">tileset_name</span><span class="p">)</span>
+    <span class="n">tile_bag</span> <span class="o">=</span> <span class="n">TileBag</span><span class="p">(</span><span class="n">tile_set</span><span class="p">)</span>
+
+    <span class="c1"># Set up dimensions of board and view</span>
+    <span class="n">board_width</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">board_height</span> <span class="o">=</span> <span class="n">board_width</span>
+    <span class="n">view_width</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">view_height</span> <span class="o">=</span> <span class="n">view_width</span>
+    <span class="n">view_left</span> <span class="o">=</span> <span class="p">(</span><span class="n">board_width</span> <span class="o">-</span> <span class="n">view_width</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">view_top</span> <span class="o">=</span> <span class="p">(</span><span class="n">board_height</span> <span class="o">-</span> <span class="n">view_height</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">view_rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="n">view_left</span><span class="p">,</span> <span class="n">view_top</span><span class="p">,</span> <span class="n">view_width</span><span class="p">,</span> <span class="n">view_height</span><span class="p">)</span>
+
+    <span class="c1"># Create board and fill with tiles from tile bag</span>
+    <span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="n">board_width</span><span class="p">,</span> <span class="n">board_height</span><span class="p">,</span> <span class="n">tile_bag</span><span class="o">=</span><span class="n">tile_bag</span><span class="p">)</span>
+
+    <span class="c1"># Set up screen display</span>
+    <span class="n">SCREEN_X_ORIGIN</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">SCREEN_Y_ORIGIN</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">SCREEN_WIDTH</span> <span class="o">=</span> <span class="n">view_width</span> <span class="o">*</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">SCREEN_HEIGHT</span> <span class="o">=</span> <span class="n">view_height</span> <span class="o">*</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SDL_VIDEO_WINDOW_POS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">SCREEN_X_ORIGIN</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">SCREEN_Y_ORIGIN</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">screen</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_mode</span><span class="p">([</span><span class="n">SCREEN_WIDTH</span><span class="p">,</span> <span class="n">SCREEN_HEIGHT</span><span class="p">])</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_caption</span><span class="p">(</span><span class="s2">&quot;Shifting Maze&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;START TESTING&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test 1: Set-up view in screen&quot;</span><span class="p">)</span>
+    <span class="n">view</span> <span class="o">=</span> <span class="n">View</span><span class="p">(</span><span class="n">view_rect</span><span class="p">,</span> <span class="n">board</span><span class="o">.</span><span class="n">placements</span><span class="p">,</span> <span class="n">tile_set</span><span class="p">)</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test 2: Rotation of tiles&quot;</span><span class="p">)</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">Position</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">rot</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">rotate_tile</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">rot</span><span class="p">)</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+
+    <span class="n">rot</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">rotate_tile</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">rot</span><span class="p">)</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test 3: Slide lines of tiles&quot;</span><span class="p">)</span>
+    <span class="nb">dir</span> <span class="o">=</span> <span class="n">EAST</span>
+    <span class="n">x_or_y</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+    <span class="n">patch_rect</span><span class="p">,</span> <span class="n">patch_placements</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">slide_line</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">x_or_y</span><span class="p">,</span> <span class="n">tile_bag</span><span class="p">)</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">slide_line</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">patch_rect</span><span class="p">,</span> <span class="n">patch_placements</span><span class="p">,</span> <span class="n">tile_set</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+
+    <span class="nb">dir</span> <span class="o">=</span> <span class="n">WEST</span>
+    <span class="n">x_or_y</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+    <span class="n">patch_rect</span><span class="p">,</span> <span class="n">patch_placements</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">slide_line</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">x_or_y</span><span class="p">,</span> <span class="n">tile_bag</span><span class="p">)</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">slide_line</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">patch_rect</span><span class="p">,</span> <span class="n">patch_placements</span><span class="p">,</span> <span class="n">tile_set</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="mi">100000</span><span class="p">)</span>
+
+    <span class="nb">dir</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">slide_tiles</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="nb">dir</span><span class="p">)</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+
+    <span class="nb">dir</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">slide_tiles</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="nb">dir</span><span class="p">)</span>
+
+    <span class="n">pygame</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="mi">5000</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Bruce Wright.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

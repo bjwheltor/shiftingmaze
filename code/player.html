@@ -4,12 +4,14 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>player module &mdash; Shifting Maze 0.1 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <title>player module &mdash; Shifting Maze 0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -35,7 +37,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../approach.html">Approach</a></li>
@@ -83,78 +85,78 @@
            <div itemprop="articleBody">
              
   <section id="module-player">
-<span id="player-module"></span><h1>player module<a class="headerlink" href="#module-player" title="Permalink to this headline">¶</a></h1>
+<span id="player-module"></span><h1>player module<a class="headerlink" href="#module-player" title="Permalink to this headline"></a></h1>
 <p>Represents a player, with visual characteristics, in for Shifting Maze game</p>
 <p>History</p>
 <p>17-Jul-2021: Initial version</p>
 <p>21-Aug-2021: Simplified variables and naming - more use of Position, noted as pos variables</p>
 <dl class="py class">
-<dt id="player.Player">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">player.</span></code><code class="sig-name descname"><span class="pre">Player</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colour</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#player.Player" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dt class="sig sig-object py" id="player.Player">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">player.</span></span><span class="sig-name descname"><span class="pre">Player</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colour</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/player.html#Player"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#player.Player" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A class to represent a player, with visual characteristics</p>
 <dl class="py attribute">
-<dt id="player.Player.number">
-<code class="sig-name descname"><span class="pre">number</span></code><a class="headerlink" href="#player.Player.number" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="player.Player.number">
+<span class="sig-name descname"><span class="pre">number</span></span><a class="headerlink" href="#player.Player.number" title="Permalink to this definition"></a></dt>
 <dd><p>int
 unique identifying number of play</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="player.Player.name">
-<code class="sig-name descname"><span class="pre">name</span></code><a class="headerlink" href="#player.Player.name" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="player.Player.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#player.Player.name" title="Permalink to this definition"></a></dt>
 <dd><p>str
 name of player</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="player.Player.image">
-<code class="sig-name descname"><span class="pre">image</span></code><a class="headerlink" href="#player.Player.image" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="player.Player.image">
+<span class="sig-name descname"><span class="pre">image</span></span><a class="headerlink" href="#player.Player.image" title="Permalink to this definition"></a></dt>
 <dd><p>pygame.Surface
 image of player avatar</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="player.Player.rect">
-<code class="sig-name descname"><span class="pre">rect</span></code><a class="headerlink" href="#player.Player.rect" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="player.Player.rect">
+<span class="sig-name descname"><span class="pre">rect</span></span><a class="headerlink" href="#player.Player.rect" title="Permalink to this definition"></a></dt>
 <dd><p>pygame.Rect
 rectangle for player image</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="player.Player.pos">
-<code class="sig-name descname"><span class="pre">pos</span></code><a class="headerlink" href="#player.Player.pos" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="player.Player.pos">
+<span class="sig-name descname"><span class="pre">pos</span></span><a class="headerlink" href="#player.Player.pos" title="Permalink to this definition"></a></dt>
 <dd><p>Position
 x, y coordinates of tile placement. (0, 0) = (left, top)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="player.Player.floor_colour">
-<code class="sig-name descname"><span class="pre">floor_colour</span></code><a class="headerlink" href="#player.Player.floor_colour" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="player.Player.floor_colour">
+<span class="sig-name descname"><span class="pre">floor_colour</span></span><a class="headerlink" href="#player.Player.floor_colour" title="Permalink to this definition"></a></dt>
 <dd><p>tuple
 Red, green, blue tuple for colour of floor.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="player.Player.player_offset">
-<code class="sig-name descname"><span class="pre">player_offset</span></code><a class="headerlink" href="#player.Player.player_offset" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="player.Player.player_offset">
+<span class="sig-name descname"><span class="pre">player_offset</span></span><a class="headerlink" href="#player.Player.player_offset" title="Permalink to this definition"></a></dt>
 <dd><p>Position
 x,y coordinates of player offset from top left of tile in plot space. Default: Position(20,20)</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="player.Player.DO_NOT_MOVE">
-<code class="sig-name descname"><span class="pre">DO_NOT_MOVE</span></code><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#player.Player.DO_NOT_MOVE" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="player.Player.DO_NOT_MOVE">
+<span class="sig-name descname"><span class="pre">DO_NOT_MOVE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#player.Player.DO_NOT_MOVE" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="player.Player.MOVE_WITH_TILES">
-<code class="sig-name descname"><span class="pre">MOVE_WITH_TILES</span></code><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#player.Player.MOVE_WITH_TILES" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="player.Player.MOVE_WITH_TILES">
+<span class="sig-name descname"><span class="pre">MOVE_WITH_TILES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#player.Player.MOVE_WITH_TILES" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="player.Player.STAY_AS_TILES_MOVE">
-<code class="sig-name descname"><span class="pre">STAY_AS_TILES_MOVE</span></code><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#player.Player.STAY_AS_TILES_MOVE" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="player.Player.STAY_AS_TILES_MOVE">
+<span class="sig-name descname"><span class="pre">STAY_AS_TILES_MOVE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#player.Player.STAY_AS_TILES_MOVE" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

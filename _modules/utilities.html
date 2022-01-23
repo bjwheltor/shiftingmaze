@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>utilities module &mdash; Shifting Maze 0.1 documentation</title>
+  <title>utilities &mdash; Shifting Maze 0.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -17,8 +16,7 @@
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="text module" href="text.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -37,25 +35,13 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../approach.html">Approach</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../prereq.html">Prerequisites</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../game.html">Game</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../board.html">Board</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../code.html">Code</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="board.html">board module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tile.html">tiles module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tileset.html">tileset module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tilebag.html">tilebag module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="player.html">player module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="view.html">view module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="position.html">position module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="direction.html">direction module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="text.html">text module</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">utilities module</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../code.html">Code</a></li>
 </ul>
 
         </div>
@@ -72,10 +58,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../code.html">Code</a> &raquo;</li>
-      <li>utilities module</li>
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      <li>utilities</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/code/utilities.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -83,24 +68,35 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-utilities">
-<span id="utilities-module"></span><h1>utilities module<a class="headerlink" href="#module-utilities" title="Permalink to this headline"></a></h1>
-<p>Utility functions</p>
-<p>History</p>
-<p>08-Jan-2022: Initial module</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="utilities.wait_for_exit">
-<span class="sig-prename descclassname"><span class="pre">utilities.</span></span><span class="sig-name descname"><span class="pre">wait_for_exit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utilities.html#wait_for_exit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utilities.wait_for_exit" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+  <h1>Source code for utilities</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Utility functions</span>
 
-</section>
+<span class="sd">History</span>
 
+<span class="sd">08-Jan-2022: Initial module</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">pygame</span>
+
+
+<div class="viewcode-block" id="wait_for_exit"><a class="viewcode-back" href="../code/utilities.html#utilities.wait_for_exit">[docs]</a><span class="k">def</span> <span class="nf">wait_for_exit</span><span class="p">():</span>
+    <span class="c1"># wait for an exit for a pygame window</span>
+    <span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">while</span> <span class="n">running</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">QUIT</span><span class="p">:</span>
+                <span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYDOWN</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_ESCAPE</span><span class="p">:</span>
+                    <span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span></div>
+</pre></div>
 
            </div>
           </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="text.html" class="btn btn-neutral float-left" title="text module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-    </div>
+          <footer>
 
   <hr/>
 

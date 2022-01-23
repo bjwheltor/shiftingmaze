@@ -4,12 +4,14 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Board &mdash; Shifting Maze 0.1 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <title>Board &mdash; Shifting Maze 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -35,7 +37,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="approach.html">Approach</a></li>
@@ -76,10 +78,10 @@
            <div itemprop="articleBody">
              
   <section id="board">
-<h1>Board<a class="headerlink" href="#board" title="Permalink to this headline">¶</a></h1>
+<h1>Board<a class="headerlink" href="#board" title="Permalink to this headline"></a></h1>
 <p>This class holds the current configuration of the rooms (called tiles) in the maze.</p>
 <section id="placements">
-<h2>Placements<a class="headerlink" href="#placements" title="Permalink to this headline">¶</a></h2>
+<h2>Placements<a class="headerlink" href="#placements" title="Permalink to this headline"></a></h2>
 <p>All the relevant information is held in a single
 NumPy array called <code class="docutils literal notranslate"><span class="pre">placements</span></code>, set-up as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">placements</span> <span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
@@ -111,7 +113,7 @@ with <code class="docutils literal notranslate"><span class="pre">size</span> <s
 </dl>
 </section>
 <section id="tile-manipulation">
-<h2>Tile manipulation<a class="headerlink" href="#tile-manipulation" title="Permalink to this headline">¶</a></h2>
+<h2>Tile manipulation<a class="headerlink" href="#tile-manipulation" title="Permalink to this headline"></a></h2>
 <p>The Board class has a number of methods to manipulate tiles within the placements array:</p>
 <blockquote>
 <div><ul class="simple">
@@ -128,7 +130,7 @@ with all the tile numbers and orientations</p></li>
 </div></blockquote>
 </section>
 <section id="door-checks">
-<h2>Door checks<a class="headerlink" href="#door-checks" title="Permalink to this headline">¶</a></h2>
+<h2>Door checks<a class="headerlink" href="#door-checks" title="Permalink to this headline"></a></h2>
 <dl class="simple">
 <dt>The Board class also has a method for checking for a door:</dt><dd><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">check_for_door</span></code></p></li>
@@ -142,7 +144,7 @@ This is because to move to an adjacent tile you need doors to exist on
 both the current tile and the one you are moving to.</p>
 </section>
 <section id="special">
-<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline"></a></h2>
 <p>There is a further method:</p>
 <blockquote>
 <div><ul class="simple">

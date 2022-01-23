@@ -4,12 +4,14 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tilebag module &mdash; Shifting Maze 0.1 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <title>tilebag module &mdash; Shifting Maze 0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -35,7 +37,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../approach.html">Approach</a></li>
@@ -83,7 +85,7 @@
            <div itemprop="articleBody">
              
   <section id="module-tilebag">
-<span id="tilebag-module"></span><h1>tilebag module<a class="headerlink" href="#module-tilebag" title="Permalink to this headline">¶</a></h1>
+<span id="tilebag-module"></span><h1>tilebag module<a class="headerlink" href="#module-tilebag" title="Permalink to this headline"></a></h1>
 <p>Represents the bag of tiles from which random ones can be drawn from
 and returned to in the Shifting Maze game</p>
 <p>History</p>
@@ -94,9 +96,9 @@ and returned to in the Shifting Maze game</p>
 <p>30-Dec-2021: Split TileBag off into separate module</p>
 <p>08-Jan-2022: Added return_tiles method and tests</p>
 <dl class="py class">
-<dt id="tilebag.TileBag">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tilebag.</span></code><code class="sig-name descname"><span class="pre">TileBag</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tile_set</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilebag.TileBag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dt class="sig sig-object py" id="tilebag.TileBag">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tilebag.</span></span><span class="sig-name descname"><span class="pre">TileBag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tile_set</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tilebag.html#TileBag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tilebag.TileBag" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Represents the bag of tiles from which random ones can be drawn
 and returned to</p>
 <dl class="simple">
@@ -107,8 +109,8 @@ and returned to</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="tilebag.TileBag.draw_tile">
-<code class="sig-name descname"><span class="pre">draw_tile</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilebag.TileBag.draw_tile" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilebag.TileBag.draw_tile">
+<span class="sig-name descname"><span class="pre">draw_tile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tilebag.html#TileBag.draw_tile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tilebag.TileBag.draw_tile" title="Permalink to this definition"></a></dt>
 <dd><p>Draw a single tile from the bag</p>
 <dl class="simple">
 <dt>Parameters</dt><dd><p>none</p>
@@ -122,8 +124,8 @@ and returned to</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="tilebag.TileBag.draw_tiles">
-<code class="sig-name descname"><span class="pre">draw_tiles</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilebag.TileBag.draw_tiles" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilebag.TileBag.draw_tiles">
+<span class="sig-name descname"><span class="pre">draw_tiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tilebag.html#TileBag.draw_tiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tilebag.TileBag.draw_tiles" title="Permalink to this definition"></a></dt>
 <dd><p>Draw a number tiles from the bag</p>
 <dl class="simple">
 <dt>Parameters</dt><dd><dl class="simple">
@@ -140,14 +142,14 @@ and returned to</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="tilebag.TileBag.mix">
-<code class="sig-name descname"><span class="pre">mix</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tilebag.TileBag.mix" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilebag.TileBag.mix">
+<span class="sig-name descname"><span class="pre">mix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tilebag.html#TileBag.mix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tilebag.TileBag.mix" title="Permalink to this definition"></a></dt>
 <dd><p>Mix the content of the bag</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="tilebag.TileBag.return_tile">
-<code class="sig-name descname"><span class="pre">return_tile</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tile_number</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilebag.TileBag.return_tile" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilebag.TileBag.return_tile">
+<span class="sig-name descname"><span class="pre">return_tile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tile_number</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tilebag.html#TileBag.return_tile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tilebag.TileBag.return_tile" title="Permalink to this definition"></a></dt>
 <dd><p>Return a single tile to the bag and shuffle</p>
 <dl class="simple">
 <dt>Parameters</dt><dd><dl class="simple">
@@ -159,8 +161,8 @@ and returned to</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="tilebag.TileBag.return_tiles">
-<code class="sig-name descname"><span class="pre">return_tiles</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tile_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tilebag.TileBag.return_tiles" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tilebag.TileBag.return_tiles">
+<span class="sig-name descname"><span class="pre">return_tiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tile_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tilebag.html#TileBag.return_tiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tilebag.TileBag.return_tiles" title="Permalink to this definition"></a></dt>
 <dd><p>Return a tiles to the bag and shuffle</p>
 <dl class="simple">
 <dt>Parameters</dt><dd><dl class="simple">

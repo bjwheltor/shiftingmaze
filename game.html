@@ -4,12 +4,14 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Game &mdash; Shifting Maze 0.1 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <title>Game &mdash; Shifting Maze 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -35,7 +37,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="approach.html">Approach</a></li>
@@ -89,13 +91,13 @@
            <div itemprop="articleBody">
              
   <section id="game">
-<h1>Game<a class="headerlink" href="#game" title="Permalink to this headline">¶</a></h1>
+<h1>Game<a class="headerlink" href="#game" title="Permalink to this headline"></a></h1>
 <p>The main module is game.py, which handles all the main set up
 and holds the game loop.</p>
 <section id="set-up">
-<h2>Set-up<a class="headerlink" href="#set-up" title="Permalink to this headline">¶</a></h2>
+<h2>Set-up<a class="headerlink" href="#set-up" title="Permalink to this headline"></a></h2>
 <section id="imports">
-<h3>Imports<a class="headerlink" href="#imports" title="Permalink to this headline">¶</a></h3>
+<h3>Imports<a class="headerlink" href="#imports" title="Permalink to this headline"></a></h3>
 <p>External imports:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">pygame</span>
@@ -113,14 +115,14 @@ and holds the game loop.</p>
 </div>
 </section>
 <section id="initialisation">
-<h3>Initialisation<a class="headerlink" href="#initialisation" title="Permalink to this headline">¶</a></h3>
+<h3>Initialisation<a class="headerlink" href="#initialisation" title="Permalink to this headline"></a></h3>
 <p>Pygame is initialised with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pygame</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
 </pre></div>
 </div>
 </section>
 <section id="constants">
-<h3>Constants<a class="headerlink" href="#constants" title="Permalink to this headline">¶</a></h3>
+<h3>Constants<a class="headerlink" href="#constants" title="Permalink to this headline"></a></h3>
 <p>A number of top level constants are defined.</p>
 <p>Colours:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">WHITE</span> <span class="o">=</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
@@ -143,7 +145,7 @@ and holds the game loop.</p>
 </div>
 </section>
 <section id="random-events">
-<h3>Random events<a class="headerlink" href="#random-events" title="Permalink to this headline">¶</a></h3>
+<h3>Random events<a class="headerlink" href="#random-events" title="Permalink to this headline"></a></h3>
 <p>A pygame random event identifier is declared
 and set to trigger every 3 seconds in the game loop:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">RANDOM</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">USEREVENT</span> <span class="o">+</span> <span class="mi">0</span>
@@ -152,7 +154,7 @@ and set to trigger every 3 seconds in the game loop:</p>
 </div>
 </section>
 <section id="tile-set">
-<h3>Tile set<a class="headerlink" href="#tile-set" title="Permalink to this headline">¶</a></h3>
+<h3>Tile set<a class="headerlink" href="#tile-set" title="Permalink to this headline"></a></h3>
 <p>The code allows the creation of a simple tile set for debugging the game
 or the standard (full) tile sset for actually playing the game:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">test_tileset</span> <span class="o">=</span> <span class="kc">False</span>
@@ -182,7 +184,7 @@ or the standard (full) tile sset for actually playing the game:</p>
 <p>The details are explained under the Tiles section.</p>
 </section>
 <section id="board">
-<h3>Board<a class="headerlink" href="#board" title="Permalink to this headline">¶</a></h3>
+<h3>Board<a class="headerlink" href="#board" title="Permalink to this headline"></a></h3>
 <p>The full dimensions of the board are set using the Dimensions class,
 and used to create a board from Tiles in the TileBag:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="n">Dimensions</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">tile_bag</span><span class="o">=</span><span class="n">tile_bag</span><span class="p">)</span>
@@ -195,7 +197,7 @@ to allow for the centring of the player on the display.</p>
 </div>
 </section>
 <section id="display">
-<h3>Display<a class="headerlink" href="#display" title="Permalink to this headline">¶</a></h3>
+<h3>Display<a class="headerlink" href="#display" title="Permalink to this headline"></a></h3>
 <p>The screen display is created with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SCREEN_X_ORIGIN</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">SCREEN_Y_ORIGIN</span> <span class="o">=</span> <span class="mi">0</span>
@@ -219,7 +221,7 @@ and the display is created, using Plot:</p>
 </div>
 </section>
 <section id="player">
-<h3>Player<a class="headerlink" href="#player" title="Permalink to this headline">¶</a></h3>
+<h3>Player<a class="headerlink" href="#player" title="Permalink to this headline"></a></h3>
 <p>The player position is set to be the centre of the board,
 with other player attributes being set
 before the player is created:</p>
@@ -235,7 +237,7 @@ before the player is created:</p>
 </div>
 </section>
 <section id="text">
-<h3>Text<a class="headerlink" href="#text" title="Permalink to this headline">¶</a></h3>
+<h3>Text<a class="headerlink" href="#text" title="Permalink to this headline"></a></h3>
 <p>Set-up a text output object
 (mainly for ease of providing diagnostic output to the screen)
 and print some initial information:</p>
@@ -255,7 +257,7 @@ implemented consistently yet.</p>
 </section>
 </section>
 <section id="loop">
-<h2>Loop<a class="headerlink" href="#loop" title="Permalink to this headline">¶</a></h2>
+<h2>Loop<a class="headerlink" href="#loop" title="Permalink to this headline"></a></h2>
 <p>The game loop in just a simple while loop, with a logical, starting:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -269,7 +271,7 @@ which might not actually be necessary at this point,
 given the Plot set-up also this, and the changes in the game
 loop tend to also have updates.</p>
 <section id="event-handling">
-<h3>Event handling<a class="headerlink" href="#event-handling" title="Permalink to this headline">¶</a></h3>
+<h3>Event handling<a class="headerlink" href="#event-handling" title="Permalink to this headline"></a></h3>
 <p>All the events are returned in <code class="docutils literal notranslate"><span class="pre">event</span></code> and handled in a loop:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
 </pre></div>
@@ -336,7 +338,7 @@ slide a row or column.</p>
 </div>
 </section>
 <section id="exit">
-<h3>Exit<a class="headerlink" href="#exit" title="Permalink to this headline">¶</a></h3>
+<h3>Exit<a class="headerlink" href="#exit" title="Permalink to this headline"></a></h3>
 <p>Once the game loop is exited by setting <code class="docutils literal notranslate"><span class="pre">running</span> <span class="pre">=</span> <span class="pre">False</span></code>,
 a clean exit is handled with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>

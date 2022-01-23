@@ -4,12 +4,14 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tiles module &mdash; Shifting Maze 0.1 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <title>tiles module &mdash; Shifting Maze 0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -35,7 +37,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../approach.html">Approach</a></li>
@@ -83,7 +85,7 @@
            <div itemprop="articleBody">
              
   <section id="module-tile">
-<span id="tiles-module"></span><h1>tiles module<a class="headerlink" href="#module-tile" title="Permalink to this headline">¶</a></h1>
+<span id="tiles-module"></span><h1>tiles module<a class="headerlink" href="#module-tile" title="Permalink to this headline"></a></h1>
 <p>Represents a tile in the Shifting Maze game, including image of tile</p>
 <p>History</p>
 <dl class="simple">
@@ -92,86 +94,86 @@
 </dl>
 <p>30-Dec-2021: Split Tile off into separate fle</p>
 <dl class="py class">
-<dt id="tile.Tile">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">tile.</span></code><code class="sig-name descname"><span class="pre">Tile</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tile.Tile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dt class="sig sig-object py" id="tile.Tile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tile.</span></span><span class="sig-name descname"><span class="pre">Tile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tile.html#Tile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tile.Tile" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Represents a tile including image of tile</p>
 <dl class="py attribute">
-<dt id="tile.Tile.number">
-<code class="sig-name descname"><span class="pre">number</span></code><a class="headerlink" href="#tile.Tile.number" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tile.Tile.number">
+<span class="sig-name descname"><span class="pre">number</span></span><a class="headerlink" href="#tile.Tile.number" title="Permalink to this definition"></a></dt>
 <dd><p>int
 Unique number assigned to tile</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="tile.Tile.doors">
-<code class="sig-name descname"><span class="pre">doors</span></code><a class="headerlink" href="#tile.Tile.doors" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tile.Tile.doors">
+<span class="sig-name descname"><span class="pre">doors</span></span><a class="headerlink" href="#tile.Tile.doors" title="Permalink to this definition"></a></dt>
 <dd><p>list
 List of values representing no door or blank wall (0) or a door (1).
 These proceed clockwise from up the screen. Default: [1,1,1,1]</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="tile.Tile.size">
-<code class="sig-name descname"><span class="pre">size</span></code><a class="headerlink" href="#tile.Tile.size" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tile.Tile.size">
+<span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#tile.Tile.size" title="Permalink to this definition"></a></dt>
 <dd><p>integer
 Length of one edge of a square tile, including frame. Default: 102</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="tile.Tile.frame">
-<code class="sig-name descname"><span class="pre">frame</span></code><a class="headerlink" href="#tile.Tile.frame" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tile.Tile.frame">
+<span class="sig-name descname"><span class="pre">frame</span></span><a class="headerlink" href="#tile.Tile.frame" title="Permalink to this definition"></a></dt>
 <dd><p>int
 Width of frame around edge of tile. Default: 1</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="tile.Tile.wall_width">
-<code class="sig-name descname"><span class="pre">wall_width</span></code><a class="headerlink" href="#tile.Tile.wall_width" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tile.Tile.wall_width">
+<span class="sig-name descname"><span class="pre">wall_width</span></span><a class="headerlink" href="#tile.Tile.wall_width" title="Permalink to this definition"></a></dt>
 <dd><p>int
 Thickness of walls. Default: 10</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="tile.Tile.door_width">
-<code class="sig-name descname"><span class="pre">door_width</span></code><a class="headerlink" href="#tile.Tile.door_width" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tile.Tile.door_width">
+<span class="sig-name descname"><span class="pre">door_width</span></span><a class="headerlink" href="#tile.Tile.door_width" title="Permalink to this definition"></a></dt>
 <dd><p>int
 Width of doorways. Default: 50</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="tile.Tile.image">
-<code class="sig-name descname"><span class="pre">image</span></code><a class="headerlink" href="#tile.Tile.image" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tile.Tile.image">
+<span class="sig-name descname"><span class="pre">image</span></span><a class="headerlink" href="#tile.Tile.image" title="Permalink to this definition"></a></dt>
 <dd><p>pygame.Surface
 Image of tile</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="tile.Tile.rect">
-<code class="sig-name descname"><span class="pre">rect</span></code><a class="headerlink" href="#tile.Tile.rect" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tile.Tile.rect">
+<span class="sig-name descname"><span class="pre">rect</span></span><a class="headerlink" href="#tile.Tile.rect" title="Permalink to this definition"></a></dt>
 <dd><p>pygame.Surface.rect
 Rectangle describing tile image</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="tile.Tile.frame_colour">
-<code class="sig-name descname"><span class="pre">frame_colour</span></code><a class="headerlink" href="#tile.Tile.frame_colour" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tile.Tile.frame_colour">
+<span class="sig-name descname"><span class="pre">frame_colour</span></span><a class="headerlink" href="#tile.Tile.frame_colour" title="Permalink to this definition"></a></dt>
 <dd><p>tuple
 Red, green, blue tuple for colour of frame around tile.
 Default: (192, 192, 192) = LIGHT_GREY</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="tile.Tile.wall_colour">
-<code class="sig-name descname"><span class="pre">wall_colour</span></code><a class="headerlink" href="#tile.Tile.wall_colour" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tile.Tile.wall_colour">
+<span class="sig-name descname"><span class="pre">wall_colour</span></span><a class="headerlink" href="#tile.Tile.wall_colour" title="Permalink to this definition"></a></dt>
 <dd><p>tuple
 Red, green, blue tuple for colour of walls
 Default: (200, 100, 100) = RED</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="tile.Tile.floor_colour">
-<code class="sig-name descname"><span class="pre">floor_colour</span></code><a class="headerlink" href="#tile.Tile.floor_colour" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tile.Tile.floor_colour">
+<span class="sig-name descname"><span class="pre">floor_colour</span></span><a class="headerlink" href="#tile.Tile.floor_colour" title="Permalink to this definition"></a></dt>
 <dd><p>tuple
 Red, green, blue tuple for colour of floor.
 Default: (150, 150, 255) # BLUE</p>

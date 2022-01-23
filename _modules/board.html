@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>board &mdash; Shifting Maze 0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Shifting Maze
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../approach.html">Approach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../prereq.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../game.html">Game</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../board.html">Board</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code.html">Code</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Shifting Maze</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      <li>board</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for board</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Represents the state of the board for Shifting Maze game</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">pygame</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span> <span class="nn">position</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">direction</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">from</span> <span class="nn">tileset</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">tilebag</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">NATT</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">TILE</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">ROT</span> <span class="o">=</span> <span class="mi">1</span>
+
+
+<div class="viewcode-block" id="Board"><a class="viewcode-back" href="../code/board.html#board.Board">[docs]</a><span class="k">class</span> <span class="nc">Board</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents the state of the board</span>
+<span class="sd">    This is initialised either by drawing a set of tiles from a Tile Bag and</span>
+<span class="sd">    assigning random orientations for by specifying an explicit list of tiles</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        w (int):</span>
+<span class="sd">            Width = x-dimension of board in tiles in x direction (west and east)</span>
+<span class="sd">        h (int):</span>
+<span class="sd">            Height = y-dimension of board in tiles y direction (north and south)</span>
+<span class="sd">        n (int):</span>
+<span class="sd">            Number of board square attributes (NATT), where the attributes are</span>
+<span class="sd">            TILE (0) is the tile number</span>
+<span class="sd">            ROT (1) is the rotation or orientation of each tile (degrees clockwise)</span>
+<span class="sd">        size (int):</span>
+<span class="sd">            Total number of tiles on board (w * h)</span>
+<span class="sd">        placements (numpy.ndarray):</span>
+<span class="sd">            Holds all information on the state of the each square</span>
+<span class="sd">            on the board. Has dimensions h, w, n</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tile_bag</span><span class="p">:</span> <span class="n">TileBag</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tile_list</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create board of specified size and fill with tiles drawn randomly from the tile bag</span>
+<span class="sd">        and assigned random orientations.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            width:</span>
+<span class="sd">                X-dimension of board in tiles in x direction (west and east)</span>
+<span class="sd">            height:</span>
+<span class="sd">                Y-dimension of board in tiles y direction (north and south)</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            tile_bag:</span>
+<span class="sd">                Represents the bag of tiles from dimich random ones can be drawn.</span>
+<span class="sd">                Default is None, which sets empty placement and orientation arrays</span>
+<span class="sd">            tile_list:</span>
+<span class="sd">                List of tile numbers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">NATT</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">placements</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">tile_bag</span><span class="p">:</span>
+            <span class="n">tiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tile_bag</span><span class="o">.</span><span class="n">draw_tiles</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">rots</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choices</span><span class="p">(</span><span class="n">DIRECTIONS</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">tiles</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span>
+            <span class="n">rots</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">tile_list</span><span class="p">:</span>
+            <span class="n">tiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tile_list</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">tiles</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">)</span>
+            <span class="n">rots</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">TILE</span><span class="p">]</span> <span class="o">=</span> <span class="n">tiles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ROT</span><span class="p">]</span> <span class="o">=</span> <span class="n">rots</span>
+
+<div class="viewcode-block" id="Board.place_tile"><a class="viewcode-back" href="../code/board.html#board.Board.place_tile">[docs]</a>    <span class="k">def</span> <span class="nf">place_tile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">Position</span><span class="p">,</span> <span class="n">tile</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rot</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Place a tile onto the board.</span>
+<span class="sd">        Set the position to the tile number and the orientation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pos:</span>
+<span class="sd">                X, y coordinates of tile placement. (0, 0) = (west, north)</span>
+<span class="sd">            tile:</span>
+<span class="sd">                Number of tile to be placed</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            rot:</span>
+<span class="sd">                Orientation of tile to be placed (rotation degrees clockwise)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">TILE</span><span class="p">]</span> <span class="o">=</span> <span class="n">tile</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">ROT</span><span class="p">]</span> <span class="o">=</span> <span class="n">rot</span></div>
+
+<div class="viewcode-block" id="Board.rotate_tile"><a class="viewcode-back" href="../code/board.html#board.Board.rotate_tile">[docs]</a>    <span class="k">def</span> <span class="nf">rotate_tile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">Position</span><span class="p">,</span> <span class="n">rotate</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rotate a tile on the board. Reset the orientation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pos:</span>
+<span class="sd">                X, y coordinates of tile placement. (0, 0) = (west, north)</span>
+<span class="sd">            rotate:</span>
+<span class="sd">                Rotatation to be applied to tile (degrees clockwise)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">ROT</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">ROT</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">rot</span> <span class="o">+</span> <span class="n">rotate</span><span class="p">)</span> <span class="o">%</span> <span class="n">FULLCIRCLE</span></div>
+
+<div class="viewcode-block" id="Board.slide_line"><a class="viewcode-back" href="../code/board.html#board.Board.slide_line">[docs]</a>    <span class="k">def</span> <span class="nf">slide_line</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="nb">dir</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">x_or_y</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tile_bag</span><span class="p">:</span> <span class="n">TileBag</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Slide a row or column</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dir:</span>
+<span class="sd">                Direction in which to slide tiles</span>
+<span class="sd">            x_or_y:</span>
+<span class="sd">                X or y position on board, depending on direction.</span>
+<span class="sd">                For dir = NORTH or SOUTH, this is x, indicating the column.</span>
+<span class="sd">                For dir = EAST or WEST, this is y, indicating the row.</span>
+<span class="sd">            tilebag:</span>
+<span class="sd">                Bag of tiles from which new one can be drawn</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            - Rectangle of tiles to slide, including new tile</span>
+<span class="sd">            - Holds all information on the state of the each square</span>
+<span class="sd">                on the board.in the &#39;patch&#39;</span>
+<span class="sd">                (this will be either a row or column and one longer</span>
+<span class="sd">                than the board, e.g. for a raw (1, w+1, n)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">dir</span> <span class="o">==</span> <span class="n">WEST</span><span class="p">:</span>
+            <span class="n">patch_rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x_or_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">patch_placements</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">patch_placements</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">x_or_y</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+            <span class="n">patch_placements</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="n">TILE</span><span class="p">]</span> <span class="o">=</span> <span class="n">tile_bag</span><span class="o">.</span><span class="n">draw_tile</span><span class="p">()</span>
+            <span class="n">patch_placements</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="n">ROT</span><span class="p">]</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">DIRECTIONS</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">x_or_y</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">patch_placements</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span>
+            <span class="n">tile_bag</span><span class="o">.</span><span class="n">return_tile</span><span class="p">(</span><span class="n">patch_placements</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">TILE</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">dir</span> <span class="o">==</span> <span class="n">EAST</span><span class="p">:</span>
+            <span class="n">patch_rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">x_or_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">patch_placements</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">patch_placements</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">x_or_y</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+            <span class="n">patch_placements</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">TILE</span><span class="p">]</span> <span class="o">=</span> <span class="n">tile_bag</span><span class="o">.</span><span class="n">draw_tile</span><span class="p">()</span>
+            <span class="n">patch_placements</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ROT</span><span class="p">]</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">DIRECTIONS</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">x_or_y</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">patch_placements</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">tile_bag</span><span class="o">.</span><span class="n">return_tile</span><span class="p">(</span><span class="n">patch_placements</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="n">TILE</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">dir</span> <span class="o">==</span> <span class="n">NORTH</span><span class="p">:</span>
+            <span class="n">patch_rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="n">x_or_y</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">patch_placements</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">patch_placements</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[:,</span> <span class="n">x_or_y</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">patch_placements</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">TILE</span><span class="p">]</span> <span class="o">=</span> <span class="n">tile_bag</span><span class="o">.</span><span class="n">draw_tile</span><span class="p">()</span>
+            <span class="n">patch_placements</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ROT</span><span class="p">]</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">DIRECTIONS</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[:,</span> <span class="n">x_or_y</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">patch_placements</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">tile_bag</span><span class="o">.</span><span class="n">return_tile</span><span class="p">(</span><span class="n">patch_placements</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">TILE</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">dir</span> <span class="o">==</span> <span class="n">SOUTH</span><span class="p">:</span>
+            <span class="n">patch_rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="n">x_or_y</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">patch_placements</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">patch_placements</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[:,</span> <span class="n">x_or_y</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">patch_placements</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">TILE</span><span class="p">]</span> <span class="o">=</span> <span class="n">tile_bag</span><span class="o">.</span><span class="n">draw_tile</span><span class="p">()</span>
+            <span class="n">patch_placements</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ROT</span><span class="p">]</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">DIRECTIONS</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[:,</span> <span class="n">x_or_y</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">patch_placements</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="n">tile_bag</span><span class="o">.</span><span class="n">return_tile</span><span class="p">(</span><span class="n">patch_placements</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">TILE</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">patch_rect</span><span class="p">,</span> <span class="n">patch_placements</span></div>
+
+<div class="viewcode-block" id="Board.check_for_door"><a class="viewcode-back" href="../code/board.html#board.Board.check_for_door">[docs]</a>    <span class="k">def</span> <span class="nf">check_for_door</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">dir</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tiles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">next</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if exit exists in a particular direction from a tile on the board</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pos:</span>
+<span class="sd">                X, y coordinates of tile placement. (0, 0) = (left, top)</span>
+<span class="sd">            dir:</span>
+<span class="sd">                Direction in which presence of door to be checked.</span>
+<span class="sd">            tiles:</span>
+<span class="sd">                Tiles in use. Passed as Tileset.tiles, this is a dictionary</span>
+<span class="sd">                indexed by tile number, with values of Tile, whih holds the</span>
+<span class="sd">                properties of a tile</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            next:</span>
+<span class="sd">                If true check for door coming from next tile</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if door is present, False if not</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">next</span><span class="p">:</span>
+            <span class="n">pos_to_check</span> <span class="o">=</span> <span class="n">pos</span><span class="o">.</span><span class="n">get_next</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
+            <span class="n">dir_to_check</span> <span class="o">=</span> <span class="p">(</span><span class="nb">dir</span> <span class="o">+</span> <span class="n">PLUS180</span><span class="p">)</span> <span class="o">%</span> <span class="n">FULLCIRCLE</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pos_to_check</span> <span class="o">=</span> <span class="n">pos</span>
+            <span class="n">dir_to_check</span> <span class="o">=</span> <span class="nb">dir</span>
+        <span class="n">tile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">pos_to_check</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pos_to_check</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">TILE</span><span class="p">]</span>
+        <span class="n">rot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">pos_to_check</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pos_to_check</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">ROT</span><span class="p">]</span>
+        <span class="n">doors</span> <span class="o">=</span> <span class="n">tiles</span><span class="p">[</span><span class="n">tile</span><span class="p">]</span><span class="o">.</span><span class="n">doors</span>
+        <span class="n">door_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(((</span><span class="n">dir_to_check</span> <span class="o">-</span> <span class="n">rot</span><span class="p">)</span> <span class="o">%</span> <span class="n">FULLCIRCLE</span><span class="p">)</span> <span class="o">/</span> <span class="n">PLUS90</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">doors</span><span class="p">[</span><span class="n">door_index</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Print board details&quot;&quot;&quot;</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Board layout: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="si">}</span><span class="s2"> x </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="si">}</span><span class="s2"> tiles</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;Tiles/Rotations</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;y </span><span class="se">\\</span><span class="s2"> x &quot;</span>
+                    <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">    &quot;</span>
+                    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">string</span> <span class="o">+=</span> <span class="n">header</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">row</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">y</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">   &quot;</span>
+                <span class="n">row</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">TILE</span><span class="p">]</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">ROT</span><span class="p">]</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2">  &quot;</span>
+                <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">string</span> <span class="o">+=</span> <span class="n">row</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">string</span></div>
+
+
+<span class="c1"># ===============================</span>
+<span class="c1"># Some tests in isolation</span>
+<span class="c1"># ===============================</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SET UP FOR TESTING&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Imports for testing and initialise&quot;</span><span class="p">)</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="kn">import</span> <span class="nn">pygame</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+    <span class="kn">from</span> <span class="nn">tile</span> <span class="kn">import</span> <span class="o">*</span>
+    <span class="kn">from</span> <span class="nn">tileset</span> <span class="kn">import</span> <span class="o">*</span>
+    <span class="kn">from</span> <span class="nn">tilebag</span> <span class="kn">import</span> <span class="o">*</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initiate pygame&quot;</span><span class="p">)</span>
+    <span class="n">pygame</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Create a tile set and fill tile bag&quot;</span><span class="p">)</span>
+    <span class="n">tileset_name</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span>
+    <span class="n">doors_for_tiles</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">}</span>
+    <span class="n">tile_counts</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="mi">140</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="mi">20</span><span class="p">}</span>
+
+    <span class="n">tile_set</span> <span class="o">=</span> <span class="n">TileSet</span><span class="p">(</span><span class="n">doors_for_tiles</span><span class="p">,</span> <span class="n">tile_counts</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">tileset_name</span><span class="p">)</span>
+    <span class="n">tile_bag</span> <span class="o">=</span> <span class="n">TileBag</span><span class="p">(</span><span class="n">tile_set</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Set up dimensions of board and view&quot;</span><span class="p">)</span>
+    <span class="n">board_width</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">board_height</span> <span class="o">=</span> <span class="n">board_width</span>
+    <span class="n">view_width</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">view_height</span> <span class="o">=</span> <span class="n">view_width</span>
+    <span class="n">view_left</span> <span class="o">=</span> <span class="p">(</span><span class="n">board_width</span> <span class="o">-</span> <span class="n">view_width</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">view_top</span> <span class="o">=</span> <span class="p">(</span><span class="n">board_height</span> <span class="o">-</span> <span class="n">view_height</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">view_rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="n">view_left</span><span class="p">,</span> <span class="n">view_top</span><span class="p">,</span> <span class="n">view_width</span><span class="p">,</span> <span class="n">view_height</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">START TESTING&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test 1: Set-up Board&quot;</span><span class="p">)</span>
+    <span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="n">board_width</span><span class="p">,</span> <span class="n">board_height</span><span class="p">,</span> <span class="n">tile_bag</span><span class="o">=</span><span class="n">tile_bag</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test 2: Place tile&quot;</span><span class="p">)</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">Position</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">tile</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">rot</span> <span class="o">=</span> <span class="n">PLUS0</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pos: </span><span class="si">{</span><span class="n">pos</span><span class="si">}</span><span class="s2">  tile: </span><span class="si">{</span><span class="n">tile</span><span class="si">}</span><span class="s2">  rot: </span><span class="si">{</span><span class="n">rot</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">board</span><span class="o">.</span><span class="n">place_tile</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">tile</span><span class="p">,</span> <span class="n">rot</span><span class="o">=</span><span class="n">rot</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test 3: Rotate tile&quot;</span><span class="p">)</span>
+    <span class="n">rotate</span> <span class="o">=</span> <span class="n">PLUS90</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pos: </span><span class="si">{</span><span class="n">pos</span><span class="si">}</span><span class="s2">  rot: </span><span class="si">{</span><span class="n">rot</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">board</span><span class="o">.</span><span class="n">rotate_tile</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">rotate</span><span class="o">=</span><span class="n">rotate</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test 4: Slide row&quot;</span><span class="p">)</span>
+    <span class="nb">dir</span> <span class="o">=</span> <span class="n">EAST</span>
+    <span class="n">x_or_y</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x_or_y: </span><span class="si">{</span><span class="n">x_or_y</span><span class="si">}</span><span class="s2">  dir: </span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">placement_rect</span><span class="p">,</span> <span class="n">placement_patch</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">slide_line</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">x_or_y</span><span class="p">,</span> <span class="n">tile_bag</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;placement_rect: </span><span class="si">{</span><span class="n">placement_rect</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;placement_patch:</span><span class="se">\n</span><span class="si">{</span><span class="n">placement_patch</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+
+    <span class="nb">dir</span> <span class="o">=</span> <span class="n">WEST</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x_or_y: </span><span class="si">{</span><span class="n">x_or_y</span><span class="si">}</span><span class="s2">  dir: </span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">placement_rect</span><span class="p">,</span> <span class="n">placement_patch</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">slide_line</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">x_or_y</span><span class="p">,</span> <span class="n">tile_bag</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;placement_rect: </span><span class="si">{</span><span class="n">placement_rect</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;placement_patch:</span><span class="se">\n</span><span class="si">{</span><span class="n">placement_patch</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test 5: Slide column&quot;</span><span class="p">)</span>
+    <span class="n">x_or_y</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="nb">dir</span> <span class="o">=</span> <span class="n">NORTH</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x_or_y: </span><span class="si">{</span><span class="n">x_or_y</span><span class="si">}</span><span class="s2">  dir: </span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">placement_rect</span><span class="p">,</span> <span class="n">placement_patch</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">slide_line</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">x_or_y</span><span class="p">,</span> <span class="n">tile_bag</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;placement_rect: </span><span class="si">{</span><span class="n">placement_rect</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;placement_patch:</span><span class="se">\n</span><span class="si">{</span><span class="n">placement_patch</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+
+    <span class="nb">dir</span> <span class="o">=</span> <span class="n">SOUTH</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x_or_y: </span><span class="si">{</span><span class="n">x_or_y</span><span class="si">}</span><span class="s2">  dir: </span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">placement_rect</span><span class="p">,</span> <span class="n">placement_patch</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">slide_line</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">x_or_y</span><span class="p">,</span> <span class="n">tile_bag</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;placement_rect: </span><span class="si">{</span><span class="n">placement_rect</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;placement_patch:</span><span class="se">\n</span><span class="si">{</span><span class="n">placement_patch</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test 6: Check for doors&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tile_set</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;tile: </span><span class="si">{</span><span class="n">board</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">TILE</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">board</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">ROT</span><span class="p">]</span><span class="si">}</span><span class="s2">  pos: </span><span class="si">{</span><span class="n">pos</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="nb">dir</span> <span class="o">=</span> <span class="n">NORTH</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dir: </span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">door</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">check_for_door</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;door is </span><span class="si">{</span><span class="n">door</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">dir</span> <span class="o">=</span> <span class="n">EAST</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dir: </span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">door</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">check_for_door</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;door is </span><span class="si">{</span><span class="n">door</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">dir</span> <span class="o">=</span> <span class="n">SOUTH</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dir: </span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">door</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">check_for_door</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;door is </span><span class="si">{</span><span class="n">door</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">dir</span> <span class="o">=</span> <span class="n">WEST</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dir: </span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">door</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">check_for_door</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;door is </span><span class="si">{</span><span class="n">door</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test 7: Check for doors in next tile&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tile_set</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;tile: </span><span class="si">{</span><span class="n">board</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">TILE</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">board</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">ROT</span><span class="p">]</span><span class="si">}</span><span class="s2">  pos: </span><span class="si">{</span><span class="n">pos</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="nb">dir</span> <span class="o">=</span> <span class="n">NORTH</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dir: </span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">door</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">check_for_door</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;check for door in next tile&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pos: </span><span class="si">{</span><span class="n">pos</span><span class="o">.</span><span class="n">get_next</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">door</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">check_for_door</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">,</span> <span class="nb">next</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;door is </span><span class="si">{</span><span class="n">door</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">dir</span> <span class="o">=</span> <span class="n">EAST</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dir: </span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">door</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">check_for_door</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;check for door in next tile&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pos: </span><span class="si">{</span><span class="n">pos</span><span class="o">.</span><span class="n">get_next</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">door</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">check_for_door</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">,</span> <span class="nb">next</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;door is </span><span class="si">{</span><span class="n">door</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">dir</span> <span class="o">=</span> <span class="n">SOUTH</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dir: </span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">door</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">check_for_door</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;check for door in next tile&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pos: </span><span class="si">{</span><span class="n">pos</span><span class="o">.</span><span class="n">get_next</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">door</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">check_for_door</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">,</span> <span class="nb">next</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;door is </span><span class="si">{</span><span class="n">door</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">dir</span> <span class="o">=</span> <span class="n">WEST</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dir: </span><span class="si">{</span><span class="nb">dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">door</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">check_for_door</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;check for door in next tile&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pos: </span><span class="si">{</span><span class="n">pos</span><span class="o">.</span><span class="n">get_next</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">door</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">check_for_door</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">tile_set</span><span class="o">.</span><span class="n">tiles</span><span class="p">,</span> <span class="nb">next</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;door is </span><span class="si">{</span><span class="n">door</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Bruce Wright.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
