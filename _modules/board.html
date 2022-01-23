@@ -183,6 +183,41 @@
         <span class="n">rot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">ROT</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">pos</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">ROT</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">rot</span> <span class="o">+</span> <span class="n">rotate</span><span class="p">)</span> <span class="o">%</span> <span class="n">FULLCIRCLE</span></div>
 
+    <span class="k">def</span> <span class="nf">check_for_door</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">dir</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tiles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">next</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if exit exists in a particular direction from a tile on the board</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pos:</span>
+<span class="sd">                X, y coordinates of tile placement. (0, 0) = (left, top)</span>
+<span class="sd">            dir:</span>
+<span class="sd">                Direction in which presence of door to be checked.</span>
+<span class="sd">            tiles:</span>
+<span class="sd">                Tiles in use. Passed as Tileset.tiles, this is a dictionary</span>
+<span class="sd">                indexed by tile number, with values of Tile, whih holds the</span>
+<span class="sd">                properties of a tile</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            next:</span>
+<span class="sd">                If true check for door coming from next tile</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if door is present, False if not</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">next</span><span class="p">:</span>
+            <span class="n">pos_to_check</span> <span class="o">=</span> <span class="n">pos</span><span class="o">.</span><span class="n">get_next</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
+            <span class="n">dir_to_check</span> <span class="o">=</span> <span class="p">(</span><span class="nb">dir</span> <span class="o">+</span> <span class="n">PLUS180</span><span class="p">)</span> <span class="o">%</span> <span class="n">FULLCIRCLE</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pos_to_check</span> <span class="o">=</span> <span class="n">pos</span>
+            <span class="n">dir_to_check</span> <span class="o">=</span> <span class="nb">dir</span>
+        <span class="n">tile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">pos_to_check</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pos_to_check</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">TILE</span><span class="p">]</span>
+        <span class="n">rot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">placements</span><span class="p">[</span><span class="n">pos_to_check</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">pos_to_check</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">ROT</span><span class="p">]</span>
+        <span class="n">doors</span> <span class="o">=</span> <span class="n">tiles</span><span class="p">[</span><span class="n">tile</span><span class="p">]</span><span class="o">.</span><span class="n">doors</span>
+        <span class="n">door_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(((</span><span class="n">dir_to_check</span> <span class="o">-</span> <span class="n">rot</span><span class="p">)</span> <span class="o">%</span> <span class="n">FULLCIRCLE</span><span class="p">)</span> <span class="o">/</span> <span class="n">PLUS90</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">doors</span><span class="p">[</span><span class="n">door_index</span><span class="p">]</span>
+
 <div class="viewcode-block" id="Board.slide_line"><a class="viewcode-back" href="../code/board.html#board.Board.slide_line">[docs]</a>    <span class="k">def</span> <span class="nf">slide_line</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="nb">dir</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">x_or_y</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tile_bag</span><span class="p">:</span> <span class="n">TileBag</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
