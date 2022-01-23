@@ -89,7 +89,9 @@
 <dt id="board.Board">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">board.</span></code><code class="sig-name descname"><span class="pre">Board</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_bag</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="tilebag.html#tilebag.TileBag" title="tilebag.TileBag"><span class="pre">tilebag.TileBag</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_list</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#board.Board" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Represents the state of the board</p>
+<p>Represents the state of the board
+This is initialised either by drawing a set of tiles from a Tile Bag and
+assigning random orientations for by specifying an explicit list of tiles</p>
 <dl class="py attribute">
 <dt id="board.Board.w">
 <code class="sig-name descname"><span class="pre">w</span></code><a class="headerlink" href="#board.Board.w" title="Permalink to this definition">¶</a></dt>
@@ -168,9 +170,6 @@ properties of a tile</p></li>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>True if door is present, False if not</p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>door</p>
-</dd>
 </dl>
 </dd></dl>
 
@@ -221,18 +220,17 @@ For dir = EAST or WEST, this is y, indicating the row.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p>Rectangle of tiles to slide, including new tile
-patch_placements:</p>
-<blockquote>
-<div><p>Holds all information on the state of the each square
-on the board.in the ‘patch’
+<dd class="field-even"><p><ul class="simple">
+<li><p>Rectangle of tiles to slide, including new tile</p></li>
+<li><dl class="simple">
+<dt>Holds all information on the state of the each square</dt><dd><p>on the board.in the ‘patch’
 (this will be either a row or column and one longer
 than the board, e.g. for a raw (1, w+1, n)</p>
-</div></blockquote>
-</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>patch_rect</p>
+</dl>
+</li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
