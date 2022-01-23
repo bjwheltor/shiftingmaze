@@ -69,46 +69,38 @@
            <div itemprop="articleBody">
              
   <h1>Source code for tileset</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Represents a full set of tiles for use in the Shifting Maze game</span>
-
-<span class="sd">History</span>
-
-<span class="sd">17-Jul-2021: Initial version-controlled code for tile generation and management. </span>
-<span class="sd">    Note: walls now changes to access with opposite truth values.</span>
-
-<span class="sd">30-Dec-2021: Split TileSet off into separate module</span>
-
-<span class="sd">08-Jan-2022: Added tests and better exit condition using utilities</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">utilities</span>
+<span></span><span class="kn">import</span> <span class="nn">utilities</span>
 <span class="kn">from</span> <span class="nn">tile</span> <span class="kn">import</span> <span class="o">*</span>
 
 
 <div class="viewcode-block" id="TileSet"><a class="viewcode-back" href="../code/tileset.html#tileset.TileSet">[docs]</a><span class="k">class</span> <span class="nc">TileSet</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Represents a full set of tiles</span>
+<span class="sd">    Represents a full set of tiles.</span>
 
-<span class="sd">    Attributes</span>
-<span class="sd">        name : string</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        name (str):</span>
 <span class="sd">            Name of tile set. Default: &quot;standard&quot;.</span>
-<span class="sd">        tiles : dict</span>
-<span class="sd">            Dictionary of tiles indexed by the tile number.</span>
-<span class="sd">        tile_counts : int</span>
-<span class="sd">            Number of each tile in set.</span>
+<span class="sd">        tiles (dict):</span>
+<span class="sd">            Dictionary with lists of doors for each tile.</span>
+<span class="sd">            Each list represents no door or blank wall (0) or a door (1) for each side.</span>
+<span class="sd">            These proceed anti-clockwise from up the screen.</span>
+<span class="sd">        tile_counts (dict):</span>
+<span class="sd">            Dictionary with then number of each tile in set.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doors_for_tiles</span><span class="p">,</span> <span class="n">tile_counts</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;standard&quot;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doors_for_tiles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">tile_counts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;standard&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Parameters</span>
-<span class="sd">            name : string</span>
-<span class="sd">                Name of tile set. Default: &quot;standard&quot;</span>
-<span class="sd">            doors_for_tiles : dict</span>
+<span class="sd">        Args:</span>
+<span class="sd">            doors_for_tiles:</span>
 <span class="sd">                Dictionary with lists of doors for each tile.</span>
 <span class="sd">                Each list represents no door or blank wall (0) or a door (1) for each side.</span>
 <span class="sd">                These proceed anti-clockwise from up the screen.</span>
-<span class="sd">            tile_counts : dict</span>
+<span class="sd">            tile_counts:</span>
 <span class="sd">                Dictionary with then number of each tile in set.</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            name (str):</span>
+<span class="sd">                Name of tile set, with default value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tile_counts</span> <span class="o">=</span> <span class="n">tile_counts</span>
@@ -117,7 +109,17 @@
         <span class="k">for</span> <span class="n">tile_number</span><span class="p">,</span> <span class="n">doors</span> <span class="ow">in</span> <span class="n">doors_for_tiles</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">tiles</span><span class="p">[</span><span class="n">tile_number</span><span class="p">]</span> <span class="o">=</span> <span class="n">Tile</span><span class="p">(</span><span class="n">tile_number</span><span class="p">,</span> <span class="n">doors</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TileSet.get_image"><a class="viewcode-back" href="../code/tileset.html#tileset.TileSet.get_image">[docs]</a>    <span class="k">def</span> <span class="nf">get_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">,</span> <span class="n">rot</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="TileSet.get_image"><a class="viewcode-back" href="../code/tileset.html#tileset.TileSet.get_image">[docs]</a>    <span class="k">def</span> <span class="nf">get_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rot</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">         Args:</span>
+<span class="sd">             number:</span>
+<span class="sd">                 Unique number assigned to tile.</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">             rot:</span>
+<span class="sd">                 Orientation of tile to be placed (rotation degrees clockwise),</span>
+<span class="sd">                 with default value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">rot</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">rot</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiles</span><span class="p">[</span><span class="n">number</span><span class="p">]</span><span class="o">.</span><span class="n">image</span>

@@ -81,7 +81,7 @@
 <span class="sd">            Unique number assigned to tile.</span>
 <span class="sd">        doors (list):</span>
 <span class="sd">            List of values representing no door or blank wall (0) or a door (1).</span>
-<span class="sd">            These proceed clockwise from up the screen. Default: [1,1,1,1].</span>
+<span class="sd">            These proceed clockwise from up the screen. Has default value.</span>
 <span class="sd">        size (int):</span>
 <span class="sd">            Length of one edge of a square tile, including frame. Default: 102.</span>
 <span class="sd">        frame (int):</span>
@@ -107,12 +107,13 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">doors</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Parameters:</span>
+<span class="sd">        Args:</span>
 <span class="sd">            number:</span>
 <span class="sd">                Unique number assigned to tile</span>
-<span class="sd">            doors:</span>
+
+<span class="sd">        Keyword Args:</span>
 <span class="sd">                List of values representing no door or blank wall (0) or a door (1).</span>
-<span class="sd">                These proceed anti-clockwise from up the screen. Default: [1,1,1,1]</span>
+<span class="sd">                These proceed anti-clockwise from up the screen, with default value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">number</span> <span class="o">=</span> <span class="n">number</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">doors</span> <span class="o">=</span> <span class="n">doors</span>
