@@ -86,7 +86,6 @@
              
   <section id="module-board">
 <span id="board-module"></span><h1>board module<a class="headerlink" href="#module-board" title="Permalink to this headline"></a></h1>
-<p>Represents the state of the board for Shifting Maze game.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="board.Board">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">board.</span></span><span class="sig-name descname"><span class="pre">Board</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_bag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/board.html#Board"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.Board" title="Permalink to this definition"></a></dt>
@@ -95,9 +94,9 @@
 This is initialised either by drawing a set of tiles from a Tile Bag and
 assigning random orientations for by specifying an explicit list of tiles.</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="board.Board.w">
-<span class="sig-name descname"><span class="pre">w</span></span><a class="headerlink" href="#board.Board.w" title="Permalink to this definition"></a></dt>
-<dd><p>Width = x-dimension of board in tiles in x direction (west and east)</p>
+<dt class="sig sig-object py" id="board.Board.width">
+<span class="sig-name descname"><span class="pre">width</span></span><a class="headerlink" href="#board.Board.width" title="Permalink to this definition"></a></dt>
+<dd><p>X-dimension of board in tiles in x direction (west and east)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
@@ -106,9 +105,9 @@ assigning random orientations for by specifying an explicit list of tiles.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="board.Board.h">
-<span class="sig-name descname"><span class="pre">h</span></span><a class="headerlink" href="#board.Board.h" title="Permalink to this definition"></a></dt>
-<dd><p>Height = y-dimension of board in tiles y direction (north and south)</p>
+<dt class="sig sig-object py" id="board.Board.height">
+<span class="sig-name descname"><span class="pre">height</span></span><a class="headerlink" href="#board.Board.height" title="Permalink to this definition"></a></dt>
+<dd><p>Y-dimension of board in tiles y direction (north and south)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
@@ -117,8 +116,8 @@ assigning random orientations for by specifying an explicit list of tiles.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="board.Board.n">
-<span class="sig-name descname"><span class="pre">n</span></span><a class="headerlink" href="#board.Board.n" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="board.Board.nattr">
+<span class="sig-name descname"><span class="pre">nattr</span></span><a class="headerlink" href="#board.Board.nattr" title="Permalink to this definition"></a></dt>
 <dd><p>Number of board square attributes (NATT), where the attributes are
 TILE (0) is the tile number
 ROT (1) is the rotation or orientation of each tile (degrees clockwise)</p>
