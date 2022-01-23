@@ -201,10 +201,9 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            - Rectangle of tiles to slide, including new tile</span>
-<span class="sd">            - Holds all information on the state of the each square</span>
-<span class="sd">                on the board.in the &#39;patch&#39;</span>
-<span class="sd">                (this will be either a row or column and one longer</span>
-<span class="sd">                than the board, e.g. for a raw (1, w+1, n)</span>
+<span class="sd">            - Holds all information on the state of the each square on the board</span>
+<span class="sd">              in the &#39;patch&#39; (this will be either a row or column and one longer</span>
+<span class="sd">              than the board, e.g. for a raw (1, w+1, n)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">dir</span> <span class="o">==</span> <span class="n">WEST</span><span class="p">:</span>
             <span class="n">patch_rect</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x_or_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -241,7 +240,9 @@
 
         <span class="k">return</span> <span class="n">patch_rect</span><span class="p">,</span> <span class="n">patch_placements</span></div>
 
-<div class="viewcode-block" id="Board.check_for_door"><a class="viewcode-back" href="../code/board.html#board.Board.check_for_door">[docs]</a>    <span class="k">def</span> <span class="nf">check_for_door</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">dir</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tiles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">next</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Board.check_for_door"><a class="viewcode-back" href="../code/board.html#board.Board.check_for_door">[docs]</a>    <span class="k">def</span> <span class="nf">check_for_door</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">dir</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">tiles</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">next</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if exit exists in a particular direction from a tile on the board</span>
 
