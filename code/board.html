@@ -86,14 +86,14 @@
              
   <section id="module-board">
 <span id="board-module"></span><h1>board module<a class="headerlink" href="#module-board" title="Permalink to this headline"></a></h1>
-<p>Represents the state of the board for Shifting Maze game</p>
+<p>Represents the state of the board for Shifting Maze game.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="board.Board">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">board.</span></span><span class="sig-name descname"><span class="pre">Board</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_bag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/board.html#Board"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.Board" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Represents the state of the board
+<p>Represents the state of the board.
 This is initialised either by drawing a set of tiles from a Tile Bag and
-assigning random orientations for by specifying an explicit list of tiles</p>
+assigning random orientations for by specifying an explicit list of tiles.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="board.Board.w">
 <span class="sig-name descname"><span class="pre">w</span></span><a class="headerlink" href="#board.Board.w" title="Permalink to this definition"></a></dt>
@@ -154,16 +154,14 @@ on the board. Has dimensions h, w, n</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="board.Board.check_for_door">
-<span class="sig-name descname"><span class="pre">check_for_door</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/board.html#Board.check_for_door"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.Board.check_for_door" title="Permalink to this definition"></a></dt>
-<dd><p>Check if exit exists in a particular direction from a tile on the board</p>
+<span class="sig-name descname"><span class="pre">check_for_door</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/board.html#Board.check_for_door"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#board.Board.check_for_door" title="Permalink to this definition"></a></dt>
+<dd><p>Check if exit exists in a particular direction from a tile on the board.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pos</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – X, y coordinates of tile placement. (0, 0) = (left, top)</p></li>
 <li><p><strong>dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – Direction in which presence of door to be checked.</p></li>
-<li><p><strong>tiles</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) – Tiles in use. Passed as Tileset.tiles, this is a dictionary
-indexed by tile number, with values of Tile, whih holds the
-properties of a tile</p></li>
+<li><p><strong>tile_set</strong> (<a class="reference internal" href="tileset.html#tileset.TileSet" title="tileset.TileSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">TileSet</span></code></a>) – Set of tiles in use.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Keyword Arguments</dt>
