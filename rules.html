@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rules &mdash; Shifting Maze 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Introduction" href="intro.html" />
+    <link rel="prev" title="Shifting Maze Documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> Shifting Maze
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Rules</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Rules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#aim-of-the-game">Aim of the Game</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#starting-set-up">Starting Set-up</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#turn-sequence">Turn Sequence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#defender-move">Defender Move</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#maze-event">Maze Event</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#special-action">Special Action</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#challenger-move">Challenger Move</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#investigate">Investigate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#move">Move</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pick-up-object">Pick Up Object</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#challenger-power-actions">Challenger Power Actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#challenger-free-actions">Challenger Free Actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reactive-actions">Reactive Actions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Buildimg the Game</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prereq.html">Prerequisites</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="approach.html">Approach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="game.html">Game</a></li>
+<li class="toctree-l1"><a class="reference internal" href="board.html">Board</a></li>
+<li class="toctree-l1"><a class="reference internal" href="code.html">Code</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Shifting Maze</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Rules</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/rules.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="rules">
+<h1>Rules<a class="headerlink" href="#rules" title="Permalink to this headline"></a></h1>
+<section id="aim-of-the-game">
+<h2>Aim of the Game<a class="headerlink" href="#aim-of-the-game" title="Permalink to this headline"></a></h2>
+<p>You control a Challenger - a captured human - sent into the Shifting Maze,
+whose only way of obtaining freedom is to traverse the Maze to the far side,
+pick up a Key and return across the Maze, using the Key to gain their freedom.
+The first player to have a Challenger escape the Maze is the winner.</p>
+<p>The Shifting Maze is a 10 by 10 (in the X and Y directions) set of Cubes -
+a third Z dimension but the action only takes place on a single level,
+with any Challengers transported to another level in the Z direction effectively lost.
+Different Cubes have different numbers and configurations of Doorways (open sides),
+creating routes through the Maze.</p>
+<p>The Maze is continually shifting, with individual Cubes rotating,
+and lines of Cubes moving in the X and Y (and Z) direction.
+The players also have the power to rotate cubes to create new pathways through the maze.</p>
+<p>There are also robots released into the Maze to stop the Challengers;
+known as Defenders, they will kill the Challengers, if they get chance.
+The Challengers can stun or destroy the Defenders,
+but this depletes their important power reserves.
+Challengers can also attack each other, should they feel the need.</p>
+</section>
+<section id="starting-set-up">
+<h2>Starting Set-up<a class="headerlink" href="#starting-set-up" title="Permalink to this headline"></a></h2>
+<p>The maze is randomly generated.</p>
+<p>The players start with and their Challenger Counter in their designated
+start area and their Power Point Indicator at 10,</p>
+</section>
+<section id="turn-sequence">
+<h2>Turn Sequence<a class="headerlink" href="#turn-sequence" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>Defenders Move, in number order (if present), and resolve any Challenger reactions.</p></li>
+<li><p>Maze Event</p></li>
+<li><p>Challengers Move</p></li>
+</ul>
+</section>
+<section id="defender-move">
+<h2>Defender Move<a class="headerlink" href="#defender-move" title="Permalink to this headline"></a></h2>
+<p>A Defender takes 3 Investigate / Move actions, using the following rules:</p>
+<ul class="simple">
+<li><p>It will move towards the nearest Challenger in line of sight.
+if there are 2 or more equidistant, it will randomly decide which one to move towards.</p></li>
+<li><p>It will move through an Open Doorway leading to a known Cube.
+if there are 2 or more, it will:
+* not retrace it’s route;
+* randomly decide which Doorway to take.</p></li>
+<li><p>If there is a Doorway to an Uninvestigated Cube, then it will investigate,
+and then start at 1. again.</p></li>
+<li><p>If there are only Closed Doorways, it will rotate the current cube clockwise once,
+and then start at 1. again.</p></li>
+</ul>
+<p>If the Defender moves into a Cube with a Challenger, it will attempt to kill them.</p>
+</section>
+<section id="maze-event">
+<h2>Maze Event<a class="headerlink" href="#maze-event" title="Permalink to this headline"></a></h2>
+<p>Before the Challenger can take actions, there will be a random Maze Event,
+and the resolution of and Challenger Reactions.</p>
+<p>This will be on o fthe following:</p>
+<ul class="simple">
+<li><p>Special Action</p></li>
+<li><p>Rotate Cube clockwise once</p></li>
+<li><p>Rotate Cube clockwise twice</p></li>
+<li><p>Rotate Cube clockwise three times</p></li>
+<li><p>Slide X Cube Line along Plus 1 (Cube Line randomly determined)</p></li>
+<li><p>Slide X Cube Line along Minus 1 (Cube Line randomly determined)</p></li>
+<li><p>Slide Y Cube Line along Plus 1 (Cube Line randomly determined)</p></li>
+<li><p>Slide Y Cube Line along Minus 1 (Cube Line randomly determined)</p></li>
+<li><p>Slide Z Cube Line along Plus 1 (Cube Line randomly determined):sup:<cite>*</cite></p></li>
+<li><p>Slide Z Cube Line along Minus 1 (Cube Line randomly determined):sup:<cite>*</cite></p></li>
+</ul>
+<p><sup>*</sup> In the base game, this just removes the Cube in question.</p>
+<section id="special-action">
+<h3>Special Action<a class="headerlink" href="#special-action" title="Permalink to this headline"></a></h3>
+<p>In the base game, if there are less than two Defenders in the Maze,
+a new Defender will be added on a cube determined by 2D10
+(this may be an existing Cube or a new one).</p>
+</section>
+</section>
+<section id="challenger-move">
+<h2>Challenger Move<a class="headerlink" href="#challenger-move" title="Permalink to this headline"></a></h2>
+<p>The Challenger takes actions in any order:</p>
+<ul class="simple">
+<li><p>up to three Investigate / Move / Pick Up Object Actions.</p></li>
+<li><p>any number of Power Actions (as long as the Challenger has sufficient Power Points remaining).</p></li>
+<li><p>any number of Free Actions.</p></li>
+</ul>
+<p>The challenger can perform three of the Main Actions in any order,
+including multiple uses of the same action, and interspersed with Power Actions.</p>
+<section id="investigate">
+<h3>Investigate<a class="headerlink" href="#investigate" title="Permalink to this headline"></a></h3>
+<p>Challenger can Investigate any Cube (but not diagonally adjacent) to the Cube
+that they currently occupy, if there is no Cube revealed in this space.
+The player draws a tile from the Tile Bag and places it with the red dot at the
+Low X end (i.e. The end at which the Challengers start).</p>
+</section>
+<section id="move">
+<h3>Move<a class="headerlink" href="#move" title="Permalink to this headline"></a></h3>
+<p>Move the Challenger through an Open Doorway to an adjacent Cube.</p>
+</section>
+<section id="pick-up-object">
+<h3>Pick Up Object<a class="headerlink" href="#pick-up-object" title="Permalink to this headline"></a></h3>
+<p>Take an Object Counter from either the Cube that the Challenger is in
+or from the Body of another Challenger and place it on your Challenger Board,
+subject to there being a spare slot for it.</p>
+</section>
+<section id="challenger-power-actions">
+<h3>Challenger Power Actions<a class="headerlink" href="#challenger-power-actions" title="Permalink to this headline"></a></h3>
+<p>At any time within the Player Turn, subject to the Challenger having enough Power Points remaining,
+the Challenger may perform any of the actions as many times as desired:</p>
+<p>For One Power Point:</p>
+<ul class="simple">
+<li><p>Rotate Current Cube clockwise or anti-clockwise once</p></li>
+<li><p>Rotate an Adjacent Cube clockwise or anti-clockwise once,
+if it can be seen though a Doorway in the Current Cube</p></li>
+</ul>
+<p>For Two Power Points:</p>
+<ul class="simple">
+<li><p>Stun a Defender: this renders it out of action for the next Defender Move
+or for it’s current Defender Move if this is played as a reaction.</p></li>
+<li><p>Stun another Challenger, either in the Current Cube or within line of sight
+(i.e. through a series of Open Doorways). The other Challenger misses their next turn
+(signified by placing the Large Cross Token over the Mains Actions Indicator on the
+Challenger Board of the stunned Challenger).</p></li>
+</ul>
+<p>For Five Power Points:</p>
+<ul class="simple">
+<li><p>Destroy an Adjacent Cube, that you can see
+(i.e. there is a Doorway leading to it from the Current Cube.
+The Cube is removed from the Maze and replaced by a Destroyed Cube Tile.</p></li>
+<li><p>Destroy a Defender: this removed the Defender From the Maze.</p></li>
+<li><p>Kill another Challenger, either in the Current Cube or within line of sight
+(i.e. through a series of Open Doorways. The other Challenger Marker is replaced by a Dead Challenger Marker, with any objects that the Challenger was carrying placed on top of it. The Player whose Challenger has been killed, resets their Challenger Board and starts with a fresh Challenger on their next turn.</p></li>
+</ul>
+</section>
+<section id="challenger-free-actions">
+<h3>Challenger Free Actions<a class="headerlink" href="#challenger-free-actions" title="Permalink to this headline"></a></h3>
+<dl class="simple">
+<dt>The Challenger may perform any number of legal Free Actions on their turn; these include:</dt><dd><ul class="simple">
+<li><p>Discard an Object: the Object Token is removed from the Challenger Board
+and placed on the Current Cube.</p></li>
+<li><p>Use an Object. For example, a Battery Pack may be used to add the number of Power Points
+left in it to the Challenger (up to the maximum of 10).
+To indicate this, the Battery Pack Token is replaced (on the Challenger Board)
+by one with the remaining number of Power Points; if it is completely used up,
+it is removed from the game.</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="reactive-actions">
+<h3>Reactive Actions<a class="headerlink" href="#reactive-actions" title="Permalink to this headline"></a></h3>
+<p>If a Challenger is threatened with death at any time (even when it is not their turn)
+they may use Main and/or Power Actions to save themselves. They may only spend actions
+until they are safe; after this they must stop. Power Actions are spent in the usual way,
+with the Power Track on the Challenger Board adjusted. Main actions used are recorded
+by placing a Small Cross Token over a Main Action Indicator on the Challenger Board
+for each of actions used. These are essentially used in advance against
+the next Move’s allocation and will not be available for the next Challenger Move.</p>
+<p>The situations the constitute a threat of death are:
+- a Defender moving into the Challenger’s Current Cube
+- the Current Cube moving in the Z direction (i.e. up or down)
+- the Current Cube moves in the X or Y direction beyond the edge of the Maze grid (this also implies an up or down movement)</p>
+<p>The possible Reactive Actions that might be taken are:
+- Stun or Destroy the Defender.
+- Move to another Cube.
+- Rotate the Current Cube or an Adjacent Cube to create a Doorway that is not Closed.
+- Investigate an Adjacent Cube.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Shifting Maze Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="intro.html" class="btn btn-neutral float-right" title="Introduction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Bruce Wright.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,185 @@
+Rules
+=====
+
+Aim of the Game
+---------------
+
+You control a Challenger - a captured human - sent into the Shifting Maze, 
+whose only way of obtaining freedom is to traverse the Maze to the far side, 
+pick up a Key and return across the Maze, using the Key to gain their freedom.
+The first player to have a Challenger escape the Maze is the winner.
+
+The Shifting Maze is a 10 by 10 (in the X and Y directions) set of Cubes - 
+a third Z dimension but the action only takes place on a single level, 
+with any Challengers transported to another level in the Z direction effectively lost. 
+Different Cubes have different numbers and configurations of Doorways (open sides), 
+creating routes through the Maze.
+
+The Maze is continually shifting, with individual Cubes rotating, 
+and lines of Cubes moving in the X and Y (and Z) direction. 
+The players also have the power to rotate cubes to create new pathways through the maze.
+
+There are also robots released into the Maze to stop the Challengers; 
+known as Defenders, they will kill the Challengers, if they get chance. 
+The Challengers can stun or destroy the Defenders, 
+but this depletes their important power reserves. 
+Challengers can also attack each other, should they feel the need.
+
+
+Starting Set-up
+---------------
+
+The maze is randomly generated.
+
+The players start with and their Challenger Counter in their designated 
+start area and their Power Point Indicator at 10,
+
+Turn Sequence
+-------------
+
+* Defenders Move, in number order (if present), and resolve any Challenger reactions.
+* Maze Event
+* Challengers Move
+
+Defender Move
+-------------
+
+A Defender takes 3 Investigate / Move actions, using the following rules:
+
+* It will move towards the nearest Challenger in line of sight.
+  if there are 2 or more equidistant, it will randomly decide which one to move towards.
+* It will move through an Open Doorway leading to a known Cube.
+  if there are 2 or more, it will:
+  * not retrace it's route;
+  * randomly decide which Doorway to take.
+* If there is a Doorway to an Uninvestigated Cube, then it will investigate, 
+  and then start at 1. again.
+* If there are only Closed Doorways, it will rotate the current cube clockwise once, 
+  and then start at 1. again.
+
+If the Defender moves into a Cube with a Challenger, it will attempt to kill them.
+
+Maze Event
+----------
+
+Before the Challenger can take actions, there will be a random Maze Event,
+and the resolution of and Challenger Reactions.
+
+This will be on o fthe following:
+
+* Special Action
+* Rotate Cube clockwise once
+* Rotate Cube clockwise twice
+* Rotate Cube clockwise three times 
+* Slide X Cube Line along Plus 1 (Cube Line randomly determined)
+* Slide X Cube Line along Minus 1 (Cube Line randomly determined)
+* Slide Y Cube Line along Plus 1 (Cube Line randomly determined)
+* Slide Y Cube Line along Minus 1 (Cube Line randomly determined)
+* Slide Z Cube Line along Plus 1 (Cube Line randomly determined):sup:`*`
+* Slide Z Cube Line along Minus 1 (Cube Line randomly determined):sup:`*`
+
+:sup:`*` In the base game, this just removes the Cube in question.
+
+Special Action
+^^^^^^^^^^^^^^
+
+In the base game, if there are less than two Defenders in the Maze, 
+a new Defender will be added on a cube determined by 2D10 
+(this may be an existing Cube or a new one).
+
+
+Challenger Move
+---------------
+
+The Challenger takes actions in any order:
+
+* up to three Investigate / Move / Pick Up Object Actions.
+* any number of Power Actions (as long as the Challenger has sufficient Power Points remaining).
+* any number of Free Actions.
+
+The challenger can perform three of the Main Actions in any order,
+including multiple uses of the same action, and interspersed with Power Actions.
+
+Investigate
+^^^^^^^^^^^
+
+Challenger can Investigate any Cube (but not diagonally adjacent) to the Cube 
+that they currently occupy, if there is no Cube revealed in this space. 
+The player draws a tile from the Tile Bag and places it with the red dot at the 
+Low X end (i.e. The end at which the Challengers start).
+
+Move
+^^^^
+
+Move the Challenger through an Open Doorway to an adjacent Cube.
+
+Pick Up Object
+^^^^^^^^^^^^^^
+
+Take an Object Counter from either the Cube that the Challenger is in
+or from the Body of another Challenger and place it on your Challenger Board, 
+subject to there being a spare slot for it.
+
+Challenger Power Actions
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+At any time within the Player Turn, subject to the Challenger having enough Power Points remaining, 
+the Challenger may perform any of the actions as many times as desired:
+
+For One Power Point:
+
+* Rotate Current Cube clockwise or anti-clockwise once
+* Rotate an Adjacent Cube clockwise or anti-clockwise once,
+  if it can be seen though a Doorway in the Current Cube
+
+For Two Power Points:
+
+* Stun a Defender: this renders it out of action for the next Defender Move
+  or for it's current Defender Move if this is played as a reaction.
+* Stun another Challenger, either in the Current Cube or within line of sight 
+  (i.e. through a series of Open Doorways). The other Challenger misses their next turn 
+  (signified by placing the Large Cross Token over the Mains Actions Indicator on the 
+  Challenger Board of the stunned Challenger).
+
+For Five Power Points:
+
+* Destroy an Adjacent Cube, that you can see
+  (i.e. there is a Doorway leading to it from the Current Cube.
+  The Cube is removed from the Maze and replaced by a Destroyed Cube Tile.
+* Destroy a Defender: this removed the Defender From the Maze.
+* Kill another Challenger, either in the Current Cube or within line of sight 
+  (i.e. through a series of Open Doorways. The other Challenger Marker is replaced by a Dead Challenger Marker, with any objects that the Challenger was carrying placed on top of it. The Player whose Challenger has been killed, resets their Challenger Board and starts with a fresh Challenger on their next turn.
+
+Challenger Free Actions
+^^^^^^^^^^^^^^^^^^^^^^^
+
+The Challenger may perform any number of legal Free Actions on their turn; these include:
+ - Discard an Object: the Object Token is removed from the Challenger Board
+   and placed on the Current Cube.
+ - Use an Object. For example, a Battery Pack may be used to add the number of Power Points 
+   left in it to the Challenger (up to the maximum of 10).
+   To indicate this, the Battery Pack Token is replaced (on the Challenger Board) 
+   by one with the remaining number of Power Points; if it is completely used up, 
+   it is removed from the game.
+
+Reactive Actions
+^^^^^^^^^^^^^^^^
+
+If a Challenger is threatened with death at any time (even when it is not their turn)
+they may use Main and/or Power Actions to save themselves. They may only spend actions 
+until they are safe; after this they must stop. Power Actions are spent in the usual way, 
+with the Power Track on the Challenger Board adjusted. Main actions used are recorded
+by placing a Small Cross Token over a Main Action Indicator on the Challenger Board 
+for each of actions used. These are essentially used in advance against 
+the next Move's allocation and will not be available for the next Challenger Move.
+
+The situations the constitute a threat of death are:
+- a Defender moving into the Challenger's Current Cube
+- the Current Cube moving in the Z direction (i.e. up or down)
+- the Current Cube moves in the X or Y direction beyond the edge of the Maze grid (this also implies an up or down movement)
+
+The possible Reactive Actions that might be taken are:
+- Stun or Destroy the Defender.
+- Move to another Cube.
+- Rotate the Current Cube or an Adjacent Cube to create a Doorway that is not Closed.
+- Investigate an Adjacent Cube. 
