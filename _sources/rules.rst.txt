@@ -75,8 +75,8 @@ This will be on o fthe following:
 * Slide X Cube Line along Minus 1 (Cube Line randomly determined)
 * Slide Y Cube Line along Plus 1 (Cube Line randomly determined)
 * Slide Y Cube Line along Minus 1 (Cube Line randomly determined)
-* Slide Z Cube Line along Plus 1 (Cube Line randomly determined):sup:`*`
-* Slide Z Cube Line along Minus 1 (Cube Line randomly determined):sup:`*`
+* Slide Z Cube Line along Plus 1 (Cube Line randomly determined)\ :sup:`*`
+* Slide Z Cube Line along Minus 1 (Cube Line randomly determined)\ :sup:`*`
 
 :sup:`*` In the base game, this just removes the Cube in question.
 
