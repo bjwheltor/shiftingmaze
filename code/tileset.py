@@ -1,43 +1,35 @@
-"""
-Represents a full set of tiles for use in the Shifting Maze game
-
-History
-
-17-Jul-2021: Initial version-controlled code for tile generation and management. 
-    Note: walls now changes to access with opposite truth values.
-
-30-Dec-2021: Split TileSet off into separate module
-
-08-Jan-2022: Added tests and better exit condition using utilities
-"""
 import utilities
 from tile import *
 
 
 class TileSet:
     """
-    Represents a full set of tiles
+    Represents a full set of tiles.
 
-    Attributes
-        name : string
+    Attributes:
+        name (str):
             Name of tile set. Default: "standard".
-        tiles : dict
-            Dictionary of tiles indexed by the tile number.
-        tile_counts : int
-            Number of each tile in set.
+        tiles (dict):
+            Dictionary with lists of doors for each tile.
+            Each list represents no door or blank wall (0) or a door (1) for each side.
+            These proceed anti-clockwise from up the screen.
+        tile_counts (dict):
+            Dictionary with then number of each tile in set.
     """
 
-    def __init__(self, doors_for_tiles, tile_counts, name="standard"):
+    def __init__(self, doors_for_tiles: dict, tile_counts: dict, name="standard"):
         """
-        Parameters
-            name : string
-                Name of tile set. Default: "standard"
-            doors_for_tiles : dict
+        Args:
+            doors_for_tiles:
                 Dictionary with lists of doors for each tile.
                 Each list represents no door or blank wall (0) or a door (1) for each side.
                 These proceed anti-clockwise from up the screen.
-            tile_counts : dict
+            tile_counts:
                 Dictionary with then number of each tile in set.
+
+        Keyword Args:
+            name (str):
+                Name of tile set, with default value.
         """
         self.name = name
         self.tile_counts = tile_counts
@@ -46,7 +38,17 @@ class TileSet:
         for tile_number, doors in doors_for_tiles.items():
             self.tiles[tile_number] = Tile(tile_number, doors)
 
-    def get_image(self, number, rot=None):
+    def get_image(self, number: int, rot: int = None):
+        """
+        Args:
+            number:
+                Unique number assigned to tile.
+
+        Keyword Args:
+             rot:
+                 Orientation of tile to be placed (rotation degrees clockwise),
+                 with default value.
+        """
         if rot is None:
             rot = 0
         image = self.tiles[number].image

@@ -1,126 +1,140 @@
-"""
-Represents the state of the board for Shifting Maze game
-"""
 import pygame
 import random
 import numpy as np
 
+from typing import Tuple
+
 from position import *
 from direction import *
 
+from tileset import *
+from tilebag import *
+
+NATTR = 2
 TILE = 0
 ROT = 1
 
 
 class Board:
     """
-    Represents the state of the board
+    Represents the state of the board.
+    This is initialised either by drawing a set of tiles from a Tile Bag and
+    assigning random orientations for by specifying an explicit list of tiles.
 
     Attributes:
-        w : int
-            x-dimension of board in tiles in x direction (west and east): width
-        h : int
-            y-dimension of board in tiles y direction (north and south): height
-        n : int
-            number of board quare attributes
-        size : int
-            total number of tiles on board (w * h)
-        placements : numpy.array(h, w, n)
-            holds all information on the state of the each square on the board.
-            h is the y dimension
-            w is the x dimension
-            n is the board square attribute:
-            TILE = 0 is the tile number
-            ROT = 1 is the rotation or orientation of each tile (degrees clockwise)
+        width (int):
+            X-dimension of board in tiles in x direction (west and east)
+        height (int):
+            Y-dimension of board in tiles y direction (north and south)
+        nattr (int):
+            Number of board square attributes (NATT), where the attributes are
+            TILE (0) is the tile number
+            ROT (1) is the rotation or orientation of each tile (degrees clockwise)
+        size (int):
+            Total number of tiles on board (w * h)
+        placements (numpy.ndarray):
+            Holds all information on the state of the each square
+            on the board. Has dimensions h, w, n
     """
 
-    def __init__(self, width, height, tile_bag=None, tile_list=None):
+    def __init__(
+        self, width: int, height: int, tile_bag: TileBag = None, tile_list: list = None
+    ):
         """
         Create board of specified size and fill with tiles drawn randomly from the tile bag
         and assigned random orientations.
 
-        Parameters:
-        width : int
-            x-dimension of board in tiles in x direction (west and east): width
-        height : int
-            y-dimension of board in tiles y direction (north and south): height
+        Args:
+            width:
+                X-dimension of board in tiles in x direction (west and east)
+            height:
+                Y-dimension of board in tiles y direction (north and south)
 
-        Keywords:
-            tile_bag : TileBag
-                represents the bag of tiles from dimich random ones can be drawn.
+        Keyword Args:
+            tile_bag:
+                Represents the bag of tiles from dimich random ones can be drawn.
                 Default is None, which sets empty placement and orientation arrays
+            tile_list:
+                List of tile numbers
         """
-        self.w = width
-        self.h = height
-        self.size = self.w * self.h
-        self.n = 2
-        self.rect = pygame.Rect(0, 0, self.w, self.h)
+        self.width = width
+        self.height = height
+        self.nattr = NATTR
+        self.size = self.width * self.height
 
-        self.placements = np.empty([self.h, self.w, self.n], dtype=int)
+        # Currently maintained to stop code breaking
+        self.w = self.width
+        self.h = self.height
+        self.n = self.nattr
+
+        self.rect = pygame.Rect(0, 0, self.width, self.height)
+        self.placements = np.empty([self.height, self.width, self.nattr], dtype=int)
 
         if tile_bag:
             tiles = np.array(tile_bag.draw_tiles(self.size), dtype=int)
             rots = np.array(random.choices(DIRECTIONS, k=self.size), dtype=int)
-            tiles.shape = (self.h, self.w)
-            rots.shape = (self.h, self.w)
+            tiles.shape = (self.height, self.width)
+            rots.shape = (self.height, self.width)
         elif tile_list:
             tiles = np.array(tile_list, dtype=int)
-            tiles.shape = (self.h, self.w)
-            rots = np.zeros((self.h, self.w), dtype=int)
+            tiles.shape = (self.height, self.width)
+            rots = np.zeros((self.height, self.width), dtype=int)
 
         self.placements[:, :, TILE] = tiles
         self.placements[:, :, ROT] = rots
 
-    def place_tile(self, pos, tile, rot=0):
+    def place_tile(self, pos: Position, tile: int, rot: int = 0):
         """
         Place a tile onto the board.
         Set the position to the tile number and the orientation.
 
-        Parameters:
-            pos : Position
-                x, y coordinates of tile placement. (0, 0) = (left, top)
-            tile : int
-                number of tile to be placed
-            rot : int
-                rotation of tile to be placed (degrees clockwise)
+        Args:
+            pos:
+                X, y coordinates of tile placement. (0, 0) = (west, north)
+            tile:
+                Number of tile to be placed
+
+        Keyword Args:
+            rot:
+                Orientation of tile to be placed (rotation degrees clockwise)
         """
         self.placements[pos.y, pos.x, TILE] = tile
         self.placements[pos.y, pos.x, ROT] = rot
 
-    def rotate_tile(self, pos, rotate):
+    def rotate_tile(self, pos: Position, rotate: int):
         """
         Rotate a tile on the board. Reset the orientation.
 
-        Parameters:
-            pos : Position
-                x, y coordinates of tile placement. (0, 0) = (left, top)
-            rotate : int
-                rotatation to be applied to tile (degrees clockwise)
+        Args:
+            pos:
+                X, y coordinates of tile placement. (0, 0) = (west, north)
+            rotate:
+                Rotatation to be applied to tile (degrees clockwise)
         """
         rot = self.placements[pos.y, pos.x, ROT]
         self.placements[pos.y, pos.x, ROT] = (rot + rotate) % FULLCIRCLE
 
-    def slide_line(self, dir, x_or_y, tile_bag):
+    def slide_line(
+        self, dir: int, x_or_y: int, tile_bag: TileBag = None
+    ) -> Tuple[pygame.Rect, np.ndarray]:
         """
         Slide a row or column
 
-        Parameters:
-            dir : int
-                direction in which to slide tiles
-            x_or_y : int
-                x or y position on board, depending on direction.
+        Args:
+            dir:
+                Direction in which to slide tiles
+            x_or_y:
+                X or y position on board, depending on direction.
                 For dir = NORTH or SOUTH, this is x, indicating the column.
                 For dir = EAST or WEST, this is y, indicating the row.
-            tilebag: TileBag
+            tilebag:
                 Bag of tiles from which new one can be drawn
-        Returns
-            patch_rect: pygame.Rect
-                Rectangle of tiles to slide, including new tile
-            patch_placements : numpy.array(y, x, n)
-                holds all information on the state of the each square
-                on the board.in the 'patch'
-                (this will be either a row or column and one longer
-                than the board, e.g. for a raw (1, w+1, n)
+
+        Returns:
+            - Rectangle of tiles to slide, including new tile
+            - Holds all information on the state of the each square on the board
+              in the 'patch' (this will be either a row or column and one longer
+              than the board, e.g. for a raw (1, w+1, n)
         """
         if dir == WEST:
             patch_rect = pygame.Rect(0, x_or_y, self.w + 1, 1)
@@ -157,25 +171,26 @@ class Board:
 
         return patch_rect, patch_placements
 
-    def check_for_door(self, pos, dir, tiles, next=False):
+    def check_for_door(
+        self, pos: int, dir: int, tile_set: TileSet, next: bool = False
+    ) -> bool:
         """
-        Check if exit exists in a particular direction from a tile on the board
+        Check if exit exists in a particular direction from a tile on the board.
 
-        Parameters:
-            pos : Position
-                x, y coordinates of tile placement. (0, 0) = (left, top)
-            dir : int
+        Args:
+            pos:
+                X, y coordinates of tile placement. (0, 0) = (left, top)
+            dir:
                 Direction in which presence of door to be checked.
-            tiles : TileSet.tiles
-                Tiles in use
+            tile_set:
+                Set of tiles in use.
 
-        Keywords:
-            next : logical
+        Keyword Args:
+            next:
                 If true check for door coming from next tile
 
-        Returns
-            door : logical
-                True if door is present, False if not
+        Returns:
+            True if door is present, False if not
         """
         if next:
             pos_to_check = pos.get_next(dir)
@@ -185,11 +200,11 @@ class Board:
             dir_to_check = dir
         tile = self.placements[pos_to_check.y, pos_to_check.x, TILE]
         rot = self.placements[pos_to_check.y, pos_to_check.x, ROT]
-        doors = tiles[tile].doors
+        doors = tile_set.tiles[tile].doors
         door_index = int(((dir_to_check - rot) % FULLCIRCLE) / PLUS90)
         return doors[door_index]
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Print board details"""
         string = f"Board layout: {self.w} x {self.h} tiles\n"
         string += "Tiles/Rotations\n"
@@ -307,19 +322,19 @@ if __name__ == "__main__":
     )
     dir = NORTH
     print(f"dir: {dir}")
-    door = board.check_for_door(pos, dir, tile_set.tiles)
+    door = board.check_for_door(pos, dir, tile_set)
     print(f"door is {door}")
     dir = EAST
     print(f"dir: {dir}")
-    door = board.check_for_door(pos, dir, tile_set.tiles)
+    door = board.check_for_door(pos, dir, tile_set)
     print(f"door is {door}")
     dir = SOUTH
     print(f"dir: {dir}")
-    door = board.check_for_door(pos, dir, tile_set.tiles)
+    door = board.check_for_door(pos, dir, tile_set)
     print(f"door is {door}")
     dir = WEST
     print(f"dir: {dir}")
-    door = board.check_for_door(pos, dir, tile_set.tiles)
+    door = board.check_for_door(pos, dir, tile_set)
     print(f"door is {door}")
 
     print("Test 7: Check for doors in next tile")
@@ -329,29 +344,29 @@ if __name__ == "__main__":
     )
     dir = NORTH
     print(f"dir: {dir}")
-    door = board.check_for_door(pos, dir, tile_set.tiles)
+    door = board.check_for_door(pos, dir, tile_set)
     print(f"check for door in next tile")
     print(f"pos: {pos.get_next(dir)}")
-    door = board.check_for_door(pos, dir, tile_set.tiles, next=True)
+    door = board.check_for_door(pos, dir, tile_set, next=True)
     print(f"door is {door}")
     dir = EAST
     print(f"dir: {dir}")
-    door = board.check_for_door(pos, dir, tile_set.tiles)
+    door = board.check_for_door(pos, dir, tile_set)
     print(f"check for door in next tile")
     print(f"pos: {pos.get_next(dir)}")
-    door = board.check_for_door(pos, dir, tile_set.tiles, next=True)
+    door = board.check_for_door(pos, dir, tile_set, next=True)
     print(f"door is {door}")
     dir = SOUTH
     print(f"dir: {dir}")
-    door = board.check_for_door(pos, dir, tile_set.tiles)
+    door = board.check_for_door(pos, dir, tile_set)
     print(f"check for door in next tile")
     print(f"pos: {pos.get_next(dir)}")
-    door = board.check_for_door(pos, dir, tile_set.tiles, next=True)
+    door = board.check_for_door(pos, dir, tile_set, next=True)
     print(f"door is {door}")
     dir = WEST
     print(f"dir: {dir}")
-    door = board.check_for_door(pos, dir, tile_set.tiles)
+    door = board.check_for_door(pos, dir, tile_set)
     print(f"check for door in next tile")
     print(f"pos: {pos.get_next(dir)}")
-    door = board.check_for_door(pos, dir, tile_set.tiles, next=True)
+    door = board.check_for_door(pos, dir, tile_set, next=True)
     print(f"door is {door}")

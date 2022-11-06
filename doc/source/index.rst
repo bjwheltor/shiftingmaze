@@ -2,18 +2,28 @@ Shifting Maze Documentation
 ===========================
 
 .. toctree::
-   :maxdepth: 3
-   :caption: Contents:
+   :maxdepth: 1
+   :caption: Rules
+
+   rules
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Buildimg the Game
 
    intro
-   approach
    prereq
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Developer Guide
+
+   approach
    game
    board
+
+.. toctree::
+   :maxdepth: 1
+   :caption: The Code
+
    code
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`

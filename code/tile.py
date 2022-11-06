@@ -1,57 +1,48 @@
-"""
-Represents a tile in the Shifting Maze game, including image of tile
-
-History
-
-17-Jul-2021: Initial version-controlled code for tile generation and management. 
-    Note: walls now changes to access with opposite truth values.
-    
-30-Dec-2021: Split Tile off into separate fle
-"""
 import pygame
 
 
 class Tile:
     """
-    Represents a tile including image of tile
+    Represents a tile including image of tile.
 
     Attributes:
-        number : int
-            Unique number assigned to tile
-        doors : list
+        number (int):
+            Unique number assigned to tile.
+        doors (list):
             List of values representing no door or blank wall (0) or a door (1).
-            These proceed clockwise from up the screen. Default: [1,1,1,1]
-        size : integer
-            Length of one edge of a square tile, including frame. Default: 102
-        frame : int
-            Width of frame around edge of tile. Default: 1
-        wall_width : int
-            Thickness of walls. Default: 10
-        door_width : int
-            Width of doorways. Default: 50
-        image : pygame.Surface
-            Image of tile
-        rect : pygame.Surface.rect
-            Rectangle describing tile image
-        frame_colour : tuple
+            These proceed clockwise from up the screen. Has default value.
+        size (int):
+            Length of one edge of a square tile, including frame. Default: 102.
+        frame (int):
+            Width of frame around edge of tile. Default: 1.
+        wall_width (int):
+            Thickness of walls. Default: 10.
+        door_width (int):
+            Width of doorways. Default: 50.
+        image (pygame.Surface)
+            Image of tile.
+        rect (pygame.Rect):
+            Rectangle describing tile image.
+        frame_colour (tuple):
             Red, green, blue tuple for colour of frame around tile.
-            Default: (192, 192, 192) = LIGHT_GREY
-        wall_colour : tuple
-            Red, green, blue tuple for colour of walls
-            Default: (200, 100, 100) = RED
-        floor_colour : tuple
+            Default: (192, 192, 192) = LIGHT_GREY.
+        wall_colour (tuple):
+            Red, green, blue tuple for colour of walls.
+            Default: (200, 100, 100) = RED.
+        floor_colour (tuple):
             Red, green, blue tuple for colour of floor.
-            Default: (150, 150, 255) # BLUE
+            Default: (150, 150, 255) = BLUE.
     """
 
-    def __init__(self, number, doors=[1, 1, 1, 1]):
+    def __init__(self, number: int, doors: list = [1, 1, 1, 1]):
         """
-        Parameters:
-            number : int
+        Args:
+            number:
                 Unique number assigned to tile
-            doors : list
+
+        Keyword Args:
                 List of values representing no door or blank wall (0) or a door (1).
-                These proceed anti-clockwise from up the screen. Default: [1,1,1,1]
+                These proceed anti-clockwise from up the screen, with default value.
         """
         self.number = number
         self.doors = doors
